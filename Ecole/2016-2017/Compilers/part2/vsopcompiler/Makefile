@@ -5,15 +5,27 @@ all:	vsopc
 .PHONY:	all archive clean install-tools
 
 # Your compiler
-vsopc:
+vsopc: bison flex preprocessing g++
+
+bison:
 	bison -v -d vsop_grammar.y
+
+flex:
 	flex vsop_syntax.l
-	g++ -Wfatal-errors -std=c++11 SemanticAnalysis/*.cpp SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc
+
+preprocessing :
+	patch -p0 vsop_grammar.tab.c < yystate.patch
+
+g++ :
+	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc
+
+generation :
+	./merr.linux -B -s "make vsopc" -o yyerror.c ./vsopc
 
 # Should clean built files, and keep only source code. Adapt to your language
 # and folder structure. If using git, you might want to use `git clean`.
 clean:
-	rm -f vsopc *~ *.bak *.o *.class *.pyc
+	rm -f vsopc *~ *.bak *.o *.class *.pyc vsop_grammar.output vsop_grammar.tab.c vsop_grammar.tab.h lex.yy.c
 
 # First rule called when in a new VM. Use this target to install any software
 # tools or libraries needed to build your compiler. e.g. assuming a C++ project

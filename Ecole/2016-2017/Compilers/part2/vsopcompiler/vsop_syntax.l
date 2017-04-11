@@ -11,7 +11,7 @@ using namespace std;
 #define YY_DECL extern "C" int yylex()
 #include "vsop_grammar.tab.h"
 void yyerror(const char *s);
-void lexicalError(const string& message);
+void lexicalError();
 char *file_name;
 extern int start_token;
 /*
@@ -31,13 +31,6 @@ IN:     text: string, the text to transform.
 OUT:    The string where the escaped sequence have been replaced.
 */
 string replaceASCII(string text, unsigned int min, unsigned int max);
-
-/*
-ROLE: This function is used to transform special character into a their escaped form.
-IN:   c, the character to transform.
-OUT:  The string containing the character transformed.
-*/
-string specialCharToString(char c);
 
 //Action performed each time a regex is matched. Here we update the current column and line.
 #define YY_USER_ACTION \
@@ -111,8 +104,7 @@ comments  	\/\/.*
 <MULTI_COMMENTS>\*\)	{comment_stack.pop();
 			if(comment_stack.empty())
 				BEGIN 0;}
-<MULTI_COMMENTS><<EOF>>	{yylloc.first_line = comment_stack.top().first_line; yylloc.first_column = comment_stack.top().first_column; comment_stack.pop();
-                          lexicalError("Unexpected end of file in a comment.");}
+<MULTI_COMMENTS><<EOF>>	{yylloc.first_line = comment_stack.top().first_line; yylloc.first_column = comment_stack.top().first_column; comment_stack.pop(); lexicalError();}
 <MULTI_COMMENTS>.|\n	{}
 
 
@@ -137,7 +129,7 @@ comments  	\/\/.*
             while(pos < yyleng){
               cur = (int) yytext[pos];
               if((yytext[pos] == '\n' && pos==0) || (pos > 0 && yytext[pos-1] != '\\' && yytext[pos] == '\n') || (cur > 126 || cur < 32 && cur!=8 && cur != 9 && cur != 10 & cur != 13))
-                lexicalError("Invalid character in string: " + specialCharToString(yytext[pos]));
+                lexicalError();
               else if (pos > 0 && yytext[pos-1] == '\\' && yytext[pos] == '\n'){
                 yylloc.first_line++;
                 yylloc.first_column = 0;
@@ -184,7 +176,7 @@ comments  	\/\/.*
                   size_t pos = 0;
                   while(yytext[pos] != '\0'){
                     if(yytext[pos] == '\\' && yytext[pos+1] != 'n' && yytext[pos+1] != 't' && yytext[pos+1] != 'r' && yytext[pos+1] != 'b')
-                      lexicalError("Unknown escaped sequence in string literal: " + specialCharToString(yytext[pos+1]));
+                      lexicalError();
                     else if(yytext[pos] == '\n'){
                       yylloc.first_line++;
                       yylloc.first_column = 0;
@@ -195,7 +187,7 @@ comments  	\/\/.*
                 }
 
 {unterm-str-lit}  {
-                    lexicalError("Unterminated string.");
+                    lexicalError();
                   }
 
 {int-lit} {
@@ -213,7 +205,7 @@ comments  	\/\/.*
           }
 
 
-{wrong-int-lit} lexicalError("Wrong integer literal.");
+{wrong-int-lit} lexicalError();
 
 
 {type-id} {
@@ -240,7 +232,7 @@ comments  	\/\/.*
 "<"            return T_LOWER;
 "<="           return T_LEQ;
 "<-"           return T_ASSIGN;
-.              {lexicalError("Non specific lexical error.");};
+.              {lexicalError();};
 %%
 
 
@@ -275,17 +267,7 @@ string replaceASCII(string text, unsigned int min, unsigned int max){
   return text;
 }
 
-string specialCharToString(char c){
-  if(c == '\n')
-    return "\\n";
-  else if(c > 126 || c < 32)
-    return "\\" + to_string((int) c);
-  else
-    return string(1, c);
-}
-
-void lexicalError(const string& message){
+void lexicalError(){
   cerr << file_name << ":" << yylloc.first_line << ":" << yylloc.first_column << ": lexical error" << endl;
-  cerr << "\t" << message << endl;
   exit(1);
 }

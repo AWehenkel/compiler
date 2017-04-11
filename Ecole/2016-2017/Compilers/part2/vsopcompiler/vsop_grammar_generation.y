@@ -16,23 +16,15 @@ int errors;
 extern "C" char *yytext;
 extern "C" int yychar;
 extern "C" int yylineno;
-int yyerror_isinitialized, yymaxstate = 56;
+int yyerror_isinitialized, yymaxstate = -1;
 struct errtable {
    int i;
    union {
       char *msg;
       struct errtable *p;
       } u;
-   } errtab[57];
-int yyerror_init()
-{
-   errtab[4].i = 1;
-   errtab[4].u.msg = "Missing class name";
-   errtab[56].i = 1;
-   errtab[56].u.msg = "Missing closing brace at the end of class";
-   errtab[53].i = 1;
-   errtab[53].u.msg = "Missing opening brace at the beginning of class";
-}
+   } errtab[0];
+int yyerror_init(){}
 
 
 void yyerror(const char *s);
@@ -347,15 +339,15 @@ void yyerror(const char *s)
 	 }
 
    // Lines to comment after error generation
-	 /*if(file_name) fprintf(stderr, "%s:", file_name);
+	 if(file_name) fprintf(stderr, "%s:", file_name);
    if (!strcmp(s, "syntax error") || !strcmp(s,"parse error")){
       sprintf(sbuf,"%s (%d;%d)", s, yystate, yychar);
       s=sbuf;
       }
    fprintf(stderr, "%d: # \"%s\": %s\n", yylineno, yytext, s);
-	 */
-	 cerr << file_name << ":" << yylloc.first_line << ":" << yylloc.first_column << ": syntax error" << endl;
-	 cerr << s << endl;
+
+	 /*cerr << file_name << ":" << yylloc.first_line << ":" << yylloc.first_column << ": syntax error" << endl;
+	 cerr << s << endl;*/
 
 	 return;
 }

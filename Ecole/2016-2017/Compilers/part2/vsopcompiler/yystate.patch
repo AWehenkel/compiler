@@ -1,0 +1,16 @@
+--- vsop_grammar.tab.c	2017-04-11 14:05:29.405066272 +0200
++++ vsop_grammar.tab.c.copy	2017-04-11 14:06:41.049064989 +0200
+@@ -1293,11 +1293,12 @@
+ /*----------.
+ | yyparse.  |
+ `----------*/
++int yystate;
+ 
+ int
+ yyparse (void)
+ {
+-    int yystate;
++    //int yystate;
+     /* Number of tokens to shift before error messages enabled.  */
+     int yyerrstatus;
+ 
