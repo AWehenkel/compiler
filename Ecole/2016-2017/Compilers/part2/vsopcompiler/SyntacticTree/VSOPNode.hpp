@@ -1,6 +1,8 @@
 #ifndef vsop_node_hpp
 #define vsop_node_hpp
 
+#include "../Visitors/Visitor.hpp"
+
 #include <iostream>
 #include <string>
 /*
@@ -35,7 +37,7 @@ public :
 	IN: visitor: Visitor*, a reference to the visitor.
 	OUT: int, a return code.
 	*/
-	virtual int accept(Visitor* visitor) const = 0;
+	virtual int accept(Visitor* visitor) = 0;
 
 };
 

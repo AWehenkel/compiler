@@ -47,13 +47,22 @@ public :
 	~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;};
 
 	//Public Methods:
+	//getters
+	ExpressionNode* getLeft() const{
+		return e_left_operand;
+	};
+
+	ExpressionNode* getRight() const{
+		return e_right_operand;
+	};
+
 	//Inherited
 	std::string getLiteral() const{
 		return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral() +  ", " + e_right_operand->getLiteral() + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitBinaryOperatorNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitBinaryOperatorNode(this);
 	};
 };
 

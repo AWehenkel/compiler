@@ -30,6 +30,11 @@ public :
 	~ConditionalNode(){delete e_condition; delete e_action; delete e_else_action;};
 
 	//Public Methods:
+	//getters
+	ExpressionNode* getCondition() const{return e_condition;};
+	ExpressionNode* getAction() const{return e_action;};
+	ExpressionNode* getElseAction() const{return e_else_action;};
+
 	//Inherited
 	std::string getLiteral() const{
 		std::string literal = "If(" + e_condition->getLiteral() + "," + e_action->getLiteral();
@@ -37,8 +42,8 @@ public :
 		return literal + end + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitConditionalNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitConditionalNode(this);
 	};
 };
 

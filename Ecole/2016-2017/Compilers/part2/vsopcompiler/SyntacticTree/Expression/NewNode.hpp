@@ -20,13 +20,16 @@ public :
 	NewNode(TypeIdentifierNode* type_id, int col = 0, int line = 0) : ExpressionNode(col, line), e_type_id(type_id){};
 
 	//Public Methods:
+	//Accessors:
+	TypeIdentifierNode* getTypeId() const{return e_type_id;};
+
 	//Inherited
 	std::string getLiteral() const{
 		return "New(" + e_type_id->getLiteral() + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitNewNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitNewNode(this);
 	};
 };
 

@@ -59,9 +59,9 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitProgramNode(this);
-	}
+	int accept(Visitor* visitor){
+		return visitor->visitProgramNode(this);
+	};
 
 };
 

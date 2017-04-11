@@ -27,8 +27,8 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitMethodNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitMethodNode(this);
 	}
 
 	//Accesors

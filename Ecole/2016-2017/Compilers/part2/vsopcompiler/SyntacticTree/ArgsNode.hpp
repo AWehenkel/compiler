@@ -33,8 +33,8 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitArgsNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitArgsNode(this);
 	};
 	/*
 	addExpression

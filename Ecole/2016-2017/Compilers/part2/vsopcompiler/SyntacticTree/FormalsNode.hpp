@@ -27,8 +27,8 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitFormalsNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitFormalsNode(this);
 	};
 
 	/*

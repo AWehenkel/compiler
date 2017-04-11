@@ -25,6 +25,11 @@ public :
 	~BraceNode(){delete e_expr;};
 
 	//Public Methods:
+	//getters
+	ExpressionNode* getExpression() const{
+		return e_expr;
+	};
+
 	//Inherited
 	std::string getLiteral() const{
 		std::string literal = "(";
@@ -32,8 +37,8 @@ public :
 		return literal + s_expr + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitBraceNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitBraceNode(this);
 	};
 };
 

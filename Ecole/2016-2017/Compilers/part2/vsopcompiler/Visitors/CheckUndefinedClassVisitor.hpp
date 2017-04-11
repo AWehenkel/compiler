@@ -27,6 +27,6 @@ class CheckUndefinedClassVisitor : public Visitor {
     int visitFormalsNode(FormalsNode *node);
     int visitMethodNode(MethodNode *node);
     int visitProgramNode(ProgramNode *node);
-}
+};
 
 #endif //check_undefined_class_visitor_hpp

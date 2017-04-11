@@ -20,8 +20,8 @@ public :
 		return t_content;
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitTypeIdentifierNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitTypeIdentifierNode(this);
 	}
 };
 

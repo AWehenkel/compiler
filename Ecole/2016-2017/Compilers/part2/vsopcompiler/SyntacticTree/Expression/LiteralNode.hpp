@@ -26,8 +26,8 @@ public :
 		return e_content;
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitLiteralNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitLiteralNode(this);
 	};
 };
 

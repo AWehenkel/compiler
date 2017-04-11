@@ -31,6 +31,12 @@ public :
 	~LetNode(){delete e_init_exp; delete e_scope_exp;};
 
 	//Public Methods:
+	//Accessors
+	ObjectIdentifierNode* getObjectId() const{return e_object_id;};
+	TypeIdentifierNode* getType() const{return e_type;};
+	ExpressionNode* getInitExp() const{return e_init_exp;};
+	ExpressionNode* getScopeExp() const{return e_scope_exp;};
+
 	//Inherited
 	std::string getLiteral() const{
 		std::string literal = "Let(" + e_object_id->getLiteral() + ", " + e_type->getLiteral() + ", ";
@@ -38,8 +44,8 @@ public :
 		return literal + end + e_scope_exp->getLiteral() + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitLetNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitLetNode(this);
 	};
 };
 

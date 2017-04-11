@@ -8,7 +8,7 @@ all:	vsopc
 vsopc:
 	bison -v -d vsop_grammar.y
 	flex vsop_syntax.l
-	g++ -std=c++11 SemanticAnalysis/*.cpp SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc
+	g++ -Wfatal-errors -std=c++11 SemanticAnalysis/*.cpp SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc
 
 # Should clean built files, and keep only source code. Adapt to your language
 # and folder structure. If using git, you might want to use `git clean`.

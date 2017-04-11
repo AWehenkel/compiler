@@ -28,11 +28,15 @@ public :
 	~WhileNode(){delete e_condition; delete e_action;};
 
 	//Public Methods:
+	//Accessors:
+	ExpressionNode* getCondition() const{return e_condition;};
+	ExpressionNode* getAction() const{return e_action;};
+
 	//Inherited
 	std::string getLiteral() const{return "While(" + e_condition->getLiteral() + "," + e_action->getLiteral() + ")";};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitWhileNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitWhileNode(this);
 	};
 };
 

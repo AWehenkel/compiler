@@ -35,13 +35,17 @@ public :
 	~UnaryOperatorNode(){delete e_operand;};
 
 	//Public Methods:
+	//Accessors:
+	UnaryOperator getOperator() const{return e_op;};
+	ExpressionNode* getOperand() const{return e_operand;};
+
 	//Inherited
 	std::string getLiteral() const{
 		return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral() + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitUnaryOperatorNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitUnaryOperatorNode(this);
 	};
 };
 

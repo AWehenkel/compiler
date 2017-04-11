@@ -30,8 +30,8 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitFormalNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitFormalNode(this);
 	};
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};

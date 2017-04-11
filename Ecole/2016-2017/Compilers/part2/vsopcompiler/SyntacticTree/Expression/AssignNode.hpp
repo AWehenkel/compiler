@@ -27,11 +27,20 @@ public :
 	~AssignNode(){delete e_name; delete e_expr;};
 
 	//Public Methods:
+	//Getter
+	ObjectIdentifierNode* getName() const{
+		return e_name;
+	};
+
+	ExpressionNode* getExpression() const{
+		return e_expr;
+	};
+
 	//Inherited
 	std::string getLiteral() const{return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")";};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitAssignNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitAssignNode(this);
 	};
 };
 

@@ -37,8 +37,8 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitClassBodyNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitClassBodyNode(this);
 	};
 	/*
 	addField

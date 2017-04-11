@@ -41,8 +41,8 @@ public :
 		return 0;
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitClassNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitClassNode(this);
 	};
 	//Accesors
 	TypeIdentifierNode* getName() const {return e_name;};

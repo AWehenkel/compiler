@@ -29,14 +29,19 @@ public :
 	~CallNode(){delete e_args; delete e_object;};
 
 	//Public Methods:
+	//getters
+	ObjectIdentifierNode* getMethodName() const{return e_method_name;};
+	ArgsNode* getArgs() const{return e_args;};
+	ExpressionNode* getObject() const{return e_object;};
+
 	//Inherited
 	std::string getLiteral() const{
 		std::string obj = e_object ? e_object->getLiteral() : "self";
 		return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")";
 	};
 
-	int accept(Visitor* visitor) const{
-		return visitor.visitCallNode(this);
+	int accept(Visitor* visitor){
+		return visitor->visitCallNode(this);
 	};
 };
 

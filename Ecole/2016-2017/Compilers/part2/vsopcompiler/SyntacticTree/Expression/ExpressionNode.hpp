@@ -20,7 +20,7 @@ public :
 	//Inherited
 	virtual std::string getLiteral() const = 0;
 
-	int accept(Visitor* visitor) const = 0;
+	virtual int accept(Visitor* visitor) = 0;
 };
 
 #endif //expression_node_hpp
