@@ -1,116 +1,41 @@
+#include <cstring>
+
 #include "CheckUndefinedClassVisitor.hpp"
+#include "../SyntacticTree/TypeIdentifierNode.hpp"
+#include "../SyntacticTree/ProgramNode.hpp"
 
-int CheckUndefinedClassVisitor::visitAssignNode(AssignNode *node);
-int CheckUndefinedClassVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node);
-int CheckUndefinedClassVisitor::visitBlockNode(BlockNode *node);
-int CheckUndefinedClassVisitor::visitBraceNode(BraceNode *node);
-int CheckUndefinedClassVisitor::visitCallNode(CallNode *node);
-int CheckUndefinedClassVisitor::visitConditionalNode(ConditionalNode *node);
-int CheckUndefinedClassVisitor::visitLetNode(LetNode *node);
-int CheckUndefinedClassVisitor::visitLiteralNode(LiteralNode *node);
-int CheckUndefinedClassVisitor::visitNewNode(NewNode *node);
-int CheckUndefinedClassVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node);
-int CheckUndefinedClassVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node);
-int CheckUndefinedClassVisitor::visitWhileNode(WhileNode *node);
-int CheckUndefinedClassVisitor::visitArgsNode(ArgsNode *node);
-
-int CheckUndefinedClassVisitor::visitClassBodyNode(ClassBodyNode *node){
-
-    int result = 0;
-
-    // Check fields
-    std::vector<FieldNode*> fields = getFields();
-    for (vector<ClassNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it){
-      result = (*it)->accept(this);
-      if (result != 0)
-        break;
-    }
-
-    // Check methods
-  	std::vector<MethodNode*> methods = getMethods();
-    for (vector<ClassNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it){
-      result = (*it)->accept(this);
-      if (result != 0)
-        break;
-    }
-
-    return result;
-}
-
-int CheckUndefinedClassVisitor::visitClassNode(ClassNode *node){
-
-  // Get body
-  ClassBodyNode *body = node->getBody();
-
-  return body->accept(this);
-
-}
-
-int CheckUndefinedClassVisitor::visitFieldNode(FieldNode *node){
-
-  int result = 0;
-
-  // Check type
-  TypeIdentifierNode* type = getType();
-  result = type->accept(this);
-  if (result != 0)
-    return result;
-
-  // Check expressions
-	ExpressionNode* expr = getInitExpr();
-  result = expr->accept(this);
-  if (result != 0)
-    return result;
-
-  return result;
-
-}
-
-int CheckUndefinedClassVisitor::visitFormalNode(FormalNode *node);
-int CheckUndefinedClassVisitor::visitFormalsNode(FormalsNode *node);
-
-int CheckUndefinedClassVisitor::visitMethodNode(MethodNode *node){
-
-  int result = 0;
-
-  // Check formals
-  FormalsNode* formals = getFormals();
-  result = formals->accept(this);
-  if (result != 0)
-    return result;
-
-  // Check type identifier
-  TypeIdentifierNode* id = getRetType();
-  result = id->accept(this);
-  if (result != 0)
-    return result;
-
-  // Check block
-  BlockNode* block = getBlock();
-  result = block->accept(this);
-  if (result != 0)
-    return result;
-
-  return result;
-
-}
-
+using namespace std;
 int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
 
-  int result = 0;
-
+  std::cerr << "Checking the program" << std::endl;
   // Get the class tables
-  table_class = node->getTableClass();
+  table_class = node->getTableClasses();
 
   // Get the classes
   std::vector<ClassNode*> classes = node->getClasses();
-
-  for (vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it){
-    result = (*it)->accept(this);
-    if (result != 0)
-      break;
+  for(std::vector<ClassNode*>::iterator it = classes.begin(); it != classes.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
   }
 
-  return result;
+  return 0;
+}
+
+int CheckUndefinedClassVisitor::visitTypeIdentifierNode(TypeIdentifierNode *node){
+
+  std::string str = node->getLiteral();
+  char * s = new char[str.size() + 1];
+  std::copy(str.begin(), str.end(), s);
+  s[str.size()] = '\0'; // don't forget the terminating 0
+
+  // Check if it is not one the basic types
+  if (!strcmp(s, "int32") || !strcmp(s, "bool")  || !strcmp(s, "string")  || !strcmp(s, "unit"))
+    return 0;
+
+  // Check if it is the name of class
+  if (table_class.find(s) == table_class.end())
+    return -1;
+
+  return 0;
 
 }

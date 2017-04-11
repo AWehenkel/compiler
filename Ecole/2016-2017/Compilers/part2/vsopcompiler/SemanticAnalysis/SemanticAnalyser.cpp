@@ -1,7 +1,7 @@
 #include <unordered_map>
 #include <string>
 #include "SemanticAnalyser.hpp"
-
+#include "../Visitors/CheckUndefinedClassVisitor.hpp"
 using namespace std;
 
 ProgramNode* SemanticAnalyser::semanticAnalysis(ProgramNode* program){
@@ -22,5 +22,10 @@ int SemanticAnalyser::classPass(ProgramNode* program){
       cerr << "il y a un cycle et c'est pas cool" << endl;
       return -3;
     }
+
+  CheckUndefinedClassVisitor *visitor;
+  if (program->accept(visitor) < 0)
+    cerr << "Type inconnu" << endl;
+
   return 0;
 }

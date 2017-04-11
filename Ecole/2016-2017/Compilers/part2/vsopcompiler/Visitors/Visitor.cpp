@@ -14,11 +14,11 @@ int Visitor::visitAssignNode(AssignNode *node){
 }
 
 int Visitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
-  ExpressionNode* left = node->getExpression();
+  ExpressionNode* left = node->getLeft();
   if(left && left->accept(this) < 0)
     return -1;
 
-  ExpressionNode* right = node->getExpression();
+  ExpressionNode* right = node->getRight();
   if(right && right->accept(this) < 0)
     return -1;
 
@@ -27,11 +27,9 @@ int Visitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
 
 int Visitor::visitBlockNode(BlockNode *node){
   std::vector<ExpressionNode*> exprs = node->getExpressions();
-  if(exprs){
-    for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
-      if((*it)->accept(this) < 0)
-        return -1;
-      }
+  for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
   }
 
   return 0;
@@ -89,49 +87,48 @@ int Visitor::visitNewNode(NewNode *node){
 int Visitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
   return 0;
 }
+
 int Visitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
-  UnaryOperator op = node->getOperator();
+  //UnaryOperator op = node->getOperator();
   ExpressionNode* operand = node->getOperand();
-  if((op && op->accept(this) < 0) || (operand && operand->accept(this) < 0))
+  if(operand && operand->accept(this) < 0)
     return -1;
   return 0;
 }
+
 int Visitor::visitWhileNode(WhileNode *node){
   ExpressionNode* condition = node->getCondition();
   ExpressionNode* action = node->getAction();
-  if((condition && condtion->acc < 0) || (action && action->accept(this) < 0))
+  if((condition && condition->accept(this) < 0) || (action && action->accept(this) < 0))
     return -1;
   return 0;
 }
+
 int Visitor::visitArgsNode(ArgsNode *node){
   std::vector<ExpressionNode*> exprs = node->getExpressions();
-  if(exprs){
-    for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
-      if((*it)->accept(this) < 0)
-        return -1;
-      }
+  for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
   }
   return 0;
 }
+
 int Visitor::visitClassBodyNode(ClassBodyNode *node){
   std::vector<FieldNode*> fields = node->getFields();
-  if(fields){
-    for(std::vector<FieldNode*>::iterator it = fields.begin(); it != fields.end(); ++it){
-      if((*it)->accept(this) < 0)
-        return -1;
-      }
+  for(std::vector<FieldNode*>::iterator it = fields.begin(); it != fields.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
   }
 
   std::vector<MethodNode*> methods = node->getMethods();
-  if(methods){
-    for(std::vector<MethodNode*>::iterator it = methods.begin(); it != methods.end(); ++it){
-      if((*it)->accept(this) < 0)
-        return -1;
-      }
+  for(std::vector<MethodNode*>::iterator it = methods.begin(); it != methods.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
   }
 
   return 0;
 }
+
 int Visitor::visitClassNode(ClassNode *node){
   TypeIdentifierNode* name = node->getName();
   TypeIdentifierNode* extends = node->getExtends();
@@ -140,14 +137,16 @@ int Visitor::visitClassNode(ClassNode *node){
     return -1;
   return 0;
 }
+
 int Visitor::visitFieldNode(FieldNode *node){
   ObjectIdentifierNode* name = node->getName();
   TypeIdentifierNode* type = node->getType();
   ExpressionNode* init_expr = node->getInitExpr();
-  if((name && name->accept(this) < 0) || (type && type->accept(this) < 0) (init_expr && init_expr->accept(this) < 0))
+  if((name && name->accept(this) < 0) || (type && type->accept(this) < 0) || (init_expr && init_expr->accept(this) < 0))
     return -1;
   return 0;
 }
+
 int Visitor::visitFormalNode(FormalNode *node){
   ObjectIdentifierNode* name = node->getName();
   TypeIdentifierNode* type = node->getType();
@@ -155,16 +154,16 @@ int Visitor::visitFormalNode(FormalNode *node){
     return -1;
   return 0;
 }
+
 int Visitor::visitFormalsNode(FormalsNode *node){
   std::vector<FormalNode*> formals = node->getFormals();
-  if(formals){
-    for(std::vector<FormalNode*>::iterator it = formals.begin(); it != formals.end(); ++it){
-      if((*it)->accept(this) < 0)
-        return -1;
-      }
-  }
+  for(std::vector<FormalNode*>::iterator it = formals.begin(); it != formals.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
+    }
   return 0;
 }
+
 int Visitor::visitMethodNode(MethodNode *node){
   ObjectIdentifierNode* name = node->getName();
   FormalsNode* formals = node->getFormals();
@@ -174,14 +173,13 @@ int Visitor::visitMethodNode(MethodNode *node){
     return -1;
   return 0;
 }
+
 int Visitor::visitProgramNode(ProgramNode *node){
   std::vector<ClassNode*> classes = node->getClasses();
-  if(classes){
-    for(std::vector<ClassNode*>::iterator it = classes.begin(); it != classes.end(); ++it){
-      if((*it)->accept(this) < 0)
-        return -1;
-      }
-  }
+  for(std::vector<ClassNode*>::iterator it = classes.begin(); it != classes.end(); ++it){
+    if((*it)->accept(this) < 0)
+      return -1;
+    }
   return 0;
 }
 

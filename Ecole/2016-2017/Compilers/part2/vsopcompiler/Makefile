@@ -17,7 +17,7 @@ preprocessing :
 	patch -p0 vsop_grammar.tab.c < yystate.patch
 
 g++ :
-	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc
+	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp SemanticAnalysis/*.cpp Visitors/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc
 
 generation :
 	./merr.linux -B -s "make vsopc" -o yyerror.c ./vsopc
