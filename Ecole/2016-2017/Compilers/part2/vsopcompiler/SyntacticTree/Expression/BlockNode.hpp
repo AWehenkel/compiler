@@ -1,0 +1,47 @@
+#ifndef block_node_hpp
+#define block_node_hpp
+
+#include <string>
+#include <vector>
+#include "ExpressionNode.hpp"
+/*
+	Class used to represent a syntaxic node containing a block
+*/
+class BlockNode : public ExpressionNode {
+private :
+	std::vector<ExpressionNode*> expressions;
+
+public :
+	//Constructors
+	/*
+	BlockNode
+	IN:	col: 				int, the column where the node is present.
+			line:				int, the line where the node is present.
+	*/
+	BlockNode(int col = 0, int line = 0) : ExpressionNode(col, line){};
+
+	//Public methods
+	//Inherited
+	std::string getLiteral() const;
+
+	/*
+	addExpression
+	IN: expression: ExpressionNode*, the expression to add.
+	OUT: void
+	ROLE: Add an expression at the end of the list expression of the block.
+	*/
+	void addExpression(ExpressionNode *expression);
+
+	/*
+	insertExpr
+	IN: expression: ExpressionNode*, the expression to add.
+	OUT: void
+	ROLE: Add an expression at the frond of the list expression of the block.
+	*/
+	void insertExpr(ExpressionNode *expression);
+
+	//Accessors
+	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
+};
+
+#endif //block_node_hpp

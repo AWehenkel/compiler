@@ -1,0 +1,41 @@
+#ifndef ConditionalNode_hpp
+#define ConditionalNode_hpp
+
+#include <string>
+#include <vector>
+#include "ExpressionNode.hpp"
+/*
+	Class used to represent a syntaxic node containing an if statements
+*/
+class ConditionalNode : public ExpressionNode {
+private :
+	ExpressionNode* e_condition;
+	ExpressionNode* e_action;
+	ExpressionNode* e_else_action;
+
+public :
+	//Constructors:
+	/*
+	ConditionalNode
+	IN:	condition:		ExpressionNode*, the condition on the action.
+			action:				ExpressionNode*, the action to do if the condition is true.
+			else_action:	ExpressionNode*, the condition to do else.
+			col: 					int, the column where the node is present.
+			line:					int, the line where the node is present.
+	*/
+	ConditionalNode(ExpressionNode* condition, ExpressionNode* action, ExpressionNode* else_action = NULL, int col = 0, int line = 0) : ExpressionNode(col, line),
+		e_condition(condition), e_action(action), e_else_action(else_action){};
+
+	//Destructor:
+	~ConditionalNode(){delete e_condition; delete e_action; delete e_else_action;};
+
+	//Public Methods:
+	//Inherited
+	std::string getLiteral() const{
+		std::string literal = "If(" + e_condition->getLiteral() + "," + e_action->getLiteral();
+		std::string end = e_else_action ? "," + e_else_action->getLiteral() : "";
+		return literal + end + ")";
+	};
+};
+
+#endif //ConditionalNode_hpp
