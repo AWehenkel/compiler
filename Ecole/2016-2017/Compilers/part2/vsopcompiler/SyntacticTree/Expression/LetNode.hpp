@@ -37,6 +37,10 @@ public :
 		std::string end = e_init_exp ? e_init_exp->getLiteral() + ", " : "";
 		return literal + end + e_scope_exp->getLiteral() + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitLetNode(this);
+	};
 };
 
 #endif //LetNode_hpp

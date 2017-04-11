@@ -27,6 +27,10 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
+	int accept(Visitor* visitor) const{
+		return visitor.visitFormalsNode(this);
+	};
+
 	/*
 	addFormal
 	IN: formal: FormalNode*, the formal to add.

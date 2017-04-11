@@ -27,6 +27,10 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
+	int accept(Visitor* visitor) const{
+		return visitor.visitMethodNode(this);
+	}
+
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	FormalsNode* getFormals() const {return e_formals;};

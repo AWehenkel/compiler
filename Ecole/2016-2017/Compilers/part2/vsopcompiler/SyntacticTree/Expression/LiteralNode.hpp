@@ -25,6 +25,10 @@ public :
 	std::string getLiteral() const{
 		return e_content;
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitLiteralNode(this);
+	};
 };
 
 #endif //LiteralNode_hpp

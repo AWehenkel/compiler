@@ -29,6 +29,10 @@ public :
 	//Public Methods:
 	//Inherited
 	std::string getLiteral() const{return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")";};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitAssignNode(this);
+	};
 };
 
 #endif //AssignNode_hpp

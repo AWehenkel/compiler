@@ -36,6 +36,10 @@ public :
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitClassBodyNode(this);
+	};
 	/*
 	addField
 	IN: expression: FieldNode*, the field to add.

@@ -13,7 +13,7 @@
 class ProgramNode : public VSOPNode {
 private :
 	std::vector<ClassNode*> classes;
-	std::unordered_map<std::string, ClassNode*> table_class;
+	std::unordered_map<std::string, ClassNode*> table_classes;
 
 public :
 	//Constructors
@@ -48,15 +48,20 @@ public :
 		for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); class_it++)
 			if((*class_it)->fillClassTable(table) < 0)
 				return -1;
-		table_class = table;
+		table_classes = table;
 		return 0;
 	};
 
 	//Accessor
 	std::vector<ClassNode*> getClasses() const {return classes;};
+	std::unordered_map<std::string, ClassNode*> getTableClasses() const {return table_classes;};
 
 	//Inherited
 	std::string getLiteral() const;
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitProgramNode(this);
+	}
 
 };
 

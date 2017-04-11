@@ -36,6 +36,10 @@ public :
 		std::string end = e_else_action ? "," + e_else_action->getLiteral() : "";
 		return literal + end + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitConditionalNode(this);
+	};
 };
 
 #endif //ConditionalNode_hpp
