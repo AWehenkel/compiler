@@ -4,6 +4,7 @@
 #include <cstring>
 #include <stdlib.h>
 #include "all_headers.hpp"
+#include "SemanticAnalysis/SemanticAnalyser.hpp"
 using namespace std;
 extern "C" int yylex();
 extern "C" int yyparse();
@@ -109,7 +110,7 @@ void yyerror(const char *s);
 
 start :
 	START_LEXICAL Input
-	| START_SYNTAX program													{cout << *$2;}
+	| START_SYNTAX program													{cout << *$2; SemanticAnalyser::semanticAnalysis($2);}
 ;
 
 Input :

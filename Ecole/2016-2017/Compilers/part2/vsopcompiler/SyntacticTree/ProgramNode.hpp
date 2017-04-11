@@ -60,7 +60,6 @@ public :
 	std::string getLiteral() const;
 
 	int accept(Visitor* visitor){
-		std::cerr << "entering accept" << std::endl;
 		return visitor->visitProgramNode(this);
 	};
 

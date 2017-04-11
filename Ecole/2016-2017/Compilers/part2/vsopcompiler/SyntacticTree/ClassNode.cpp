@@ -16,6 +16,11 @@ string ClassNode::getLiteral() const{
 }
 
 int ClassNode::setParent(unordered_map<std::string, ClassNode*> &table){
+
+	// Can have no parents
+	if (!e_extends)
+		return 0;
+		
 	if(table.find(e_extends->getLiteral()) != table.end()){
 		parent = table.find(e_extends->getLiteral())->second;
 		return 0;

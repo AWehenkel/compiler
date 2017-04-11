@@ -31,7 +31,6 @@ int Visitor::visitBlockNode(BlockNode *node){
     if((*it)->accept(this) < 0)
       return -1;
   }
-
   return 0;
 }
 

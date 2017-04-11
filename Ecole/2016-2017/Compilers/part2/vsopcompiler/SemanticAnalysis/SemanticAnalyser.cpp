@@ -13,9 +13,11 @@ int SemanticAnalyser::classPass(ProgramNode* program){
   unordered_map<string, ClassNode*> class_table;
   if(program->fillClassTable(class_table) < 0)
     return -1;
-  for(auto it = class_table.begin(); it != class_table.end(); ++it)
+
+  for(auto it = class_table.begin(); it != class_table.end(); ++it){
     if((it->second)->setParent(class_table) < 0)
       return -2;
+  }
 
   for(auto it = class_table.begin(); it != class_table.end(); ++it)
     if((it->second)->inCycle()){
@@ -23,9 +25,9 @@ int SemanticAnalyser::classPass(ProgramNode* program){
       return -3;
     }
 
-  CheckUndefinedClassVisitor *visitor;
+  CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
   if (program->accept(visitor) < 0)
-    cerr << "Type inconnu" << endl;
+    return -4;
 
   return 0;
 }

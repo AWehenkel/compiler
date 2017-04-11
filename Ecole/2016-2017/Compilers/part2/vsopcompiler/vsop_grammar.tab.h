@@ -97,7 +97,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 43 "vsop_grammar.y" /* yacc.c:1909  */
+#line 44 "vsop_grammar.y" /* yacc.c:1909  */
 
 	int ival;
   char *sval;

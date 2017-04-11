@@ -7,7 +7,6 @@
 using namespace std;
 int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
 
-  std::cerr << "Checking the program" << std::endl;
   // Get the class tables
   table_class = node->getTableClasses();
 

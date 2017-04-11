@@ -1,4 +1,4 @@
 class A {}
-class B {
+class B extends A{
   factorial() : C { true }
 }
