@@ -19,6 +19,8 @@ public :
 	//Public method
 	//Inherited
 	virtual std::string getLiteral() const = 0;
+
+	int accept(Visitor* visitor) const = 0;
 };
 
 #endif //expression_node_hpp

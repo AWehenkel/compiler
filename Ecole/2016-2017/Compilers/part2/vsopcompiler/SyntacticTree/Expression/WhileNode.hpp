@@ -30,6 +30,10 @@ public :
 	//Public Methods:
 	//Inherited
 	std::string getLiteral() const{return "While(" + e_condition->getLiteral() + "," + e_action->getLiteral() + ")";};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitWhileNode(this);
+	};
 };
 
 #endif //ConditionalNode_hpp

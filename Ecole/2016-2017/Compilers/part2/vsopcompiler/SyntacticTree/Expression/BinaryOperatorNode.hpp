@@ -51,6 +51,10 @@ public :
 	std::string getLiteral() const{
 		return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral() +  ", " + e_right_operand->getLiteral() + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitBinaryOperatorNode(this);
+	};
 };
 
 #endif //BinaryOperatorNode_hpp

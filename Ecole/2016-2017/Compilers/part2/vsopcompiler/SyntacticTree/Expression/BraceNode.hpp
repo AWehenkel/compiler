@@ -31,6 +31,10 @@ public :
 		std::string s_expr = e_expr ? e_expr->getLiteral() : "";
 		return literal + s_expr + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitBraceNode(this);
+	};
 };
 
 #endif //BraceNode_hpp

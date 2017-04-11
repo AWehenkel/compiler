@@ -24,6 +24,10 @@ public :
 	std::string getLiteral() const{
 		return e_content;
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitObjectIdentifierNode(this);
+	};
 };
 
 #endif //ObjectIdentifierNode_hpp

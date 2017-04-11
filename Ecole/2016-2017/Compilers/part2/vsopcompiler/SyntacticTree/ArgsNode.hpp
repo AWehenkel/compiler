@@ -32,6 +32,10 @@ public :
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitArgsNode(this);
+	};
 	/*
 	addExpression
 	IN: expression: ExpressionNode*, the expression to add.

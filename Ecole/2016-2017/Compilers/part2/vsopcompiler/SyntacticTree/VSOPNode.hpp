@@ -32,10 +32,10 @@ public :
 	/*
 	accept
 	ROLE: accept the node using a specific visitor.
-	IN: visitor: Visitor&, a reference to the visitor.
+	IN: visitor: Visitor*, a reference to the visitor.
 	OUT: int, a return code.
 	*/
-	virtual int accept(Visitor& visitor) const = 0;
+	virtual int accept(Visitor* visitor) const = 0;
 
 };
 

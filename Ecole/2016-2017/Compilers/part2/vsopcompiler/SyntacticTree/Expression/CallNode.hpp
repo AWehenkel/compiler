@@ -34,6 +34,10 @@ public :
 		std::string obj = e_object ? e_object->getLiteral() : "self";
 		return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitCallNode(this);
+	};
 };
 
 #endif //CallNode_hpp

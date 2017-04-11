@@ -24,6 +24,10 @@ public :
 	std::string getLiteral() const{
 		return "New(" + e_type_id->getLiteral() + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitNewNode(this);
+	};
 };
 
 #endif //NewNode_hpp

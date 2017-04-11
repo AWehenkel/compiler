@@ -39,6 +39,10 @@ public :
 	std::string getLiteral() const{
 		return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral() + ")";
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitUnaryOperatorNode(this);
+	};
 };
 
 #endif //UnaryOperatorNode_hpp

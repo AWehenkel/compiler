@@ -19,6 +19,10 @@ public :
 	std::string getLiteral() const{
 		return t_content;
 	};
+
+	int accept(Visitor* visitor) const{
+		return visitor.visitTypeIdentifierNode(this);
+	}
 };
 
 #endif //TypeIdentifierNode_hpp

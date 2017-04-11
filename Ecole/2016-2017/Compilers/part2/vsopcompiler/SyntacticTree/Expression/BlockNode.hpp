@@ -24,6 +24,10 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
+	int accept(Visitor* visitor) const{
+		return visitor.visitBlockNode(this);
+	};
+
 	/*
 	addExpression
 	IN: expression: ExpressionNode*, the expression to add.
