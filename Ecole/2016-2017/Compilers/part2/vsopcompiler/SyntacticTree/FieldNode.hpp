@@ -14,7 +14,7 @@ private :
 	ObjectIdentifierNode* e_name;
 	TypeIdentifierNode* e_type;
 	ExpressionNode* e_init_expr;
-
+	ClassNode* e_class_scope;
 public :
 	//Constructors
 	/*
@@ -39,6 +39,10 @@ public :
 	~FieldNode(){delete e_name; delete e_type; delete e_init_expr;}
 
 	//Public methods
+	//Setter
+	void setClassScope(ClassNode* class_scope){
+		e_class_scope = class_scope;
+	};
 	//Inherited
 	std::string getLiteral() const;
 

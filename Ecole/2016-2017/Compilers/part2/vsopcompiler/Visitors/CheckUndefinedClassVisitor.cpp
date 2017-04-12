@@ -35,6 +35,7 @@ int CheckUndefinedClassVisitor::visitTypeIdentifierNode(TypeIdentifierNode *node
   if (table_class.find(s) == table_class.end())
     return -1;
 
+  node->setClassType(table_class.find(s)->second);
   return 0;
 
 }

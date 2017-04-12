@@ -9,6 +9,7 @@
 class TypeIdentifierNode : public VSOPNode {
 private :
 	std::string t_content;
+	ClassNode* t_class_type;
 	//Overloaded operator
 	friend inline bool operator==(TypeIdentifierNode &id1, TypeIdentifierNode &id2){
 		return id1.equals(id2);
@@ -16,7 +17,7 @@ private :
 public :
 
 	//Constructors:
-	TypeIdentifierNode(std::string content, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content){};
+	TypeIdentifierNode(std::string content, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(NULL){};
 
 	//Public Methods:
 	//Inherited
@@ -28,6 +29,11 @@ public :
 	int accept(Visitor* visitor){
 		return visitor->visitTypeIdentifierNode(this);
 	}
+
+	//Setter
+	void setClassType(ClassNode* class_type){
+		t_class_type = class_type;
+	};
 
 	/*
 	equals

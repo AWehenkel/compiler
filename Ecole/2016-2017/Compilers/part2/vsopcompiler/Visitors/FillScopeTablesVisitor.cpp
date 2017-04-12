@@ -14,10 +14,14 @@ int FillScopeTablesVisitor::visitClassNode(ClassNode *node){
 int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
   if(!current_class || current_class->addMethod(node) < 0)
     return -5;
+  node->setClassScope(current_class);
+  current_method = node;
   return Visitor::visitMethodNode(node);
 }
 int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
   if(!current_class || current_class->addField(node) < 0)
     return -5;
+  node->setClassScope(current_class);
   return Visitor::visitFieldNode(node);
 }
+//TODO verifier que les variables ont été déclarée dans leur scope et vérifier que les call se rapportent à un vrai truc
