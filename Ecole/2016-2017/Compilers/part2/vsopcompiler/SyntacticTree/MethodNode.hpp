@@ -14,6 +14,12 @@ private :
 	FormalsNode* e_formals;
 	TypeIdentifierNode* e_ret_type;
 	BlockNode* e_block;
+	ClassNode* e_class_scope;
+	//Overloaded operator
+	friend inline bool operator==(MethodNode &method1, MethodNode &method2){
+		return method1.equals(method2);
+	};
+
 
 public :
 	//Constructors
@@ -36,6 +42,21 @@ public :
 	FormalsNode* getFormals() const {return e_formals;};
 	TypeIdentifierNode* getRetType() const {return e_ret_type;};
 	BlockNode* getBlock() const {return e_block;};
+
+	//Setter
+	void setClassScope(ClassNode* class_scope){
+		e_class_scope = class_scope;
+	};
+
+	/*
+	equals
+	ROLE: Compare a method to determine whether or not it is equal to this method.
+	IN:		method: MethodNode const &, the method with which compare the current method.
+	OUT: bool, true if the name, the type and the arguments are equal.
+	*/
+	bool equals(MethodNode &method){
+		return *(method.getName()) == *(getName()) && *(method.getFormals()) == *(getFormals()) && *(method.getRetType()) == *(getRetType());
+	}
 };
 
 #endif //method_node_hpp

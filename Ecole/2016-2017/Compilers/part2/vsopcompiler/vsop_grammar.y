@@ -53,6 +53,7 @@ void yyerror(const char *s);
 	class FormalsNode* formals_node;
 	class FormalNode* formal_node;
 	class TypeIdentifierNode* type_identifier_node;
+  class ObjectIdentifierNode* object_identifier_node;
 	class BlockNode* block_node;
 	class ExpressionNode* expression_node;
 	class ArgsNode* args_node;
@@ -69,12 +70,11 @@ void yyerror(const char *s);
 %token T_PLUS T_MINUS T_TIMES T_DIV T_POW T_DOT T_EQUAL T_LOWER T_LEQ
 %token T_ASSIGN
 %token T_COMMENTS
-%token START_SYNTAX START_LEXICAL;
+%token START_SYNTAX START_LEXICAL START_SEMANTIC;
 %token T_ERROR
 
 %type <program_node>            program
 %type <class_node>              class
-%type <type_identifier_node>    extend
 %type <class_body_node>         class-body
 %type <field_node>              field
 %type <method_node>             method
@@ -82,7 +82,8 @@ void yyerror(const char *s);
 %type <formals_node>            formals
 %type <formals_node>            virgul-formals
 %type <formal_node>             formal
-%type <type_identifier_node>    type
+%type <type_identifier_node>    type t_type_id extend
+%type <object_identifier_node>  t_obj_id
 %type <block_node>              block
 %type <block_node>              sc-expr
 %type <expression_node>         expr
@@ -110,7 +111,8 @@ void yyerror(const char *s);
 
 start :
 	START_LEXICAL Input
-	| START_SYNTAX program													{cout << *$2; SemanticAnalyser::semanticAnalysis($2);}
+	| START_SYNTAX program													{cout << *$2;}
+  | START_SEMANTIC program                        {SemanticAnalyser::semanticAnalysis($2);}
 ;
 
 Input :
@@ -163,17 +165,23 @@ program :
 	| program class  								{$1->addClass($2); $$ = $1;}
 ;
 
+t_type_id :
+  T_TYPE_ID               {$$ = new TypeIdentifierNode($1, yylloc.first_line, yylloc.first_column);}
+;
+t_obj_id :
+  T_OBJ_ID                {$$ = new ObjectIdentifierNode($1, yylloc.first_line, yylloc.first_column);}
+
 class :
-	T_CLASS T_TYPE_ID extend T_L_BRACE class-body T_R_BRACE	{if($3){
-																														$$ = new ClassNode(new TypeIdentifierNode($2), $5, $3);
+	T_CLASS t_type_id extend T_L_BRACE class-body T_R_BRACE	{if($3){
+																														$$ = new ClassNode($2, $5, $3);
 																													 }else
-																														$$ = new ClassNode(new TypeIdentifierNode($2), $5);
+																														$$ = new ClassNode($2, $5);
 																													}
 ;
 
 extend :
 																{$$ = NULL;}
-	| T_EXTENDS T_TYPE_ID					{$$ = new TypeIdentifierNode($2);}
+	| T_EXTENDS t_type_id					{$$ = $2;}
 ;
 
 class-body :
@@ -183,10 +191,10 @@ class-body :
 ;
 
 field :
-	T_OBJ_ID T_COLON type assign T_SEMI_COLON		{if($4)
-																								$$ = new FieldNode(new ObjectIdentifierNode($1), $3, $4);
+	t_obj_id T_COLON type assign T_SEMI_COLON		{if($4)
+																								$$ = new FieldNode($1, $3, $4, $1->getLine(), $1->getCol());
 																							 else
-																								$$ = new FieldNode(new ObjectIdentifierNode($1), $3);
+																								$$ = new FieldNode($1, $3, $1->getLine(), $1->getCol());
 																							}
 ;
 
@@ -196,11 +204,11 @@ assign :
 ;
 
 method :
-	T_OBJ_ID T_L_PAR formals T_R_PAR T_COLON type block	{$$ = new MethodNode(new ObjectIdentifierNode($1), $3, $6, $7);}
+	t_obj_id T_L_PAR formals T_R_PAR T_COLON type block	{$$ = new MethodNode($1, $3, $6, $7, $1->getLine(), $1->getCol());}
 ;
 
 type :
-	T_TYPE_ID						{string tmp = $1; free $1; $$ = new TypeIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
+	t_type_id						{$$ = $1;}
 	| T_INT32						{$$ = new TypeIdentifierNode("int32", yylloc.first_column, yylloc.first_line);}
 	| T_BOOL						{$$ = new TypeIdentifierNode("bool", yylloc.first_column, yylloc.first_line);}
 	| T_STRING					{$$ = new TypeIdentifierNode("string", yylloc.first_column, yylloc.first_line);}
@@ -218,7 +226,7 @@ virgul-formals :
 ;
 
 formal :
-	T_OBJ_ID T_COLON type					{$$ = new FormalNode(new ObjectIdentifierNode($1), $3);}
+	t_obj_id T_COLON type					{$$ = new FormalNode($1, $3, $1->getLine(), $1->getCol());}
 ;
 
 block :
@@ -234,8 +242,8 @@ expr :
 	T_IF expr T_THEN expr															{$$ = new ConditionalNode($2, $4);}
 	| T_IF expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6);}
 	| T_WHILE expr T_DO expr													{$$ = new WhileNode($2, $4);}
-	| T_LET T_OBJ_ID T_COLON type assign T_IN expr		{$$ = new LetNode(new ObjectIdentifierNode($2), $4, $7, $5);}
-	| T_OBJ_ID T_ASSIGN expr													{$$ = new AssignNode(new ObjectIdentifierNode($1), $3);}
+	| T_LET t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5);}
+	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3);}
 	| T_NOT expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2);}
 	| T_MINUS expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2);}
 	| T_ISNULL expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2);}
@@ -248,10 +256,10 @@ expr :
 	| expr T_TIMES expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3);}
 	| expr T_DIV expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3);}
 	| expr T_POW expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3);}
-	| T_OBJ_ID T_L_PAR args T_R_PAR										{$$ = new CallNode(new ObjectIdentifierNode($1), $3);}
-	| expr T_DOT T_OBJ_ID T_L_PAR args T_R_PAR				{$$ = new CallNode(new ObjectIdentifierNode($3), $5, $1);}
-	| T_NEW T_TYPE_ID																	{$$ = new NewNode(new TypeIdentifierNode($2));}
-	| T_OBJ_ID																				{$$ = new ObjectIdentifierNode($1, yylloc.first_column, yylloc.first_line);}
+	| t_obj_id T_L_PAR args T_R_PAR										{$$ = new CallNode($1, $3, NULL, $1->getLine(), $1->getCol());}
+	| expr T_DOT t_obj_id T_L_PAR args T_R_PAR				{$$ = new CallNode($3, $5, $1);}
+	| T_NEW t_type_id																	{$$ = new NewNode($2);}
+	| t_obj_id																				{$$ = $1;}
 	| literal																					{$$ = $1;}
 	| T_L_PAR T_R_PAR																	{$$ = new BraceNode();}
 	| T_L_PAR expr T_R_PAR														{$$ = $2;}
@@ -289,12 +297,12 @@ int main (int argc, char *argv[]){
 		return -1;
 	}
 
-	if(!strcmp(argv[1], "-lex")){
+	if(!strcmp(argv[1], "-lex"))
 		start_token = START_LEXICAL;
-		//start_token = 0;
-	}else
+	else if(!strcmp(argv[1], "-check"))
+    start_token = START_SEMANTIC;
+  else
 		start_token = START_SYNTAX;
-		//start_token : 1;
 
 	FILE *myfile = fopen(argv[argc-1], "r");
 	file_name = argv[argc-1];

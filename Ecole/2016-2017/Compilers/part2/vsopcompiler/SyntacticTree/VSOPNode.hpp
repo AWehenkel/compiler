@@ -46,6 +46,14 @@ public :
 	OUT : int, a return code
 	*/
 	virtual int updateType(){return 0;};
+
+	//Accessors
+	int getLine() const{
+		return n_line;
+	};
+	int getCol() const{
+		return n_col;
+	};
 };
 
 #endif //vsop_node_hpp

@@ -13,6 +13,7 @@ classes and to check there is no double declared method or field.
 class FillScopeTablesVisitor : public Visitor {
   private :
     ClassNode* current_class;
+    MethodNode* current_method;
   public :
     int visitClassNode(ClassNode *node);
     int visitMethodNode(MethodNode *node);

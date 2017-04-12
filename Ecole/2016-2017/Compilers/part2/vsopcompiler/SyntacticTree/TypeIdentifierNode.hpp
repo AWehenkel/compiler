@@ -9,6 +9,10 @@
 class TypeIdentifierNode : public VSOPNode {
 private :
 	std::string t_content;
+	//Overloaded operator
+	friend inline bool operator==(TypeIdentifierNode &id1, TypeIdentifierNode &id2){
+		return id1.equals(id2);
+	};
 public :
 
 	//Constructors:
@@ -20,8 +24,19 @@ public :
 		return t_content;
 	};
 
+
 	int accept(Visitor* visitor){
 		return visitor->visitTypeIdentifierNode(this);
+	}
+
+	/*
+	equals
+	ROLE: Compare an id to determine whether or not it is equal to this id.
+	IN:		id: TypeIdentifierNode const &, the id with which compare the current id.
+	OUT: bool, true if the contents are equal.
+	*/
+	bool equals(TypeIdentifierNode &id){
+		return id.t_content == t_content;
 	}
 };
 

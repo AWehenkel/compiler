@@ -88,7 +88,8 @@ extern int yydebug;
     T_COMMENTS = 298,
     START_SYNTAX = 299,
     START_LEXICAL = 300,
-    T_ERROR = 301
+    START_SEMANTIC = 301,
+    T_ERROR = 302
   };
 #endif
 
@@ -110,12 +111,13 @@ union YYSTYPE
 	class FormalsNode* formals_node;
 	class FormalNode* formal_node;
 	class TypeIdentifierNode* type_identifier_node;
+  class ObjectIdentifierNode* object_identifier_node;
 	class BlockNode* block_node;
 	class ExpressionNode* expression_node;
 	class ArgsNode* args_node;
 	class LiteralNode* literal_node;
 
-#line 119 "vsop_grammar.tab.h" /* yacc.c:1909  */
+#line 121 "vsop_grammar.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

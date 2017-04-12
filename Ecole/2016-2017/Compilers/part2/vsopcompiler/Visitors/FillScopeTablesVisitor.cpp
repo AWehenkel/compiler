@@ -12,14 +12,12 @@ int FillScopeTablesVisitor::visitClassNode(ClassNode *node){
   return Visitor::visitClassNode(node);
 }
 int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
-  cout << "ça marche comme il faut method " << endl;
-  if(!current_class)
+  if(!current_class || current_class->addMethod(node) < 0)
     return -5;
-  return current_class->addMethod(node);
+  return Visitor::visitMethodNode(node);
 }
 int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
-  cout << "ça marche comme il faut field" << endl;
-  if(!current_class)
+  if(!current_class || current_class->addField(node) < 0)
     return -5;
-  return current_class->addField(node);
+  return Visitor::visitFieldNode(node);
 }

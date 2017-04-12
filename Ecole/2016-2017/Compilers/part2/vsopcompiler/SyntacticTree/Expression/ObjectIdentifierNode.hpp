@@ -9,6 +9,11 @@
 class ObjectIdentifierNode : public ExpressionNode {
 private :
 	std::string e_content;
+
+	//Overload operator
+	friend inline bool operator==(ObjectIdentifierNode const &id1, ObjectIdentifierNode const &id2){
+		return id1.equals(id2);
+	};
 public :
 	//Constructors:
 	/*
@@ -28,6 +33,16 @@ public :
 	int accept(Visitor* visitor){
 		return visitor->visitObjectIdentifierNode(this);
 	};
+
+	/*
+	equals
+	ROLE: Compare a id to determine whether or not it is equal to this id.
+	IN:		id: ObjectIdentifierNode const &, the id with which compare the current id.
+	OUT: bool, true if the contents are equal.
+	*/
+	bool equals(ObjectIdentifierNode const &id) const{
+		return e_content == id.e_content;
+	}
 };
 
 #endif //ObjectIdentifierNode_hpp
