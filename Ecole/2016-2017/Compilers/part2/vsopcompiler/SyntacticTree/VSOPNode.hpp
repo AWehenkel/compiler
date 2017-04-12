@@ -39,6 +39,13 @@ public :
 	*/
 	virtual int accept(Visitor* visitor) = 0;
 
+	/*
+	updateType
+	ROLE : update the type of the node according to the type of its children
+	IN : -
+	OUT : int, a return code
+	*/
+	virtual int updateType(){return 0;};
 };
 
 #endif //vsop_node_hpp

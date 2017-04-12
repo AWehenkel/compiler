@@ -2,6 +2,7 @@
 #define AssignNode_hpp
 
 #include <string>
+#include <cstring>
 #include "ExpressionNode.hpp"
 /*
 	Class used to represent a syntaxic node containing an assignment
@@ -10,7 +11,7 @@ class AssignNode : public ExpressionNode {
 private :
 	ObjectIdentifierNode* e_name;
 	ExpressionNode* e_expr;
-
+	TypeIdentifierNode* e_type;
 public :
 	//Constructors:
 	/*
@@ -36,12 +37,37 @@ public :
 		return e_expr;
 	};
 
+	TypeIdentifierNode* getType() const{
+		return e_type;
+	}
+
 	//Inherited
 	std::string getLiteral() const{return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")";};
 
 	int accept(Visitor* visitor){
 		return visitor->visitAssignNode(this);
 	};
+
+	int updateType(){
+
+		// Get type of expression
+		TypeIdentifierNode *name_type = e_name->getType();
+		TypeIdentifierNode *expr_type = e_expr->getType();
+		if(!e_name || !e_expr)
+			cerr << "Error in the compiler" << endl;
+
+		/* It there was a type error in the son e_expr or if the two types are the
+		* same, assign the type of e_name to e_type and stop the propagation of
+		* errors */
+		if (!strcmp(expr_type->getLiteral(), "error") || *name_type == *expr_type)){
+			e_type = new TypeIdentifierNode(name_type->getLiteral());
+			return 0;
+		}
+
+		// If the two types were different, assign "error" to e_name and return -1
+		e_type = new TypeIdentifierNode("error");
+		return -1;
+	}
 };
 
 #endif //AssignNode_hpp
