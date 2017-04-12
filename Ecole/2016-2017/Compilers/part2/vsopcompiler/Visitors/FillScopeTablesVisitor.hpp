@@ -14,10 +14,15 @@ class FillScopeTablesVisitor : public Visitor {
   private :
     ClassNode* current_class;
     MethodNode* current_method;
+    LetNode* current_let;
+    VSOPNode* current_scope;
   public :
     int visitClassNode(ClassNode *node);
     int visitMethodNode(MethodNode *node);
     int visitFieldNode(FieldNode *node);
+    int visitObjectIdentifierNode(ObjectIdentifierNode *node);
+    int visitLetNode(LetNode *node);
+    int visitFormalNode(FormalNode *node);
 };
 
 #endif //fill_scope_tables_visitor

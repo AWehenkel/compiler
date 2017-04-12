@@ -3,7 +3,6 @@
 
 #include <string>
 #include <unordered_map>
-#include "ClassBodyNode.hpp"
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a class
@@ -24,9 +23,7 @@ private :
 	IN: field:	FieldNode*, the field to check.
 	OUT: bool, true if the field is already declared.
 	*/
-	bool hasField(FieldNode* field) const{
-		return ((fields.find(field->getName()->getLiteral()) != fields.end()) || (parent && parent->hasField(field)));
-	};
+	bool hasField(FieldNode* field) const;
 
 	/*
 	hasMethod
@@ -34,9 +31,7 @@ private :
 	IN: method:	MethodNode*, the method to check.
 	OUT: bool, true if the method is already declared.
 	*/
-	bool hasMethod(MethodNode* method) const{
-		return ((methods.find(method->getName()->getLiteral()) != methods.end()) || (parent && parent->hasMethod(method)));
-	};
+	bool hasMethod(MethodNode* method) const;
 
 
 	/*
@@ -45,9 +40,7 @@ private :
 	IN: method:	MethodNode*, the method to check.
 	OUT: bool, true if the method is already declared.
 	*/
-	bool parentHasMethod(MethodNode* method) const{
-		return (parent && parent->hasMethod(method));
-	};
+	bool parentHasMethod(MethodNode* method) const;
 public :
 	//Constructors
 
@@ -62,21 +55,16 @@ public :
 	 	e_name(name), e_extends(extends), e_body(body), in_cycle(false), fields(), methods() {};
 
 	//Destructor
-	~ClassNode(){delete e_name; delete e_extends; delete e_body;}
+	~ClassNode();
 
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
-	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
-		if(table.find(e_name->getLiteral()) != table.end())
-			return -1;
-		table[e_name->getLiteral()] = this;
-		return 0;
-	};
+	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
 
-	int accept(Visitor* visitor){
-		return visitor->visitClassNode(this);
-	};
+	TypeIdentifierNode* getDeclarationType(std::string id);
+
+	int accept(Visitor* visitor);
 	//Accesors
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
@@ -88,18 +76,7 @@ public :
 	IN: 	method, std::string, the literal of the the name of the method.
 	OUT:	A pointer to the method if it is declared else NULL.
 	*/
-	FieldNode* getField(std::string name){
-		FieldNode* to_ret;
-		if(fields.find(name) == fields.end()){
-			if(parent)
-				to_ret = parent->getField(name);
-			else
-				to_ret = NULL;
-		}
-		else
-			to_ret = fields.find(name)->second;
-		return to_ret;
-	}
+	FieldNode* getField(std::string name);
 
 	/*
 	addField
@@ -107,20 +84,7 @@ public :
 	IN:		field, FieldNode*, a pointer toward the field to add.
 	OUT: -
 	*/
-	int addField(FieldNode* field){
-		if(field){
-			FieldNode* old_field = getField(field->getName()->getLiteral());
-			if(!old_field){
-				fields[field->getName()->getLiteral()] = field;
-				return 0;
-			}
-			//Peut etre remplacer le bool de hasField par le field lui meme comme ça on pourra meme dire où il est déjà déclaré.
-			std::cerr << "Erreur le champs existe déjà dans la class où dans l'un de ses parents. line: " << old_field->getLine() << " col: " << old_field->getCol() << std::endl;
-			return -1;
-		}
-		std::cerr << "Erreur le champs est null." << std::endl;
-		return -1;
-	};
+	int addField(FieldNode* field);
 
 	/*
 	getMethod
@@ -128,18 +92,7 @@ public :
 	IN: 	method, std::string, the literal of the the name of the method.
 	OUT:	A pointer to the method if it is declared else NULL.
 	*/
-	MethodNode* getMethod(std::string name){
-		MethodNode* to_ret;
-		if(methods.find(name) == methods.end()){
-			if(parent)
-				to_ret = parent->getMethod(name);
-			else
-				to_ret = NULL;
-		}
-		else
-			to_ret = methods.find(name)->second;
-		return to_ret;
-	}
+	MethodNode* getMethod(std::string name);
 
 	/*
 	addMethod
@@ -147,23 +100,7 @@ public :
 	IN:		method, MethodNode*, a pointer toward the method to add.
 	OUT: -
 	*/
-	int addMethod(MethodNode* method){
-		if(method){
-			if(methods.find(method->getName()->getLiteral()) == methods.end()){
-				MethodNode* inherit_method = parent ? parent->getMethod(method->getName()->getLiteral()) : NULL;
-				if(!inherit_method || *method == *inherit_method){
-					methods[method->getName()->getLiteral()] = method;
-					return 0;
-				}
-				std::cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" est déjà déclarée dans une class parente à la ligne:" << inherit_method->getLine() << " col: " << inherit_method->getCol() << std::endl;
-				return -1;
-			}
-			std::cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" existe déjà dans la class à la ligne:" << methods.find(method->getName()->getLiteral())->second->getLine() << " col: " << methods.find(method->getName()->getLiteral())->second->getCol() << std::endl;
-			return -1;
-		}
-		std::cerr << "Erreur la methode est null." << std::endl;
-		return -1;
-	};
+	int addMethod(MethodNode* method);
 
 	/*
 	setParent
@@ -178,13 +115,7 @@ public :
 	IN: -
 	OUT: bool, true if the class is in a inheritance cycle
 	*/
-	bool inCycle(){
-		if(!in_cycle){
-			in_cycle = true;
-			in_cycle = parent == NULL ? false : parent->inCycle();
-		}
-		return in_cycle;
-	}
+	bool inCycle();
 };
 
 #endif //class_node_hpp

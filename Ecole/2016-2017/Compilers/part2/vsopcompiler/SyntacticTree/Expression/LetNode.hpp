@@ -13,7 +13,7 @@ private :
 	TypeIdentifierNode* e_type;
 	ExpressionNode* e_init_exp;
 	ExpressionNode* e_scope_exp;
-
+	VSOPNode* e_current_scope;
 public :
 	//Constructors:
 	/*
@@ -44,9 +44,22 @@ public :
 		return literal + end + e_scope_exp->getLiteral() + ")";
 	};
 
+	TypeIdentifierNode* getDeclarationType(std::string id){
+		if(e_object_id->getLiteral() == id)
+			return e_type;
+		else if(e_current_scope)
+			return e_current_scope->getDeclarationType(id);
+		return NULL;
+	};
+
 	int accept(Visitor* visitor){
 		return visitor->visitLetNode(this);
 	};
+
+	//Setters
+	void setCurrentScope(VSOPNode* node){
+		e_current_scope = node;
+	}
 };
 
 #endif //LetNode_hpp
