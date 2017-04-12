@@ -2,6 +2,7 @@
 #include <string>
 #include "SemanticAnalyser.hpp"
 #include "../Visitors/CheckUndefinedClassVisitor.hpp"
+#include "../Visitors/FillScopeTablesVisitor.hpp"
 using namespace std;
 
 ProgramNode* SemanticAnalyser::semanticAnalysis(ProgramNode* program){
@@ -28,6 +29,10 @@ int SemanticAnalyser::classPass(ProgramNode* program){
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
   if (program->accept(visitor) < 0)
     return -4;
+
+  FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
+  if (program->accept(visitor1) < 0)
+    return -5;
 
   return 0;
 }

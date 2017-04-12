@@ -14,6 +14,8 @@ private :
 	TypeIdentifierNode* e_extends;
 	ClassBodyNode *e_body;
 	ClassNode *parent;
+	std::unordered_map<std::string, FieldNode*> fields;
+	std::unordered_map<std::string, MethodNode*> methods;
 	bool in_cycle;
 public :
 	//Constructors
@@ -26,7 +28,7 @@ public :
 			line:			int, the line where the node is present.
 	*/
 	ClassNode(TypeIdentifierNode* name, ClassBodyNode *body, TypeIdentifierNode* extends = NULL, int col = 0, int line = 0) : VSOPNode(col, line),
-	 	e_name(name), e_extends(extends), e_body(body), in_cycle(false) {};
+	 	e_name(name), e_extends(extends), e_body(body), in_cycle(false), fields(), methods() {};
 
 	//Destructor
 	~ClassNode(){delete e_name; delete e_extends; delete e_body;}
@@ -48,6 +50,45 @@ public :
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
 	ClassBodyNode* getBody() const {return e_body;};
+
+	/*
+	addField
+	ROLE: This function adds a field to the table of fields of the class.
+	IN:		field, FieldNode*, a pointer toward the field to add.
+	OUT: -
+	*/
+	int addField(FieldNode* field){
+		if(field){
+			if(fields.find(field->getName()->getLiteral()) == fields.end()){
+				fields[field->getName()->getLiteral()] = field;
+				return 0;
+			}
+			std::cerr << "Erreur le champs existe déjà." << std::endl;
+			return -1;
+		}
+		std::cerr << "Erreur le champs est null." << std::endl;
+		return -1;
+	};
+
+	/*
+	addMethod
+	ROLE: This function adds a method to the table of methods of the class.
+	IN:		method, MethodNode*, a pointer toward the method to add.
+	OUT: -
+	*/
+	int addMethod(MethodNode* method){
+		if(method){
+			if(methods.find(method->getName()->getLiteral()) == methods.end()){
+				methods[method->getName()->getLiteral()] = method;
+				return 0;
+			}
+			std::cerr << "Erreur la methode existe déjà." << std::endl;
+			return -1;
+		}
+		std::cerr << "Erreur la methode est null." << std::endl;
+		return -1;
+	};
+
 	/*
 	setParent
 	ROLE: This function is aimed at setting the parent ClassNode of the class.
