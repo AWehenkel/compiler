@@ -33,6 +33,7 @@ public :
 	//Public Methods:
 	// Setters
 	void setCurrentClass(ClassNode* node){current_class = node;}
+	void setObject(ExpressionNode* node){e_object = node;}
 
 	//getters
 	ObjectIdentifierNode* getMethodName() const{return e_method_name;};

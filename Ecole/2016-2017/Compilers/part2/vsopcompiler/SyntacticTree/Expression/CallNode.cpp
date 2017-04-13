@@ -69,7 +69,15 @@ int CallNode::updateType(){
 }
 
 string CallNode::getLiteral() const{
-  cout << "call" << " " << e_method_name->getLiteral() << endl;
+  cout << "call" << " " << e_method_name->getLiteral() << " nom de la var " << e_object->getLiteral() << " type var " << e_object->getType()->getLiteral() <<  endl;
+  if(e_object->getType()->getClassType()){
+    cout << "ok class type"  << endl;
+    if(e_object->getType()->getClassType()->getExtends())
+      cout << "extends aussi" << endl;
+    if(node_type && node_type->getClassType() && e_method_name->getLiteral() == "print")
+      cout << node_type->getClassType()->getLiteral() << endl;
+  }
+
   string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   string obj = e_object ? e_object->getLiteral() : "self";
   return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")" + type;
