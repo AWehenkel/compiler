@@ -1,5 +1,5 @@
 #include "BlockNode.hpp"
-#include "TypeIdentifierNode.hpp"
+#include "../TypeIdentifierNode.hpp"
 
 using namespace std;
 
@@ -33,8 +33,8 @@ int BlockNode::updateType(){
 
 	string type;
 
-	ExpressionNode *last_expr = *(expressions.end()-1):
-	TypeIdentifierNode *expr_type = expr->getType();
+	ExpressionNode *last_expr = *(expressions.end()-1);
+	TypeIdentifierNode *expr_type = last_expr->getType();
 	if (!expr_type)
 		type = expr_type->getLiteral();
 	else{

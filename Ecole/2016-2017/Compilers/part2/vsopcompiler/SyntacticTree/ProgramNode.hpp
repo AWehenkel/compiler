@@ -25,10 +25,7 @@ public :
 	ProgramNode(ClassNode *new_class, int col = 0, int line = 0) : VSOPNode(col, line){addClass(new_class);};
 
 	//Destructors
-	~ProgramNode(){
-		for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it)
-			delete (*it);
-	};
+	~ProgramNode();
 
 	//Public methods
 	/*

@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "BinaryOperatorNode.hpp"
 #include "../TypeIdentifierNode.hpp"
 
@@ -18,7 +20,7 @@ int BinaryOperatorNode::update(){
   switch (e_op){
     case BinaryOperator::b_op_and :
       // Check both operands are bools or errors and return a bool if ok
-      if ((strcmp(s_left_type, "bool") != 0 && strcmp(s_left_type, "error") != 0) || (strcmp(s_right_type, "bool") != 0 && strcmp(s_right_type, "error") != 0)){
+      if ((strcmp(s_left_type.c_str(), "bool") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "bool") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
         cerr << "Les deux membres ne sont pas des booléans dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
@@ -37,7 +39,7 @@ int BinaryOperatorNode::update(){
     case BinaryOperator::b_op_leq :
     case BinaryOperator::b_op_less :
     // Check both operands are int32 or errors and return a bool if ok
-    if ((strcmp(s_left_type, "int32") != 0 && strcmp(s_left_type, "error") != 0) || (strcmp(s_right_type, "int32") != 0 && strcmp(s_right_type, "error") != 0)){
+    if ((strcmp(s_left_type.c_str(), "int32") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "int32") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
       cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
@@ -46,7 +48,7 @@ int BinaryOperatorNode::update(){
       break;
     default :
     // Check both operands are int32 and return a int32 if ok
-    if ((strcmp(s_left_type, "int32") != 0 && strcmp(s_left_type, "error") != 0) || (strcmp(s_right_type, "int32") != 0 && strcmp(s_right_type, "error") != 0)){
+    if ((strcmp(s_left_type.c_str(), "int32") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "int32") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
       cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
@@ -57,3 +59,5 @@ int BinaryOperatorNode::update(){
 
   return 0;
 }
+
+BinaryOperatorNode::~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;}

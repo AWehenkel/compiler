@@ -55,11 +55,7 @@ public :
 	 	e_name(name), e_extends(extends), e_body(body), in_cycle(false), fields(), methods() {};
 
 	//Destructor
-	~ClassNode(){
-		delete e_name;
-		delete e_extends;
-		delete e_body;
-	};
+	~ClassNode();
 
 	//Public methods
 	//Inherited

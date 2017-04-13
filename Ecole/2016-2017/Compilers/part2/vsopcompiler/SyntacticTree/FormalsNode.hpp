@@ -19,11 +19,7 @@ public :
 	FormalsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
 	//Destructor
-	~FormalsNode(){
-		for (std::vector<FormalNode*>::const_iterator it = formals.begin(); it < formals.end(); ++it) {
-			delete (*it);
-		}
-	};
+	~FormalsNode();
 
 	//Public methods
 	//Inherited

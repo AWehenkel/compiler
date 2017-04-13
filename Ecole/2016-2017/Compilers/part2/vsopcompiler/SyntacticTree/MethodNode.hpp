@@ -3,10 +3,7 @@
 
 #include <cstring>
 #include <string>
-#include "Expression/BlockNode.hpp"
-#include "FormalsNode.hpp"
 #include "VSOPNode.hpp"
-#include "ClassNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a method
 */
@@ -29,40 +26,14 @@ public :
 		VSOPNode(col, line), e_name(name), e_formals(formals), e_ret_type(ret_type), e_block(block) {};
 
 	//Destructor
-	~MethodNode(){delete e_name; delete e_ret_type; delete e_ret_type; delete e_block;}
+	~MethodNode();
 
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
-
-	int accept(Visitor* visitor){
-		return visitor->visitMethodNode(this);
-	}
-
-	TypeIdentifierNode* getDeclarationType(std::string id){
-		TypeIdentifierNode* to_ret = e_formals->getDeclarationType(id);
-		if(!to_ret)
-			to_ret = e_class_scope->getDeclarationType(id);
-		return to_ret;
-	};
-
-	int updateType(){
-
-		// Get block type
-		TypeIdentifierNode *block_type = e_block->getType();
-		if (!block_type){
-			std::cerr << "Error in the compiler" << std::endl;
-			return -1;
-		}
-
-		// Check if the types are the same
-		if (strcmp(block_type->getLiteral(), "error") != 0 && *block_type != *e_ret_type){
-			std::cerr << "Pas le même type dans méthode" << std::endl;
-			return -1;
-		}
-
-		return 0;
-	}
+	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	int updateType();
 
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
@@ -71,9 +42,7 @@ public :
 	BlockNode* getBlock() const {return e_block;};
 
 	//Setter
-	void setClassScope(ClassNode* class_scope){
-		e_class_scope = class_scope;
-	};
+	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
 
 	/*
 	equals
@@ -81,9 +50,7 @@ public :
 	IN:		method: MethodNode const &, the method with which compare the current method.
 	OUT: bool, true if the name, the type and the arguments are equal.
 	*/
-	bool equals(MethodNode &method){
-		return *(method.getName()) == *(getName()) && *(method.getFormals()) == *(getFormals()) && *(method.getRetType()) == *(getRetType());
-	}
+	bool equals(MethodNode &method);
 };
 
 #endif //method_node_hpp

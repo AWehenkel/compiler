@@ -22,11 +22,7 @@ public :
 	ArgsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
 	//Destructor
-	~ArgsNode(){
-		for (std::vector<ExpressionNode*>::const_iterator it = expressions.begin(); it < expressions.end(); ++it) {
-			delete (*it);
-		}
-	};
+	~ArgsNode();
 
 	//Public methods
 	//Inherited

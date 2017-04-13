@@ -1,6 +1,8 @@
 #include "ClassNode.hpp"
 #include "ClassBodyNode.hpp"
 #include "TypeIdentifierNode.hpp"
+#include "FieldNode.hpp"
+#include "Expression/ObjectIdentifierNode.hpp"
 #include "MethodNode.hpp"
 
 using namespace std;
@@ -18,7 +20,7 @@ string ClassNode::getLiteral() const{
 
 }
 
-int ClassNode::setParent(unordered_map<std::string, ClassNode*> &table){
+int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
 
 	// Can have no parents
 	if (!e_extends)
@@ -42,14 +44,14 @@ bool ClassNode::parentHasMethod(MethodNode* method) const{
 	return (parent && parent->hasMethod(method));
 }
 
-int ClassNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
+int ClassNode::fillClassTable(unordered_map<string, ClassNode*> &table){
 	if(table.find(e_name->getLiteral()) != table.end())
 		return -1;
 	table[e_name->getLiteral()] = this;
 	return 0;
 }
 
-TypeIdentifierNode* ClassNode::getDeclarationType(std::string id){
+TypeIdentifierNode* ClassNode::getDeclarationType(string id){
 
 	if(fields.find(id) != fields.end())
 		return fields.find(id)->second->getType();
@@ -62,7 +64,7 @@ int ClassNode::accept(Visitor* visitor){
 	return visitor->visitClassNode(this);
 }
 
-FieldNode* ClassNode::getField(std::string name){
+FieldNode* ClassNode::getField(string name){
 	FieldNode* to_ret;
 	if(fields.find(name) == fields.end()){
 		if(parent)
@@ -83,14 +85,14 @@ int ClassNode::addField(FieldNode* field){
 			return 0;
 		}
 		//Peut etre remplacer le bool de hasField par le field lui meme comme ça on pourra meme dire où il est déjà déclaré.
-		std::cerr << "Erreur le champs existe déjà dans la class où dans l'un de ses parents. line: " << old_field->getLine() << " col: " << old_field->getCol() << std::endl;
+		cerr << "Erreur le champs existe déjà dans la class où dans l'un de ses parents. line: " << old_field->getLine() << " col: " << old_field->getCol() << endl;
 		return -1;
 	}
-	std::cerr << "Erreur le champs est null." << std::endl;
+	cerr << "Erreur le champs est null." << endl;
 	return -1;
 }
 
-MethodNode* ClassNode::getMethod(std::string name){
+MethodNode* ClassNode::getMethod(string name){
 	MethodNode* to_ret;
 	if(methods.find(name) == methods.end()){
 		if(parent)
@@ -111,13 +113,13 @@ int ClassNode::addMethod(MethodNode* method){
 				methods[method->getName()->getLiteral()] = method;
 				return 0;
 			}
-			std::cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" est déjà déclarée dans une class parente à la ligne:" << inherit_method->getLine() << " col: " << inherit_method->getCol() << std::endl;
+			cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" est déjà déclarée dans une class parente à la ligne:" << inherit_method->getLine() << " col: " << inherit_method->getCol() << endl;
 			return -1;
 		}
-		std::cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" existe déjà dans la class à la ligne:" << methods.find(method->getName()->getLiteral())->second->getLine() << " col: " << methods.find(method->getName()->getLiteral())->second->getCol() << std::endl;
+		cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" existe déjà dans la class à la ligne:" << methods.find(method->getName()->getLiteral())->second->getLine() << " col: " << methods.find(method->getName()->getLiteral())->second->getCol() << endl;
 		return -1;
 	}
-	std::cerr << "Erreur la methode est null." << std::endl;
+	cerr << "Erreur la methode est null." << endl;
 	return -1;
 }
 
@@ -129,7 +131,7 @@ bool ClassNode::inCycle(){
 	return in_cycle;
 }
 
-TypeIdentifierNode* getCommonParent(ClassNode *other){
+TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
 
 	TypeIdentifierNode* common_parent =  NULL;
 
@@ -145,4 +147,10 @@ TypeIdentifierNode* getCommonParent(ClassNode *other){
 		common_parent = other->parent->getCommonParent(this);
 
 	return common_parent;
+}
+
+ClassNode::~ClassNode(){
+	delete e_name;
+	delete e_extends;
+	delete e_body;
 }

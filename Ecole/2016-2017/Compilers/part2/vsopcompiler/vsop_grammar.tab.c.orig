@@ -2155,13 +2155,13 @@ yyreduce:
 
   case 103:
 #line 280 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.literal_node) = new LiteralNode((yyvsp[0].ival), yylloc.first_column, yylloc.first_line);}
+    {(yyval.literal_node) = new LiteralNode((yyvsp[0].ival), "int32", yylloc.first_column, yylloc.first_line);}
 #line 2160 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
 #line 281 "vsop_grammar.y" /* yacc.c:1646  */
-    {string tmp = (yyvsp[0].sval); free (yyvsp[0].sval); (yyval.literal_node) = new LiteralNode(tmp, yylloc.first_column, yylloc.first_line);}
+    {string tmp = (yyvsp[0].sval); free (yyvsp[0].sval); (yyval.literal_node) = new LiteralNode(tmp, "string", yylloc.first_column, yylloc.first_line);}
 #line 2166 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2173,13 +2173,13 @@ yyreduce:
 
   case 106:
 #line 286 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.literal_node) = new LiteralNode("true", yylloc.first_column, yylloc.first_line);}
+    {(yyval.literal_node) = new LiteralNode("true", "bool", yylloc.first_column, yylloc.first_line);}
 #line 2178 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
 #line 287 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.literal_node) = new LiteralNode("false", yylloc.first_column, yylloc.first_line);}
+    {(yyval.literal_node) = new LiteralNode("false", "bool", yylloc.first_column, yylloc.first_line);}
 #line 2184 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 

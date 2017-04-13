@@ -154,21 +154,6 @@ int CheckTypeVisitor::visitFieldNode(FieldNode *node){
   return 0;
 }
 
-int CheckTypeVisitor::visitFormalNode(FormalNode *node){
-
-  if(Visitor::visitFormalNode(node) < 0){
-    std::cerr << "Erreur dans le type des fils de formal " << std::endl;
-    return -1;
-  }
-
-  if (node->updateType() < 0){
-    std::cerr << "Erreur dans le type de formal " << std::endl;
-    return -1;
-  }
-
-  return 0;
-
-}
 
 int CheckTypeVisitor::visitMethodNode(MethodNode *node){
   current_scope = (VSOPNode*) node;

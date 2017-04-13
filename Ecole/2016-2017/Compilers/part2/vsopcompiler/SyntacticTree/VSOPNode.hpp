@@ -12,8 +12,8 @@
 class VSOPNode {
 protected :
 	//Fields
-	int n_col;
-	int n_line;
+	const int n_col;
+	const int n_line;
 	//Overloaded operator
 	friend std::ostream &operator<<(std::ostream &out, VSOPNode const &node);
 
@@ -58,10 +58,10 @@ public :
 		return NULL;
 	};
 	//Accessors
-	int getLine() const{
+	const int getLine() const{
 		return n_line;
 	};
-	int getCol() const{
+	const int getCol() const{
 		return n_col;
 	};
 

@@ -23,7 +23,7 @@ public :
 	FormalNode(ObjectIdentifierNode* name, TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), e_name(name), e_type(type){};
 
 	//Destructor
-	~FormalNode(){delete e_name; delete e_type;}
+	~FormalNode();
 
 	//Public methods
 	//Inherited

@@ -2,7 +2,6 @@
 #define AssignNode_hpp
 
 #include <string>
-#include <cstring>
 #include "ExpressionNode.hpp"
 /*
 	Class used to represent a syntaxic node containing an assignment
@@ -24,7 +23,7 @@ public :
 		e_name(name), e_expr(expr){};
 
 	//Destructor:
-	~AssignNode(){delete e_name; delete e_expr;};
+	~AssignNode();
 
 	//Public Methods:
 	//Getter

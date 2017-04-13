@@ -33,7 +33,7 @@ public :
 	 	e_name(name), e_type(type), e_init_expr(init_expr) {};
 
 	//Destructor
-	~FieldNode(){delete e_name; delete e_type; delete e_init_expr;}
+	~FieldNode();
 
 	//Public methods
 	//Setter

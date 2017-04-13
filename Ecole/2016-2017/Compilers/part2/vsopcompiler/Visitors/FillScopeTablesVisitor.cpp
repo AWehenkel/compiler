@@ -5,6 +5,9 @@
 #include "../SyntacticTree/MethodNode.hpp"
 #include "../SyntacticTree/FieldNode.hpp"
 #include "../SyntacticTree/Expression/LetNode.hpp"
+#include "../SyntacticTree/Expression/ObjectIdentifierNode.hpp"
+#include "../SyntacticTree/Expression/BlockNode.hpp"
+#include "../SyntacticTree/Expression/CallNode.hpp"
 
 using namespace std;
 
@@ -23,7 +26,6 @@ int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
 }
 
 int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
-  current_scope = (VSOPNode*) node;
   if(!current_class || current_class->addField(node) < 0)
     return -5;
   node->setClassScope(current_class);
@@ -40,7 +42,6 @@ int FillScopeTablesVisitor::visitFormalNode(FormalNode *node){
   return 0;
 }
 
-
 int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
   TypeIdentifierNode* obj_type = current_scope->getDeclarationType(node->getLiteral());
   if(!obj_type){
@@ -49,4 +50,9 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
   }
   node->setType(obj_type);
   return 0;
+}
+
+int FillScopeTablesVisitor::visitCallNode(CallNode *node){
+  node->setCurrentClass(current_class);
+  Visitor::visitCallNode(node);
 }

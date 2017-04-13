@@ -1,4 +1,8 @@
+#include <cstring>
+
 #include "ConditionalNode.hpp"
+#include "../TypeIdentifierNode.hpp"
+#include "../ClassNode.hpp"
 
 using namespace std;
 
@@ -8,18 +12,18 @@ string ConditionalNode::getLiteral() const{
   return literal + end + ")";
 }
 
-int updateType(){
+int ConditionalNode::updateType(){
 
   // Check if the condition is of type bool
   TypeIdentifierNode *condition_type = e_condition->getType();
   if (!condition_type){
-    std::cerr << "Error in the compiler" << std::endl;
+    cerr << "Error in the compiler" << endl;
     return -1;
   }
   string s_condition_type = condition_type->getLiteral();
 
-  if (strcmp(s_condition_type, "error") != 0 && strcmp(s_condition_type, "bool") != 0){
-    std::cerr << "Condition is not bool in conditional" << std::endl;
+  if (strcmp(s_condition_type.c_str(), "error") != 0 && strcmp(s_condition_type.c_str(), "bool") != 0){
+    cerr << "Condition is not bool in conditional" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
@@ -33,23 +37,23 @@ int updateType(){
     else_type = new TypeIdentifierNode("unit");
 
   if(!then_type || !else_type){
-    std::cerr << "Error in the compiler" << std::endl;
+    cerr << "Error in the compiler" << endl;
     return -1;
   }
-  std::string s_then_type = then_type->getLiteral();
-  std::string s_else_type = else_type->getLiteral();
+  string s_then_type = then_type->getLiteral();
+  string s_else_type = else_type->getLiteral();
 
   // Check if one of the branch is a unit
-  if(strcmp(s_then_type,"unit") == 0 || strcmp(s_else_type,"unit") == 0){
+  if(strcmp(s_then_type.c_str(), "unit") == 0 || strcmp(s_else_type.c_str(), "unit") == 0){
     node_type = new TypeIdentifierNode("unit");
     return 0;
   }
 
   // If one branch is in error, return the type of the other branch
-  if(strcmp(s_then_type, "error") == 0){
+  if(strcmp(s_then_type.c_str(), "error") == 0){
     node_type = new TypeIdentifierNode(s_else_type);
     return 0;
-  }else if (strcmp(s_else_type, "error") == 0){
+  }else if (strcmp(s_else_type.c_str(), "error") == 0){
     node_type = new TypeIdentifierNode(s_then_type);
     return 0;
   }
@@ -60,7 +64,7 @@ int updateType(){
       node_type = new TypeIdentifierNode(s_then_type);
       return 0;
     }else{
-      std::cerr << "Types différents dans conditional" << std::endl;
+      cerr << "Types différents dans conditional" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
     }
@@ -69,10 +73,16 @@ int updateType(){
   // If both types are clases, need to check the inheritance
   node_type = then_type->getClassType()->getCommonParent(else_type->getClassType());
   if(!node_type){
-    std::cerr << "Pas d'ancêtres en commun dans conditional" << std::endl;
+    cerr << "Pas d'ancêtres en commun dans conditional" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
 
   return 0;
+}
+
+ConditionalNode::~ConditionalNode(){
+  delete e_condition;
+  delete e_action;
+  delete e_else_action;
 }

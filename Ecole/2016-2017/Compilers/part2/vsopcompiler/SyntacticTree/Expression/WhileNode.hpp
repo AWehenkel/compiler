@@ -26,7 +26,7 @@ public :
 		e_condition(condition), e_action(action){};
 
 	//Destructor:
-	~WhileNode(){delete e_condition; delete e_action;};
+	~WhileNode();
 
 	//Public Methods:
 	//Accessors:

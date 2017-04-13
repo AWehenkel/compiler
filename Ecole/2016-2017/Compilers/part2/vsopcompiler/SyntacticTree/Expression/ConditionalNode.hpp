@@ -29,7 +29,7 @@ public :
 		e_condition(condition), e_action(action), e_else_action(else_action){};
 
 	//Destructor:
-	~ConditionalNode(){delete e_condition; delete e_action; delete e_else_action;};
+	~ConditionalNode();
 
 	//Public Methods:
 	//getters
@@ -40,6 +40,7 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitConditionalNode(this);};
+	int updateType();
 };
 
 #endif //ConditionalNode_hpp

@@ -1,4 +1,6 @@
 #include "ClassBodyNode.hpp"
+#include "FieldNode.hpp"
+#include "MethodNode.hpp"
 
 using namespace std;
 
@@ -28,3 +30,12 @@ string ClassBodyNode::getLiteral() const{
 void ClassBodyNode::addField(FieldNode *field) { fields.push_back(field);}
 
 void ClassBodyNode::addMethod(MethodNode *method) { methods.push_back(method);}
+
+ClassBodyNode::~ClassBodyNode(){
+	for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it) {
+		delete (*it);
+	}
+	for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it) {
+		delete (*it);
+	}
+}

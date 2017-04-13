@@ -28,7 +28,7 @@ public :
 	LetNode(ObjectIdentifierNode* object_id, TypeIdentifierNode* type, ExpressionNode* scope_exp, ExpressionNode* init_exp = NULL, int col = 0, int line = 0) : ExpressionNode(col, line), e_object_id(object_id), e_object_type(type), e_scope_exp(scope_exp), e_init_exp(init_exp) {};
 
 	//Destructor:
-	~LetNode(){delete e_init_exp; delete e_scope_exp;};
+	~LetNode();
 
 	//Public Methods:
 	//Accessors

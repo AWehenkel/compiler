@@ -32,7 +32,7 @@ public :
 	};
 
 	//Destructor:
-	~UnaryOperatorNode(){delete e_operand;};
+	~UnaryOperatorNode();
 
 	//Public Methods:
 	//Accessors:

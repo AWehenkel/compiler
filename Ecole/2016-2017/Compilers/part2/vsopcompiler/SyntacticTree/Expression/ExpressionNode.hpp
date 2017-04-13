@@ -3,7 +3,6 @@
 
 #include <string>
 #include "../VSOPNode.hpp"
-#include "../TypeIdentifierNode"
 /*
 	Parent class of any node representing an expression.
 */
@@ -18,14 +17,15 @@ public :
 			line:					int, the line where the node is present.
 	*/
 	ExpressionNode(int col = 0, int line = 0) : VSOPNode(col, line){};
-
+	ExpressionNode(std::string type, int col = 0, int line = 0);
+	ExpressionNode(TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), node_type(type){};
 	//Public method
 	//Inherited
 	virtual std::string getLiteral() const = 0;
 
 	virtual int accept(Visitor* visitor) = 0;
 
-	virtual int getType(){return node_type;}
+	virtual TypeIdentifierNode* getType(){return node_type;}
 };
 
 #endif //expression_node_hpp

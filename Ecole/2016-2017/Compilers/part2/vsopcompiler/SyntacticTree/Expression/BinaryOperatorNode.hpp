@@ -44,7 +44,7 @@ public :
 	};
 
 	//Destructor:
-	~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;};
+	~BinaryOperatorNode();
 
 	//Public Methods:
 	//getters

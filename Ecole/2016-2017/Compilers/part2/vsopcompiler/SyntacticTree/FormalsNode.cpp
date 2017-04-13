@@ -1,5 +1,7 @@
 #include "FormalsNode.hpp"
 #include "FormalNode.hpp"
+#include "TypeIdentifierNode.hpp"
+#include "Expression/ObjectIdentifierNode.hpp"
 
 using namespace std;
 
@@ -24,8 +26,8 @@ void FormalsNode::insertFormal(FormalNode *formal) {
 	formals.insert(formals.begin(), formal);
 }
 
-TypeIdentifierNode* FormalsNode::getDeclarationType(std::string id){
-	for(std::vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
+TypeIdentifierNode* FormalsNode::getDeclarationType(string id){
+	for(vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
 		if((*formal_it)->getName()->getLiteral() == id)
 			return (*formal_it)->getType();
 	return NULL;
@@ -39,4 +41,10 @@ bool FormalsNode::equals(FormalsNode &formals){
 			return false;
 	}
 	return true;
+}
+
+FormalsNode::~FormalsNode(){
+	for (std::vector<FormalNode*>::const_iterator it = formals.begin(); it < formals.end(); ++it) {
+		delete (*it);
+	}
 }

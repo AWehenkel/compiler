@@ -1,17 +1,22 @@
+#include <cstring>
+
 #include "WhileNode.hpp"
+#include "../TypeIdentifierNode.hpp"
+
+using namespace std;
 
 int WhileNode::update(){
 
   // Check if the condition is a bool
   TypeIdentifierNode *condition_type = e_condition->getType();
-  if (!condition_type || !action_type){
-    std::cerr << "Error in the compiler" << std::endl;
+  if (!condition_type){
+    cerr << "Error in the compiler" << endl;
     return -1;
   }
   string s_condition_type = condition_type->getLiteral();
 
-  if (strcmp(s_op_type, "error") != 0  && strcmp(s_condition_type, "bool") != 0){
-    std::cerr << "Condition n'est pas un bool dans while" << std::endl;
+  if (strcmp(s_condition_type.c_str(), "error") != 0  && strcmp(s_condition_type.c_str(), "bool") != 0){
+    cerr << "Condition n'est pas un bool dans while" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
@@ -19,3 +24,5 @@ int WhileNode::update(){
 
   return 0;
 }
+
+WhileNode::~WhileNode(){delete e_condition; delete e_action;}

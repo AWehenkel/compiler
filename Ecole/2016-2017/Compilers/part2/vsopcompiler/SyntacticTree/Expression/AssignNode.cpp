@@ -1,5 +1,8 @@
+#include <cstring>
+
 #include "AssignNode.hpp"
 #include "../TypeIdentifierNode.hpp"
+#include "ObjectIdentifierNode.hpp"
 
 using namespace std;
 
@@ -14,7 +17,7 @@ int AssignNode::updateType(){
   /* It there was a type error in the son e_expr or if the two types are the
   * same, assign the type of e_name to node_type and stop the propagation of
   * errors */
-  if (!strcmp(expr_type->getLiteral(), "error") || *name_type == *expr_type)){
+  if (!strcmp(expr_type->getLiteral().c_str(), "error") || *name_type == *expr_type){
     node_type = new TypeIdentifierNode(name_type->getLiteral());
     return 0;
   }
@@ -28,3 +31,5 @@ int AssignNode::updateType(){
 std::string AssignNode::getLiteral() const{
   return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")";
 }
+
+AssignNode::~AssignNode(){delete e_name; delete e_expr;};

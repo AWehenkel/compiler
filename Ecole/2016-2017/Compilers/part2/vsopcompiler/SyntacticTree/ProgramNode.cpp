@@ -31,3 +31,8 @@ int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &tab
 int ProgramNode::accept(Visitor* visitor){
 	return visitor->visitProgramNode(this);
 }
+
+ProgramNode::~ProgramNode(){
+	for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it)
+		delete (*it);
+}

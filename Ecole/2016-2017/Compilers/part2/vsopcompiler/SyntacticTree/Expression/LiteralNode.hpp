@@ -9,6 +9,7 @@
 class LiteralNode : public ExpressionNode {
 private :
 	std::string e_content;
+
 public :
 	//Constructors:
 	/*
@@ -17,8 +18,8 @@ public :
 			col: 			int, the column where the node is present.
 			line:			int, the line where the node is present.
 	*/
-	LiteralNode(std::string content, std::string type, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(content), node_type(type){};
-	LiteralNode(int content, std::string type, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(std::to_string(content)), node_type(type){};
+	LiteralNode(std::string content, std::string type, int col = 0, int line = 0) : ExpressionNode(type, col, line), e_content(content){};
+	LiteralNode(int content, std::string type, int col = 0, int line = 0) : ExpressionNode(type, col, line), e_content(std::to_string(content)){};
 
 	//Public Methods:
 	//Inherited

@@ -22,14 +22,7 @@ public :
 	ClassBodyNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
 	//Destructor
-	~ClassBodyNode(){
-		for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it) {
-			delete (*it);
-		}
-		for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it) {
-			delete (*it);
-		}
-	}
+	~ClassBodyNode();
 
 	//Public methods
 	//Inherited

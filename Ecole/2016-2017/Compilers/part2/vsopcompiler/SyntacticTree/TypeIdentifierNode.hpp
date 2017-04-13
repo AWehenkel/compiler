@@ -2,7 +2,7 @@
 #define TypeIdentifierNode_hpp
 
 #include <string>
-#include "Expression/ExpressionNode.hpp"
+#include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a type identifier
 */
@@ -13,6 +13,9 @@ private :
 	//Overloaded operator
 	friend inline bool operator==(TypeIdentifierNode &id1, TypeIdentifierNode &id2){
 		return id1.equals(id2);
+	};
+	friend inline bool operator!=(TypeIdentifierNode &id1, TypeIdentifierNode &id2){
+		return !(id1 == id2);
 	};
 public :
 
@@ -28,7 +31,7 @@ public :
 
 	int accept(Visitor* visitor){
 		return visitor->visitTypeIdentifierNode(this);
-	}
+	};
 
 	//Setter
 	void setClassType(ClassNode* class_type){
@@ -36,7 +39,7 @@ public :
 	};
 
 	// getters
-	ClassNode* getClassType(){return t_class_type;}
+	ClassNode* getClassType(){return t_class_type;};
 
 	/*
 	equals
@@ -46,7 +49,7 @@ public :
 	*/
 	bool equals(TypeIdentifierNode &id){
 		return id.t_content == t_content;
-	}
+	};
 };
 
 #endif //TypeIdentifierNode_hpp

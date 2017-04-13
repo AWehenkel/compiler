@@ -24,7 +24,7 @@ public :
 	BraceNode(ExpressionNode* expr = NULL, int col = 0, int line = 0) : ExpressionNode(col, line), e_expr(expr){};
 
 	//Destructor:
-	~BraceNode(){delete e_expr;};
+	~BraceNode();
 
 	//Public Methods:
 	//getters

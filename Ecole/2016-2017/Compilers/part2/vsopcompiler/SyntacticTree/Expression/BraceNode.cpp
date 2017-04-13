@@ -14,7 +14,7 @@ int BraceNode::updateType(){
     cerr << "Error in the compiler" << endl;
     return -1;
   }
-  e_type = new TypeIdentifierNode(type);
+  node_type = new TypeIdentifierNode(type);
 
   return 0;
 }
@@ -24,3 +24,5 @@ string BraceNode::getLiteral() const{
   string s_expr = e_expr ? e_expr->getLiteral() : "";
   return literal + s_expr + ")";
 }
+
+BraceNode::~BraceNode(){delete e_expr;}

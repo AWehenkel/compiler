@@ -1,4 +1,5 @@
 #include "ArgsNode.hpp"
+#include "Expression/ExpressionNode.hpp"
 
 using namespace std;
 
@@ -19,3 +20,9 @@ string ArgsNode::getLiteral() const {
 void ArgsNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
 
 void ArgsNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}
+
+ArgsNode::~ArgsNode(){
+	for (std::vector<ExpressionNode*>::const_iterator it = expressions.begin(); it < expressions.end(); ++it) {
+		delete (*it);
+	}
+}

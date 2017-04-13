@@ -9,7 +9,6 @@
 class ObjectIdentifierNode : public ExpressionNode {
 private :
 	std::string e_content;
-	TypeIdentifierNode* e_type;
 	//Overload operator
 	friend inline bool operator==(ObjectIdentifierNode const &id1, ObjectIdentifierNode const &id2){
 		return id1.equals(id2);
@@ -30,7 +29,7 @@ public :
 	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
 
 	//Setters
-	void setType(TypeIdentifierNode* node){e_type = node;};
+	void setType(TypeIdentifierNode* node){node_type = node;};
 
 	/*
 	equals

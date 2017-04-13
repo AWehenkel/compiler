@@ -17,7 +17,7 @@ public :
 			col: 			int, the column where the node is present.
 			line:			int, the line where the node is present.
 	*/
-	NewNode(TypeIdentifierNode* type_id, int col = 0, int line = 0) : ExpressionNode(col, line), e_type_id(type_id), node_type(type_id){};
+	NewNode(TypeIdentifierNode* type_id, int col = 0, int line = 0) : ExpressionNode(type_id, col, line), e_type_id(type_id){};
 
 	//Public Methods:
 	//Accessors:
