@@ -20,6 +20,7 @@ int BraceNode::updateType(){
 }
 
 string BraceNode::getLiteral() const{
+  cout << "brace" << endl;
   string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   string literal = "(";
   string s_expr = e_expr ? e_expr->getLiteral() : "";

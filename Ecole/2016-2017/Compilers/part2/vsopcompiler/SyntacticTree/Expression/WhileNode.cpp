@@ -31,6 +31,7 @@ WhileNode::~WhileNode(){
 }
 
 string WhileNode::getLiteral() const{
+  cout << "while" << endl;
   string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   return "While(" + e_condition->getLiteral() + "," + e_action->getLiteral() + ")" + type;
 };

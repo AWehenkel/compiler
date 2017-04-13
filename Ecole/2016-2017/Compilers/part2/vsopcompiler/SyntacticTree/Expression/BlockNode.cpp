@@ -5,6 +5,7 @@ using namespace std;
 
 string BlockNode::getLiteral() const {
 
+	cout << "block" << endl;
 	string literal;
 	string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
 	size_t expr_size = expressions.size();

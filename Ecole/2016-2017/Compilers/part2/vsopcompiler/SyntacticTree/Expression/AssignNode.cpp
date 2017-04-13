@@ -29,6 +29,7 @@ int AssignNode::updateType(){
 }
 
 string AssignNode::getLiteral() const{
+  cout << "assign" << endl;
   string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")" + type;
 }
