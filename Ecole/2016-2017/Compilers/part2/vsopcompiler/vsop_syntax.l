@@ -145,7 +145,7 @@ comments  	\/\/.*
             vector<string> to_replace = {"\\b", "\\t", "\\n", "\\r"};
             vector<string> replacor = {"\\x08", "\\x09", "\\x0a", "\\x0d"};
             vector<string>::iterator it_replacor = replacor.begin();
-            for(vector<string>::iterator it = to_replace.begin(); it != to_replace.end(); it++)
+            for(vector<string>::iterator it = to_replace.begin(); it != to_replace.end(); ++it)
               text = replaceString(text, *it, *it_replacor++);
 
             //Multi-line strings

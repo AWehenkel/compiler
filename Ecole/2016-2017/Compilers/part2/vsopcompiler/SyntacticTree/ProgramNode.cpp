@@ -21,7 +21,7 @@ void ProgramNode::addClass(ClassNode *new_class) {
 }
 
 int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
-	for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); class_it++)
+	for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); ++class_it)
 		if((*class_it)->fillClassTable(table) < 0)
 			return -1;
 	table_classes = table;

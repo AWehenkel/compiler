@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "ExpressionNode.hpp"
-#include "../TypeIdentifierNode.hpp"
 
 /*
 	Class used to represent a syntaxic node containing an empty brace expression
@@ -33,32 +32,9 @@ public :
 	TypeIdentifierNode* getType() const{return node_type;};
 
 	//Inherited
-	std::string getLiteral() const{
-		std::string literal = "(";
-		std::string s_expr = e_expr ? e_expr->getLiteral() : "";
-		return literal + s_expr + ")";
-	};
-
-	int accept(Visitor* visitor){
-		return visitor->visitBraceNode(this);
-	};
-
-	int updateType(){
-
-		string type;
-
-		TypeIdentifierNode *expr_type = e_expr->getType();
-		if (!expr_type)
-			type = expr_type->getLiteral();
-		else{
-			std::cerr << "Error in the compiler" << std::endl;
-			return -1;
-		}
-		e_type = new TypeIdentifierNode(type);
-
-		return 0;
-	};
-
+	std::string getLiteral() const;
+	int accept(Visitor* visitor){return visitor->visitBraceNode(this);};
+	int updateType();
 };
 
 #endif //BraceNode_hpp

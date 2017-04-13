@@ -25,7 +25,7 @@ void FormalsNode::insertFormal(FormalNode *formal) {
 }
 
 TypeIdentifierNode* FormalsNode::getDeclarationType(std::string id){
-	for(std::vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); formal_it++)
+	for(std::vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
 		if((*formal_it)->getName()->getLiteral() == id)
 			return (*formal_it)->getType();
 	return NULL;
