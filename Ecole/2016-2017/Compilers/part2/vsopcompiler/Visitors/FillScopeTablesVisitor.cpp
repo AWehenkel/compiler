@@ -54,5 +54,7 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
 
 int FillScopeTablesVisitor::visitCallNode(CallNode *node){
   node->setCurrentClass(current_class);
-  Visitor::visitCallNode(node);
+  if(node->getObject())
+    return node->getObject()->accept(this);
+  return 0;
 }
