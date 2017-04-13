@@ -40,56 +40,9 @@ public :
 	ExpressionNode* getOperand() const{return e_operand;};
 
 	//Inherited
-	std::string getLiteral() const{
-		return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral() + ")";
-	};
-
-	int accept(Visitor* visitor){
-		return visitor->visitUnaryOperatorNode(this);
-	};
-
-	int update(){
-		// Get the types of the two operands
-		TypeIdentifierNode* op_type = e_operand->getType();
-		if(!op_type){
-			std::cerr << "Error in the compiler" << std::endl;
-			return -1;
-		}
-		string s_op_type = op_type->getLiteral();
-
-		switch (e_op){
-			case UnaryOperator::u_op_not :
-				// Check if operand is bools and return a bool if ok
-				if (strcmp(s_op_type, "error") != 0 && strcmp(s_op_type, "bool") != 0){
-					std::cerr << "Le membre du not n'est pas un booléan dans unary" << std::endl;
-					node_type = new TypeIdentifierNode("error");
-					return -1;
-				}
-				node_type = new TypeIdentifierNode("bool");
-				break;
-			case BinaryOperator::u_op_isnull :
-				// Check if it not a basic type
-				if (strcmp(s_op_type, "bool") == 0 || strcmp(s_op_type, "int32") == 0 || strcmp(s_op_type, "string") == 0){
-					std::cerr << "Le membre du isnull n'est pas une classe dans unary" << std::endl;
-					node_type = new TypeIdentifierNode("error");
-					return -1;
-				}
-				node_type = new TypeIdentifierNode(s_op_type);
-				break;
-			case BinaryOperator::u_op_minus :
-			// Check if operand is int32 and return a bool if ok
-			if (strcmp(s_op_type, "error") != 0 && strcmp(s_op_type, "int32") != 0){
-				std::cerr << "Le membre du minus n'est pas un int dans unary" << std::endl;
-				node_type = new TypeIdentifierNode("error");
-				return -1;
-			}
-			node_type = new TypeIdentifierNode("int32");
-			break;
-				break;
-		}
-
-		return 0;
-	};
+	std::string getLiteral() const{return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral() + ")";};
+	int accept(Visitor* visitor){return visitor->visitUnaryOperatorNode(this);};
+	int update();
 };
 
 #endif //UnaryOperatorNode_hpp

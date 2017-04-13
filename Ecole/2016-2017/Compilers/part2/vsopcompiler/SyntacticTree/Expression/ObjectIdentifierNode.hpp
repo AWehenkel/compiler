@@ -26,18 +26,11 @@ public :
 
 	//Public Methods:
 	//Inherited
-	std::string getLiteral() const{
-		return e_content;
-	};
-
-	int accept(Visitor* visitor){
-		return visitor->visitObjectIdentifierNode(this);
-	};
+	std::string getLiteral() const{return e_content;};
+	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
 
 	//Setters
-	void setType(TypeIdentifierNode* node){
-		e_type = node;
-	};
+	void setType(TypeIdentifierNode* node){e_type = node;};
 
 	/*
 	equals
@@ -45,9 +38,7 @@ public :
 	IN:		id: ObjectIdentifierNode const &, the id with which compare the current id.
 	OUT: bool, true if the contents are equal.
 	*/
-	bool equals(ObjectIdentifierNode const &id) const{
-		return e_content == id.e_content;
-	}
+	bool equals(ObjectIdentifierNode const &id) const{return e_content == id.e_content;};
 };
 
 #endif //ObjectIdentifierNode_hpp

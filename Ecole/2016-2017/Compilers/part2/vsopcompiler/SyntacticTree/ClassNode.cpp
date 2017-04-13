@@ -5,12 +5,6 @@
 
 using namespace std;
 
-ClassNode::~ClassNode(){
-	delete e_name;
-	delete e_extends;
-	delete e_body;
-}
-
 string ClassNode::getLiteral() const{
 
 	string literal = "Class(" + e_name->getLiteral() + ", ";

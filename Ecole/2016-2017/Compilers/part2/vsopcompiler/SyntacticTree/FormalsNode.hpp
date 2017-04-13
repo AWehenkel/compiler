@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "FormalNode.hpp"
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing formals(arguments)
@@ -29,17 +28,8 @@ public :
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
-
-	TypeIdentifierNode* getDeclarationType(std::string id){
-		for(std::vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); formal_it++)
-			if((*formal_it)->getName()->getLiteral() == id)
-				return (*formal_it)->getType();
-		return NULL;
-	};
-
-	int accept(Visitor* visitor){
-		return visitor->visitFormalsNode(this);
-	};
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
 
 	/*
 	addFormal
@@ -63,15 +53,7 @@ public :
 	IN:		method: MethodNode const &, the method with which compare the current method.
 	OUT: bool, true if the name, the type and the arguments are equal.
 	*/
-	bool equals(FormalsNode &formals){
-		if(formals.formals.size() != this->formals.size())
-			return false;
-		for(size_t i = 0; i < formals.formals.size(); i++){
-			if(formals.formals.at(i)->getType() != this->formals.at(i)->getType())
-				return false;
-		}
-		return true;
-	}
+	bool equals(FormalsNode &formals);
 
 	//Accessors
 	std::vector<FormalNode*> getFormals() const {return formals;};

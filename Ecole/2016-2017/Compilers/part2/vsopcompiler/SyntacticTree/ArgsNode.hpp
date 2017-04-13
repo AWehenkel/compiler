@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "Expression/ExpressionNode.hpp"
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing arguments
@@ -32,10 +31,8 @@ public :
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
+	int accept(Visitor* visitor){return visitor->visitArgsNode(this);};
 
-	int accept(Visitor* visitor){
-		return visitor->visitArgsNode(this);
-	};
 	/*
 	addExpression
 	IN: expression: ExpressionNode*, the expression to add.

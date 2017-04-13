@@ -24,13 +24,8 @@ public :
 	TypeIdentifierNode* getTypeId() const{return e_type_id;};
 
 	//Inherited
-	std::string getLiteral() const{
-		return "New(" + e_type_id->getLiteral() + ")";
-	};
-
-	int accept(Visitor* visitor){
-		return visitor->visitNewNode(this);
-	};
+	std::string getLiteral() const{return "New(" + e_type_id->getLiteral() + ")";};
+	int accept(Visitor* visitor){return visitor->visitNewNode(this);};
 };
 
 #endif //NewNode_hpp

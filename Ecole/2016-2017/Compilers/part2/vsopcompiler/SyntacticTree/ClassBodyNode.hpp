@@ -3,8 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "FieldNode.hpp"
-#include "MethodNode.hpp"
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing the body of a class
@@ -36,10 +34,9 @@ public :
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
+	int accept(Visitor* visitor){return visitor->visitClassBodyNode(this);};
 
-	int accept(Visitor* visitor){
-		return visitor->visitClassBodyNode(this);
-	};
+
 	/*
 	addField
 	IN: expression: FieldNode*, the field to add.

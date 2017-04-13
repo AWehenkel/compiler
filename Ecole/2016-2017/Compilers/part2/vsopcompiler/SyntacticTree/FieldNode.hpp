@@ -2,9 +2,6 @@
 #define field_node_hpp
 
 #include <string>
-#include "Expression/ExpressionNode.hpp"
-#include "Expression/ObjectIdentifierNode.hpp"
-#include "TypeIdentifierNode.hpp"
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a field
@@ -40,34 +37,12 @@ public :
 
 	//Public methods
 	//Setter
-	void setClassScope(ClassNode* class_scope){
-		e_class_scope = class_scope;
-	};
+	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
+
 	//Inherited
 	std::string getLiteral() const;
-
-	int accept(Visitor* visitor){
-		return visitor->visitFieldNode(this);
-	};
-
-	int update(){
-
-		if (e_init_expr){
-			TypeIdentifierNode *init_expr_type = init_expr->getType();
-			if (!init_expr_type){
-				std::cerr << "Error in the compiler" << std::endl;
-				return -1;
-			}
-			string s_init_expr_type = init_expr_type->getLiteral();
-
-			if (strcmp(s_init_expr_type, "error") != 0 || *init_expr_type != *e_type){
-				std::cerr << "Pas le même type dans field" << std::endl;
-				return -1;
-			}
-		}
-
-		return 0;
-	};
+	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
+	int update();
 
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};

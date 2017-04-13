@@ -3,7 +3,6 @@
 
 #include <string>
 #include "VSOPNode.hpp"
-#include "Expression/ObjectIdentifierNode.hpp"
 #include "TypeIdentifierNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a formal argument
@@ -29,10 +28,8 @@ public :
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
+	int accept(Visitor* visitor){return visitor->visitFormalNode(this);};
 
-	int accept(Visitor* visitor){
-		return visitor->visitFormalNode(this);
-	};
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};

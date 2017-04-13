@@ -26,9 +26,8 @@ public :
 
 	//Destructors
 	~ProgramNode(){
-		for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it) {
+		for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it)
 			delete (*it);
-		}
 	};
 
 	//Public methods
@@ -44,13 +43,7 @@ public :
 	IN: std::unordered_maptable, a reference to the table to fill with the class contained in the subnode of the current node.
 	Out: -
 	*/
-	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
-		for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); class_it++)
-			if((*class_it)->fillClassTable(table) < 0)
-				return -1;
-		table_classes = table;
-		return 0;
-	};
+	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
 
 	//Accessor
 	std::vector<ClassNode*> getClasses() const {return classes;};
@@ -58,10 +51,7 @@ public :
 
 	//Inherited
 	std::string getLiteral() const;
-
-	int accept(Visitor* visitor){
-		return visitor->visitProgramNode(this);
-	};
+	int accept(Visitor* visitor);
 
 };
 

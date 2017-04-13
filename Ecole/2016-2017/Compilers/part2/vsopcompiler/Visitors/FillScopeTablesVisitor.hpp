@@ -23,6 +23,7 @@ class FillScopeTablesVisitor : public Visitor {
     int visitObjectIdentifierNode(ObjectIdentifierNode *node);
     int visitLetNode(LetNode *node);
     int visitFormalNode(FormalNode *node);
+    int visitCallNode(CallNode *node);
 };
 
 #endif //fill_scope_tables_visitor

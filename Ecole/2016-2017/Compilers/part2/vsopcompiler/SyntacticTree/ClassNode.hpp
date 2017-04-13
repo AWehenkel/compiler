@@ -55,16 +55,19 @@ public :
 	 	e_name(name), e_extends(extends), e_body(body), in_cycle(false), fields(), methods() {};
 
 	//Destructor
-	~ClassNode();
+	~ClassNode(){
+		delete e_name;
+		delete e_extends;
+		delete e_body;
+	};
 
 	//Public methods
 	//Inherited
 	std::string getLiteral() const;
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
-
 	TypeIdentifierNode* getDeclarationType(std::string id);
-
 	int accept(Visitor* visitor);
+	
 	//Accesors
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
