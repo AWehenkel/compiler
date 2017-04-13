@@ -25,7 +25,7 @@ public :
 
 	//Public Methods:
 	//Inherited
-	std::string getLiteral() const{return e_content;};
+	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
 
 	//Setters

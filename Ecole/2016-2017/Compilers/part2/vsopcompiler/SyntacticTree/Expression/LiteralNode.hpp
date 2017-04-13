@@ -23,8 +23,8 @@ public :
 
 	//Public Methods:
 	//Inherited
-	std::string getLiteral() const{return e_content;};
 	int accept(Visitor* visitor){return visitor->visitLiteralNode(this);};
+	std::string getLiteral() const;
 };
 
 #endif //LiteralNode_hpp

@@ -49,3 +49,8 @@ int UnaryOperatorNode::update(){
 }
 
 UnaryOperatorNode::~UnaryOperatorNode(){delete e_operand;}
+
+string UnaryOperatorNode::getLiteral() const{
+  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral() + ")" + type;
+}

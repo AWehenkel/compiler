@@ -53,9 +53,7 @@ public :
 	TypeIdentifierNode* getType() const{return node_type;};
 
 	//Inherited
-	std::string getLiteral() const{
-		return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral() +  ", " + e_right_operand->getLiteral() + ")";
-	};
+	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitBinaryOperatorNode(this);};
 	int update();
 };

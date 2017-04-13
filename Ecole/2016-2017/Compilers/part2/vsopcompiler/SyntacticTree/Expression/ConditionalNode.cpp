@@ -7,9 +7,10 @@
 using namespace std;
 
 string ConditionalNode::getLiteral() const{
+  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   string literal = "If(" + e_condition->getLiteral() + "," + e_action->getLiteral();
   string end = e_else_action ? "," + e_else_action->getLiteral() : "";
-  return literal + end + ")";
+  return literal + end + ")" + type;
 }
 
 int ConditionalNode::updateType(){

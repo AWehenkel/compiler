@@ -42,9 +42,10 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
 }
 
 string LetNode::getLiteral() const{
+  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   string literal = "Let(" + e_object_id->getLiteral() + ", " + e_object_type->getLiteral() + ", ";
   string end = e_init_exp ? e_init_exp->getLiteral() + ", " : "";
-  return literal + end + e_scope_exp->getLiteral() + ")";
+  return literal + end + e_scope_exp->getLiteral() + ")" + type;
 }
 
 LetNode::~LetNode(){delete e_init_exp; delete e_scope_exp;}

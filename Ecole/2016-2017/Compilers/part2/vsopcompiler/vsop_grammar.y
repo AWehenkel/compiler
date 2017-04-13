@@ -112,7 +112,7 @@ void yyerror(const char *s);
 start :
 	START_LEXICAL Input
 	| START_SYNTAX program													{cout << *$2;}
-  | START_SEMANTIC program                        {SemanticAnalyser::semanticAnalysis($2); cout << $2->getLiteralWithType();}
+  | START_SEMANTIC program                        {SemanticAnalyser::semanticAnalysis($2); cout << *$2;}
 ;
 
 Input :

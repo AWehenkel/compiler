@@ -34,7 +34,7 @@ public :
 	ExpressionNode* getAction() const{return e_action;};
 
 	//Inherited
-	std::string getLiteral() const{return "While(" + e_condition->getLiteral() + "," + e_action->getLiteral() + ")";};
+	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitWhileNode(this);};
 	int update();
 };

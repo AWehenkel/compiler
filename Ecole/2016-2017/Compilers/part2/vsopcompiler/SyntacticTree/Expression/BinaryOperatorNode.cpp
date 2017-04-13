@@ -61,3 +61,8 @@ int BinaryOperatorNode::update(){
 }
 
 BinaryOperatorNode::~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;}
+
+string BinaryOperatorNode::getLiteral() const{
+  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral() +  ", " + e_right_operand->getLiteral() + ")" + type;
+}

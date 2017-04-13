@@ -69,8 +69,9 @@ int CallNode::updateType(){
 }
 
 string CallNode::getLiteral() const{
+  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
   string obj = e_object ? e_object->getLiteral() : "self";
-  return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")";
+  return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")" + type;
 }
 
 CallNode::~CallNode(){delete e_args; delete e_object;}

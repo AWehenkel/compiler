@@ -6,6 +6,7 @@ using namespace std;
 string BlockNode::getLiteral() const {
 
 	string literal;
+	string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
 	size_t expr_size = expressions.size();
 	if (expr_size == 0)
 		//Not empty expression should be generated
@@ -22,7 +23,7 @@ string BlockNode::getLiteral() const {
 		literal += "]";
 	}
 
-	return literal;
+	return literal + type;
 }
 
 void BlockNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
