@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "ExpressionNode.hpp"z
+#include "ExpressionNode.hpp"
 /*
 	Class used to represent a syntaxic node containing an if statements
 */
@@ -36,15 +36,8 @@ public :
 	ExpressionNode* getElseAction() const{return e_else_action;};
 
 	//Inherited
-	std::string getLiteral() const{
-		std::string literal = "If(" + e_condition->getLiteral() + "," + e_action->getLiteral();
-		std::string end = e_else_action ? "," + e_else_action->getLiteral() : "";
-		return literal + end + ")";
-	};
-
-	int accept(Visitor* visitor){
-		return visitor->visitConditionalNode(this);
-	};
+	std::string getLiteral() const;
+	int accept(Visitor* visitor){return visitor->visitConditionalNode(this);};
 };
 
 #endif //ConditionalNode_hpp
