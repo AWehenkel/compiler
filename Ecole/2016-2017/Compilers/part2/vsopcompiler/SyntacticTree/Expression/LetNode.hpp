@@ -15,7 +15,7 @@ private :
 	TypeIdentifierNode* e_object_type;
 	ExpressionNode* e_init_exp;
 	ExpressionNode* e_scope_exp;
-
+	VSOPNode* e_current_scope;
 public :
 	//Constructors:
 	/*
@@ -44,6 +44,14 @@ public :
 		std::string literal = "Let(" + e_object_id->getLiteral() + ", " + e_type->getLiteral() + ", ";
 		std::string end = e_init_exp ? e_init_exp->getLiteral() + ", " : "";
 		return literal + end + e_scope_exp->getLiteral() + ")";
+	};
+
+	TypeIdentifierNode* getDeclarationType(std::string id){
+		if(e_object_id->getLiteral() == id)
+			return e_type;
+		else if(e_current_scope)
+			return e_current_scope->getDeclarationType(id);
+		return NULL;
 	};
 
 	int accept(Visitor* visitor){
@@ -76,6 +84,12 @@ public :
 
 		return 0;
 	};
+
+	//Setters
+	void setCurrentScope(VSOPNode* node){
+		e_current_scope = node;
+	}
+
 };
 
 #endif //LetNode_hpp

@@ -4,6 +4,7 @@
 #include "../SyntacticTree/ClassNode.hpp"
 #include "../SyntacticTree/MethodNode.hpp"
 #include "../SyntacticTree/FieldNode.hpp"
+#include "../SyntacticTree/Expression/LetNode.hpp"
 
 using namespace std;
 
@@ -11,17 +12,42 @@ int FillScopeTablesVisitor::visitClassNode(ClassNode *node){
   current_class = node;
   return Visitor::visitClassNode(node);
 }
+
 int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
+  current_scope = (VSOPNode*) node;
   if(!current_class || current_class->addMethod(node) < 0)
     return -5;
   node->setClassScope(current_class);
   current_method = node;
-  return Visitor::visitMethodNode(node);
+  return node->getBlock()->accept(this);
 }
+
 int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
+  current_scope = (VSOPNode*) node;
   if(!current_class || current_class->addField(node) < 0)
     return -5;
   node->setClassScope(current_class);
-  return Visitor::visitFieldNode(node);
+  return 0;
+}
+
+int FillScopeTablesVisitor::visitLetNode(LetNode *node){
+  node->setCurrentScope(current_scope);
+  current_scope = (VSOPNode*) node;
+  return Visitor::visitLetNode(node);
+}
+
+int FillScopeTablesVisitor::visitFormalNode(FormalNode *node){
+  return 0;
+}
+
+
+int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
+  TypeIdentifierNode* obj_type = current_scope->getDeclarationType(node->getLiteral());
+  if(!obj_type){
+    cerr << "erreur variable \"" << node->getLiteral() << "\"utilisée avant déclaration(line:" << node->getLine() << " col:" << node->getCol() << ")" << endl;
+    return -6;
+  }
+  node->setType(obj_type);
+  return 0;
 }
 //TODO verifier que les variables ont été déclarée dans leur scope et vérifier que les call se rapportent à un vrai truc

@@ -30,6 +30,13 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 
+	TypeIdentifierNode* getDeclarationType(std::string id){
+		for(std::vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); formal_it++)
+			if((*formal_it)->getName()->getLiteral() == id)
+				return (*formal_it)->getType();
+		return NULL;
+	};
+
 	int accept(Visitor* visitor){
 		return visitor->visitFormalsNode(this);
 	};

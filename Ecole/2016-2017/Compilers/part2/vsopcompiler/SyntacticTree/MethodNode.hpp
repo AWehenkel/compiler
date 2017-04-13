@@ -5,6 +5,7 @@
 #include "Expression/BlockNode.hpp"
 #include "FormalsNode.hpp"
 #include "VSOPNode.hpp"
+#include "ClassNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a method
 */
@@ -36,6 +37,13 @@ public :
 	int accept(Visitor* visitor){
 		return visitor->visitMethodNode(this);
 	}
+
+	TypeIdentifierNode* getDeclarationType(std::string id){
+		TypeIdentifierNode* to_ret = e_formals->getDeclarationType(id);
+		if(!to_ret)
+			to_ret = e_class_scope->getDeclarationType(id);
+		return to_ret;
+	};
 
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
