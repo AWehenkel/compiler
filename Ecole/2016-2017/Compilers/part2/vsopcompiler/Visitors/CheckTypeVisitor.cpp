@@ -95,7 +95,7 @@ int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
 }
 
 int CheckTypeVisitor::visitLetNode(LetNode *node){
-
+  current_scope = (VSOPNode*) node;
   if(Visitor::visitLetNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de let " << std::endl;
     return -1;
@@ -171,7 +171,7 @@ int CheckTypeVisitor::visitFormalNode(FormalNode *node){
 }
 
 int CheckTypeVisitor::visitMethodNode(MethodNode *node){
-
+  current_scope = (VSOPNode*) node;
   if(Visitor::visitMethodNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de method " << std::endl;
     return -1;

@@ -8,6 +8,8 @@ This class is a subclass of the Visitor.
 Its purpose is to find any type errors.
 */
 class CheckTypeVisitor : public Visitor {
+  private :
+    VSOPNode* current_scope;
   public :
     int visitAssignNode(AssignNode *node);
     int visitBinaryOperatorNode(BinaryOperatorNode *node);

@@ -45,11 +45,7 @@ public :
 		return visitor->visitCallNode(this);
 	};
 
-	int updateType(){
-
-		
-
-	}
+	int updateType();
 };
 
 #endif //CallNode_hpp
