@@ -5,6 +5,7 @@
 #include "../ArgsNode.hpp"
 #include "ExpressionNode.hpp"
 #include "ObjectIdentifierNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing a call to a method
 */

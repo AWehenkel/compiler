@@ -3,10 +3,13 @@
 
 #include <string>
 #include "../VSOPNode.hpp"
+#include "../TypeIdentifierNode"
 /*
 	Parent class of any node representing an expression.
 */
 class ExpressionNode : public VSOPNode {
+protected :
+	TypeIdentifierNode* node_type;
 public :
 	//Constructors
 	/*
@@ -21,6 +24,8 @@ public :
 	virtual std::string getLiteral() const = 0;
 
 	virtual int accept(Visitor* visitor) = 0;
+
+	virtual int getType(){return node_type;}
 };
 
 #endif //expression_node_hpp

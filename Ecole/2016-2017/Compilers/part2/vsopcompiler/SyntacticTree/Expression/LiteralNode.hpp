@@ -17,8 +17,8 @@ public :
 			col: 			int, the column where the node is present.
 			line:			int, the line where the node is present.
 	*/
-	LiteralNode(std::string content, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(content){};
-	LiteralNode(int content, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(std::to_string(content)){};
+	LiteralNode(std::string content, std::string type, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(content), node_type(type){};
+	LiteralNode(int content, std::string type, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(std::to_string(content)), node_type(type){};
 
 	//Public Methods:
 	//Inherited

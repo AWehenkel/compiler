@@ -4,6 +4,8 @@
 #include <string>
 #include <cstring>
 #include "ExpressionNode.hpp"
+#include "ObjectIdentifierNode.hpp"
+#include "../TypeIdentifierNode.hpp"
 /*
 	Class used to represent a syntaxic node containing an assignment
 */
@@ -11,7 +13,6 @@ class AssignNode : public ExpressionNode {
 private :
 	ObjectIdentifierNode* e_name;
 	ExpressionNode* e_expr;
-	TypeIdentifierNode* e_type;
 public :
 	//Constructors:
 	/*
@@ -37,10 +38,6 @@ public :
 		return e_expr;
 	};
 
-	TypeIdentifierNode* getType() const{
-		return e_type;
-	}
-
 	//Inherited
 	std::string getLiteral() const{return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")";};
 
@@ -48,6 +45,27 @@ public :
 		return visitor->visitAssignNode(this);
 	};
 
+	int updateType(){
+
+		// Get types
+		TypeIdentifierNode *name_type = e_name->getType();
+		TypeIdentifierNode *expr_type = e_expr->getType();
+		if(!e_name || !e_expr)
+			std::cerr << "Error in the compiler" << std::endl;
+
+		/* It there was a type error in the son e_expr or if the two types are the
+		* same, assign the type of e_name to node_type and stop the propagation of
+		* errors */
+		if (!strcmp(expr_type->getLiteral(), "error") || *name_type == *expr_type)){
+			node_type = new TypeIdentifierNode(name_type->getLiteral());
+			return 0;
+		}
+
+		// If the two types were different, assign "error" to e_name and return -1
+		node_type = new TypeIdentifierNode("error");
+		std::cerr << "!! Les deux types sont différents dans assign" << std::endl;
+		return -1;
+	};
 };
 
 #endif //AssignNode_hpp

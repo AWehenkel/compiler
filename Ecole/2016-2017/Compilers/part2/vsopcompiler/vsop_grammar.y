@@ -277,14 +277,14 @@ comma-arg :
 ;
 
 literal :
-	T_INT_LIT									{$$ = new LiteralNode($1, yylloc.first_column, yylloc.first_line);}
-	| T_STRING_LIT						{string tmp = $1; free $1; $$ = new LiteralNode(tmp, yylloc.first_column, yylloc.first_line);}
+	T_INT_LIT									{$$ = new LiteralNode($1, "int32", yylloc.first_column, yylloc.first_line);}
+	| T_STRING_LIT						{string tmp = $1; free $1; $$ = new LiteralNode(tmp, "string", yylloc.first_column, yylloc.first_line);}
 	| boolean-literal					{$$ = $1;}
 ;
 
 boolean-literal :
-	T_TRUE							{$$ = new LiteralNode("true", yylloc.first_column, yylloc.first_line);}
-	| T_FALSE						{$$ = new LiteralNode("false", yylloc.first_column, yylloc.first_line);}
+	T_TRUE							{$$ = new LiteralNode("true", "bool", yylloc.first_column, yylloc.first_line);}
+	| T_FALSE						{$$ = new LiteralNode("false", "bool", yylloc.first_column, yylloc.first_line);}
 ;
 
 %%
