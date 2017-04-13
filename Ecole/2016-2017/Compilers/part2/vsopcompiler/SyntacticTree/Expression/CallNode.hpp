@@ -44,6 +44,12 @@ public :
 	int accept(Visitor* visitor){
 		return visitor->visitCallNode(this);
 	};
+
+	int updateType(){
+
+		
+
+	}
 };
 
 #endif //CallNode_hpp

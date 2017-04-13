@@ -67,7 +67,7 @@ public :
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	int accept(Visitor* visitor);
-	
+
 	//Accesors
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
@@ -112,6 +112,7 @@ public :
 	OUT: -
 	*/
 	int setParent(std::unordered_map<std::string, ClassNode*> &table);
+
 	/*
 	inCycle
 	ROLE: This function is used to know if there are cyclic inheritance.
@@ -119,6 +120,14 @@ public :
 	OUT: bool, true if the class is in a inheritance cycle
 	*/
 	bool inCycle();
+
+	/*
+	getCommonParent
+	ROLE : This function finds the common ancestor to two classes
+	IN : other, pointers to classes
+  OUT : A pointer to the common ancestor type, null if no common ancestor
+	*/
+	TypeIdentifierNode* getCommonParent(ClassNode *other);
 };
 
 #endif //class_node_hpp

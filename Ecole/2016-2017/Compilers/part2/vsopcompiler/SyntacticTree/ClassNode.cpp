@@ -128,3 +128,21 @@ bool ClassNode::inCycle(){
 	}
 	return in_cycle;
 }
+
+TypeIdentifierNode* getCommonParent(ClassNode *other){
+
+	TypeIdentifierNode* common_parent =  NULL;
+
+	// Check if there is a direct parent linkage
+	TypeIdentifierNode* other_type = other->getName();
+	if (*other_type == *e_name)
+		common_parent = e_name;
+
+	if (!common_parent && parent)
+		common_parent = parent->getCommonParent(other);
+
+	if(!common_parent && other->parent)
+		common_parent = other->parent->getCommonParent(this);
+
+	return common_parent;
+}

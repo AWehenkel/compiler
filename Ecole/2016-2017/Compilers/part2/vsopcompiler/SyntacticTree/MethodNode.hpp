@@ -1,6 +1,7 @@
 #ifndef method_node_hpp
 #define method_node_hpp
 
+#include <cstring>
 #include <string>
 #include "Expression/BlockNode.hpp"
 #include "FormalsNode.hpp"
@@ -44,6 +45,24 @@ public :
 			to_ret = e_class_scope->getDeclarationType(id);
 		return to_ret;
 	};
+
+	int updateType(){
+
+		// Get block type
+		TypeIdentifierNode *block_type = e_block->getType();
+		if (!block_type){
+			std::cerr << "Error in the compiler" << std::endl;
+			return -1;
+		}
+
+		// Check if the types are the same
+		if (strcmp(block_type->getLiteral(), "error") != 0 && *block_type != *e_ret_type){
+			std::cerr << "Pas le même type dans méthode" << std::endl;
+			return -1;
+		}
+
+		return 0;
+	}
 
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};

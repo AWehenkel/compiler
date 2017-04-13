@@ -35,6 +35,9 @@ public :
 		t_class_type = class_type;
 	};
 
+	// getters
+	ClassNode* getClassType(){return t_class_type;}
+
 	/*
 	equals
 	ROLE: Compare an id to determine whether or not it is equal to this id.
