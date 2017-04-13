@@ -43,8 +43,12 @@ int FillScopeTablesVisitor::visitFormalNode(FormalNode *node){
 }
 
 int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
+  if(node->getLiteral() == "self"){
+    node->setType(current_class->getName());
+    return 0;
+  }
   TypeIdentifierNode* obj_type = current_scope->getDeclarationType(node->getLiteral());
-  if(!obj_type && node->getLiteral() != "self"){
+  if(!obj_type){
     cerr << "erreur variable \"" << node->getLiteral() << "\" utilisée avant déclaration(line:" << node->getLine() << " col:" << node->getCol() << ")" << endl;
     return -6;
   }
