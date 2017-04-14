@@ -25,7 +25,7 @@ public :
 			col: 					int, the column where the node is present.
 			line:					int, the line where the node is present.
 	*/
-	CallNode(ObjectIdentifierNode* method_name, ArgsNode* args, ExpressionNode* object = NULL, int col = 0, int line = 0) : ExpressionNode(col, line), e_object(object), e_args(args), e_method_name(method_name){};
+	CallNode(ObjectIdentifierNode* method_name, ArgsNode* args, ExpressionNode* object = NULL, int col = 0, int line = 0) : ExpressionNode(col, line), e_object(object), e_args(args), e_method_name(method_name), current_class(NULL){};
 
 	//Destructor:
 	~CallNode();

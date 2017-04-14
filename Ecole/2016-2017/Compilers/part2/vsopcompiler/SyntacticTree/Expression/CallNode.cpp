@@ -74,12 +74,21 @@ string CallNode::getLiteral() const{
     cout << "ok class type"  << endl;
     if(e_object->getType()->getClassType()->getExtends())
       cout << "extends aussi" << endl;
-    if(node_type && node_type->getClassType() && e_method_name->getLiteral() == "print")
-      cout << node_type->getClassType()->getLiteral() << endl;
+    if(node_type && node_type->getClassType() && e_method_name->getLiteral() == "print"){
+      cout << "ici ok" << endl;
+      cout << node_type->getLiteral() << endl;
+    }
+    cout << "ok2" << endl;
   }
 
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getClassType()->getLiteral() : "";
+  cout << "ok1" << endl;
   string obj = e_object ? e_object->getLiteral() : "self";
+  cout << "ok2" << endl;
+  if(e_method_name)
+    cout << "e_method ok : " << e_method_name->getLiteral() << endl;
+  if(e_args)
+    cout << "e_args ok" << e_args->getLiteral() << endl;
   return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")" + type;
 }
 

@@ -16,7 +16,7 @@ public :
 	IN:	col: 					int, the column where the node is present.
 			line:					int, the line where the node is present.
 	*/
-	ExpressionNode(int col = 0, int line = 0) : VSOPNode(col, line){};
+	ExpressionNode(int col = 0, int line = 0) : VSOPNode(col, line), node_type(NULL){};
 	ExpressionNode(std::string type, int col = 0, int line = 0);
 	ExpressionNode(TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), node_type(type){};
 	//Public method
