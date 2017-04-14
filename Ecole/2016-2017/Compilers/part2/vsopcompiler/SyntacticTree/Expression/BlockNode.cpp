@@ -9,7 +9,7 @@ string BlockNode::getLiteral() const {
 	string type = node_type ? " : " + node_type->getLiteral() : "";
 	size_t expr_size = expressions.size();
 	if (expr_size == 0)
-		//Not empty expression should be generated
+		//No empty expression should be generated
 		return "";
 	else if(expr_size == 1)
 		literal += (*(expressions.begin()))->getLiteral();
@@ -23,7 +23,7 @@ string BlockNode::getLiteral() const {
 		literal += "]";
 	}
 
-	return literal + type;
+	return "Block(" + literal + type + ")";
 }
 
 void BlockNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
