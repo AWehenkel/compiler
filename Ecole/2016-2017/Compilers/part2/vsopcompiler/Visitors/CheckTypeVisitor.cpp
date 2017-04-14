@@ -25,6 +25,7 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
     return -1;
   }
 
+  std::cout << "BinaryOperatorNode visitor" << std::endl;
   if (node->updateType() < 0){
     std::cerr << "Erreur dans le type de binary " << std::endl;
     return -1;

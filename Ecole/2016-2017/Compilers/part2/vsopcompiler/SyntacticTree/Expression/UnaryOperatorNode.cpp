@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int UnaryOperatorNode::update(){
+int UnaryOperatorNode::updateType(){
   // Get the types of the two operands
   TypeIdentifierNode* op_type = e_operand->getType();
   if(!op_type){

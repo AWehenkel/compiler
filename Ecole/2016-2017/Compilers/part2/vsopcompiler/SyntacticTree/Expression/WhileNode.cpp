@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int WhileNode::update(){
+int WhileNode::updateType(){
 
   // Check if the condition is a bool
   TypeIdentifierNode *condition_type = e_condition->getType();

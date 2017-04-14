@@ -36,9 +36,12 @@ int BlockNode::updateType(){
 
 	cout << "number of expressions in block" << endl;
 	cout << expressions.size() << endl;
-	for (vector<ExpressionNode*>::const_iterator it = expressions.begin(); it != expressions.end(); ++it){
+	for (vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it){
 		ExpressionNode *expr = *it;
-		cout << "expression type is ";
+		cout << "expression type is " << endl;
+		if (!expr->getType()){
+			cout << "bizarre" << endl;
+		}
 		cout << expr->getType()->getLiteral() << endl;
 	}
 	ExpressionNode *last_expr = *(expressions.end()-1);

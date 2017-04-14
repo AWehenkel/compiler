@@ -19,6 +19,10 @@ public :
 	ExpressionNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 	ExpressionNode(std::string type, int col = 0, int line = 0);
 	ExpressionNode(TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), node_type(type){};
+
+	//Destructor
+	//~ExpressionNode();
+
 	//Public method
 	//Inherited
 	virtual std::string getLiteral() const = 0;

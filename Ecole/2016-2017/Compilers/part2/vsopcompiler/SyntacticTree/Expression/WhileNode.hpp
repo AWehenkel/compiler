@@ -36,7 +36,7 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitWhileNode(this);};
-	int update();
+	int updateType();
 };
 
 #endif //ConditionalNode_hpp

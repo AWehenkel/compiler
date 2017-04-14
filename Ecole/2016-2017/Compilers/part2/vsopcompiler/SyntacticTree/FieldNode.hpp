@@ -42,7 +42,7 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
-	int update();
+	int updateType();
 
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};

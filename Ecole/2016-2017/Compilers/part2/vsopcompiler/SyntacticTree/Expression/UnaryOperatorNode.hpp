@@ -42,7 +42,7 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitUnaryOperatorNode(this);};
-	int update();
+	int updateType();
 };
 
 #endif //UnaryOperatorNode_hpp

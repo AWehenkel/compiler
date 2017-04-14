@@ -55,7 +55,7 @@ public :
 	//Inherited
 	std::string getLiteral() const;
 	int accept(Visitor* visitor){return visitor->visitBinaryOperatorNode(this);};
-	int update();
+	int updateType();
 };
 
 #endif //BinaryOperatorNode_hpp

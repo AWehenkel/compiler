@@ -16,7 +16,7 @@ string FieldNode::getLiteral() const {
 	return literal;
 }
 
-int FieldNode::update(){
+int FieldNode::updateType(){
 
 	if (e_init_expr){
 		TypeIdentifierNode *init_expr_type = e_init_expr->getType();
