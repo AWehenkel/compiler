@@ -5,7 +5,6 @@
 using namespace std;
 
 string ClassBodyNode::getLiteral(bool with_type) const{
-
 	//Print fields
 	string literal = "[";
 	for (vector<FieldNode*>::const_iterator it = fields.begin(); it != fields.end(); ++it) {

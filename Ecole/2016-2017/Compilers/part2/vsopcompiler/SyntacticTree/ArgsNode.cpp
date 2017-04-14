@@ -4,7 +4,6 @@
 using namespace std;
 
 string ArgsNode::getLiteral(bool with_type) const {
-
 	string literal;
 	literal += "[";
 	for (vector<ExpressionNode*>::const_iterator it = expressions.begin(); it != expressions.end(); ++it) {

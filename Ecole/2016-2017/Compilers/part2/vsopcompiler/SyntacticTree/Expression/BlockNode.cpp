@@ -4,7 +4,6 @@
 using namespace std;
 
 string BlockNode::getLiteral(bool with_type) const {
-
 	string literal;
 	string type = "";
 	if(with_type)

@@ -6,7 +6,6 @@
 using namespace std;
 
 string FormalsNode::getLiteral(bool with_type) const {
-
 	string literal = "[";
 	for (vector<FormalNode*>::const_iterator it = formals.begin(); it < formals.end(); ++it) {
 		literal += (*it)->getLiteral(with_type);

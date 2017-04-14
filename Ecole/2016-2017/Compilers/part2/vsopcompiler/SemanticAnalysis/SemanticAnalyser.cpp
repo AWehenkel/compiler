@@ -7,7 +7,7 @@
 using namespace std;
 
 ProgramNode* SemanticAnalyser::semanticAnalysis(ProgramNode* program){
-  cout << classPass(program) << endl;
+  classPass(program);
   return program;
 }
 

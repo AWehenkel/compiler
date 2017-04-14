@@ -8,7 +8,6 @@
 using namespace std;
 
 string MethodNode::getLiteral(bool with_type) const {
-
 	return "Method(" + e_name->getLiteral(with_type) + ", " + e_formals->getLiteral(with_type) + ", " + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
 }
 

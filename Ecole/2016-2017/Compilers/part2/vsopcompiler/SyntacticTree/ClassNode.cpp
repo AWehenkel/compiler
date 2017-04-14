@@ -8,7 +8,6 @@
 using namespace std;
 
 string ClassNode::getLiteral(bool with_type) const{
-
 	string literal = "Class(" + e_name->getLiteral(with_type) + ", ";
 	if(e_extends == NULL)
 		literal += "Object, ";
