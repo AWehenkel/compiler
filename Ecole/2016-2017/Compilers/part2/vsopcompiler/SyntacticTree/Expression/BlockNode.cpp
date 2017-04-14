@@ -5,9 +5,8 @@ using namespace std;
 
 string BlockNode::getLiteral() const {
 
-	cout << "block" << endl;
 	string literal;
-	string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+	string type = node_type ? " : " + node_type->getLiteral() : "";
 	size_t expr_size = expressions.size();
 	if (expr_size == 0)
 		//Not empty expression should be generated
@@ -35,13 +34,20 @@ int BlockNode::updateType(){
 
 	string type;
 
+	cout << "number of expressions in block" << endl;
+	cout << expressions.size() << endl;
+	for (vector<ExpressionNode*>::const_iterator it = expressions.begin(); it != expressions.end(); ++it){
+		ExpressionNode *expr = *it;
+		cout << "expression type is ";
+		cout << expr->getType()->getLiteral() << endl;
+	}
 	ExpressionNode *last_expr = *(expressions.end()-1);
 	TypeIdentifierNode *expr_type = last_expr->getType();
-	if (!expr_type)
-		type = expr_type->getLiteral();
-	else{
-		cerr << "Error in the compiler" << endl;
+	if (!expr_type){
+		cerr << "Error in the compiler in BlockNode : expr_type is null" << endl;
 		return -1;
+	}else{
+		type = expr_type->getLiteral();
 	}
 	// Put the type of the last instruction, even if it was an error.
 	node_type = new TypeIdentifierNode(type);

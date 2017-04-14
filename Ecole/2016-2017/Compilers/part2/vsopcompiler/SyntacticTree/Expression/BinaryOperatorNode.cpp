@@ -11,7 +11,7 @@ int BinaryOperatorNode::update(){
   TypeIdentifierNode* left_type = e_left_operand->getType();
   TypeIdentifierNode* right_type = e_right_operand->getType();
   if(!left_type || !right_type){
-    cerr << "Error in the compiler" << endl;
+    cerr << "Error in the compiler in BinaryOperatorNode : left_type or right_type is null" << endl;
     return -1;
   }
   string s_left_type = left_type->getLiteral();
@@ -63,7 +63,6 @@ int BinaryOperatorNode::update(){
 BinaryOperatorNode::~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;}
 
 string BinaryOperatorNode::getLiteral() const{
-  cout << "bin" << endl;
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
   return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral() +  ", " + e_right_operand->getLiteral() + ")" + type;
 }

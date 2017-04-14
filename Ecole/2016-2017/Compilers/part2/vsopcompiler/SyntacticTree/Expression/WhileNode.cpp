@@ -10,7 +10,7 @@ int WhileNode::update(){
   // Check if the condition is a bool
   TypeIdentifierNode *condition_type = e_condition->getType();
   if (!condition_type){
-    cerr << "Error in the compiler" << endl;
+    cerr << "Error in the compiler in WhileNode : condition_type is null" << endl;
     return -1;
   }
   string s_condition_type = condition_type->getLiteral();
@@ -31,7 +31,6 @@ WhileNode::~WhileNode(){
 }
 
 string WhileNode::getLiteral() const{
-  cout << "while" << endl;
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
   return "While(" + e_condition->getLiteral() + "," + e_action->getLiteral() + ")" + type;
 };

@@ -11,7 +11,7 @@ int LetNode::updateType(){
   if (e_init_exp){
     TypeIdentifierNode *init_expr_type = e_init_exp->getType();
     if (!init_expr_type){
-      cerr << "Error int the compiler" << endl;
+      cerr << "Error int the compiler in LetNode : init_expr_type is null" << endl;
       return -1;
     }
 
@@ -25,7 +25,7 @@ int LetNode::updateType(){
 
   TypeIdentifierNode *scope_expr_type = e_scope_exp->getType();
   if (!scope_expr_type){
-    cerr << "Error int the compiler" << endl;
+    cerr << "Error int the compiler in LetNode : scope_expr_type null" << endl;
     return -1;
   }
   node_type = new TypeIdentifierNode(scope_expr_type->getLiteral());
@@ -42,8 +42,7 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
 }
 
 string LetNode::getLiteral() const{
-  cout << "let" << endl;
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
   string literal = "Let(" + e_object_id->getLiteral() + ", " + e_object_type->getLiteral() + ", ";
   string end = e_init_exp ? e_init_exp->getLiteral() + ", " : "";
   return literal + end + e_scope_exp->getLiteral() + ")" + type;

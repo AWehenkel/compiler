@@ -34,5 +34,9 @@ int SemanticAnalyser::classPass(ProgramNode* program){
   if (program->accept(visitor1) < 0)
     return -5;
 
+  FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
+  if (program->accept(visitor1) < 0)
+    return -5;
+
   return 0;
 }

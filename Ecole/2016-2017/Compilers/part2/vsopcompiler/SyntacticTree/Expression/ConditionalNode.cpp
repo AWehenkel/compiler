@@ -7,8 +7,7 @@
 using namespace std;
 
 string ConditionalNode::getLiteral() const{
-  cout << "condition" << endl;
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
   string literal = "If(" + e_condition->getLiteral() + "," + e_action->getLiteral();
   string end = e_else_action ? "," + e_else_action->getLiteral() : "";
   return literal + end + ")" + type;
@@ -19,7 +18,7 @@ int ConditionalNode::updateType(){
   // Check if the condition is of type bool
   TypeIdentifierNode *condition_type = e_condition->getType();
   if (!condition_type){
-    cerr << "Error in the compiler" << endl;
+    cerr << "Error in the compiler in ConditionalNode : condition_type is null" << endl;
     return -1;
   }
   string s_condition_type = condition_type->getLiteral();
@@ -39,7 +38,7 @@ int ConditionalNode::updateType(){
     else_type = new TypeIdentifierNode("unit");
 
   if(!then_type || !else_type){
-    cerr << "Error in the compiler" << endl;
+    cerr << "Error in the compiler in ConditionalNode : then_type or else_type null" << endl;
     return -1;
   }
   string s_then_type = then_type->getLiteral();
