@@ -17,7 +17,7 @@ int CallNode::updateType(){
     object_type = e_object->getType();
 
   if (!object_type){
-    cerr << "Error in the compiler" << endl;
+    cerr << "Error in the compiler in CallNode : object_type is null" << endl;
     return -1;
   }
 
@@ -51,7 +51,7 @@ int CallNode::updateType(){
     TypeIdentifierNode* formal_type = formal->getType();
     TypeIdentifierNode* arg_type = arg->getType();
     if (!formal_type || !arg_type){
-      cerr << "Error in the compiler" << endl;
+      cerr << "Error in the compiler in CallNode : formal_type or arg_type is null" << endl;
       return -1;
     }
     if(arg_type->getLiteral() == "error" != 0 && *arg_type != *formal_type){
@@ -62,25 +62,24 @@ int CallNode::updateType(){
     ++it;
   }
 
-  node_type = method->getRetType();
+  cout << "return type" << endl;
+  cout << method->getRetType()->getLiteral() << endl;
+  node_type = new TypeIdentifierNode(method->getRetType()->getLiteral());
+
 
   return 0;
 
 }
 
 string CallNode::getLiteral() const{
-  cout << "call" << " " << e_method_name->getLiteral() << " nom de la var " << e_object->getLiteral() << " type var " << e_object->getType()->getLiteral() <<  endl;
-  if(e_object->getType()->getClassType()){
-    cout << "ok class type"  << endl;
-    if(e_object->getType()->getClassType()->getExtends())
-      cout << "extends aussi" << endl;
-    if(node_type && node_type->getClassType() && e_method_name->getLiteral() == "print")
-      cout << node_type->getClassType()->getLiteral() << endl;
-  }
+  cout << "Object name" << endl;
+  cout << e_object->getLiteral() << endl;
 
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
-  string obj = e_object ? e_object->getLiteral() : "self";
-  return "Call(" + obj + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")" + type;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
+  cout << "Call type" << endl;
+  cout << type << endl;
+  //string obj = e_object ? e_object->getLiteral() : "self";
+  return "Call(" + e_object->getLiteral() + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")" + type;
 }
 
 CallNode::~CallNode(){delete e_args; delete e_object;}

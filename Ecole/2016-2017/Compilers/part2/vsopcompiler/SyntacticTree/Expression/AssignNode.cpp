@@ -11,8 +11,8 @@ int AssignNode::updateType(){
   // Get types
   TypeIdentifierNode *name_type = e_name->getType();
   TypeIdentifierNode *expr_type = e_expr->getType();
-  if(!e_name || !e_expr)
-    cerr << "Error in the compiler" << endl;
+  if(!name_type || !expr_type)
+    cerr << "Error in the compiler in AssignNode : name_type or expr_type is null" << endl;
 
   /* It there was a type error in the son e_expr or if the two types are the
   * same, assign the type of e_name to node_type and stop the propagation of
@@ -29,8 +29,7 @@ int AssignNode::updateType(){
 }
 
 string AssignNode::getLiteral() const{
-  cout << "assign" << endl;
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
   return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")" + type;
 }
 

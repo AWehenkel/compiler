@@ -9,7 +9,7 @@ int UnaryOperatorNode::update(){
   // Get the types of the two operands
   TypeIdentifierNode* op_type = e_operand->getType();
   if(!op_type){
-    cerr << "Error in the compiler" << endl;
+    cerr << "Error in the compiler in UnaryOperatorNode : op_type is null" << endl;
     return -1;
   }
   string s_op_type = op_type->getLiteral();
@@ -51,7 +51,6 @@ int UnaryOperatorNode::update(){
 UnaryOperatorNode::~UnaryOperatorNode(){delete e_operand;}
 
 string UnaryOperatorNode::getLiteral() const{
-  cout << "un" << endl;
-  string type = node_type ? " : " + node_type->getLiteral() : ""; if(node_type) cout << node_type->getLiteral() << endl;
+  string type = node_type ? " : " + node_type->getLiteral() : "";
   return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral() + ")" + type;
 }
