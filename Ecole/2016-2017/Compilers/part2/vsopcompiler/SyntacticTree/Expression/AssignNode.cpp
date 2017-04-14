@@ -30,7 +30,7 @@ int AssignNode::updateType(){
 
 string AssignNode::getLiteral() const{
   string type = node_type ? " : " + node_type->getLiteral() : "";
-  return "Assign(" + e_name->getLiteral() + ", " + e_expr->getLiteral() + ")" + type;
+  return "Assign(" + e_name->getLiteralWithoutType() + ", " + e_expr->getLiteral() + ")" + type;
 }
 
 AssignNode::~AssignNode(){delete e_name; delete e_expr;};

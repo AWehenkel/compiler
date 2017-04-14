@@ -53,6 +53,8 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
     return -6;
   }
   node->setType(obj_type);
+  cout << node->getLiteral() << endl;
+
   return 0;
 }
 
@@ -61,5 +63,7 @@ int FillScopeTablesVisitor::visitCallNode(CallNode *node){
   if(node->getObject())
     return node->getObject()->accept(this);
   node->setObject(new ObjectIdentifierNode("self"));
+  if(node->getArgs()->accept(this) < 0)
+    return -1;
   return node->getObject()->accept(this);
 }

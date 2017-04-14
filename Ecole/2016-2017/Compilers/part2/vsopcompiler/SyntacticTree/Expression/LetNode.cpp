@@ -43,7 +43,7 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
 
 string LetNode::getLiteral() const{
   string type = node_type ? " : " + node_type->getLiteral() : "";
-  string literal = "Let(" + e_object_id->getLiteral() + ", " + e_object_type->getLiteral() + ", ";
+  string literal = "Let(" + e_object_id->getLiteralWithoutType() + ", " + e_object_type->getLiteral() + ", ";
   string end = e_init_exp ? e_init_exp->getLiteral() + ", " : "";
   return literal + end + e_scope_exp->getLiteral() + ")" + type;
 }

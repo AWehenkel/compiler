@@ -22,10 +22,10 @@ class Cons extends List {
 
 class Main extends IO {
   main() : int32 {
-    let xs : List <- (new Cons).init(0, (new Cons).init(1, (new Cons).init(2, new Nil))) in {
-      print("List has length ");
-      printInt32(xs.length());
-      print("\n");
+    let xs : List in {
+      self.print("List has length ");
+      self.printInt32(xs.length());
+      self.print("\n");
       0
     }
   }

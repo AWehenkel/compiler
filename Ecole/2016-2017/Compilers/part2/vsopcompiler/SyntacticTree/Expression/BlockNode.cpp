@@ -20,10 +20,9 @@ string BlockNode::getLiteral() const {
 			if (it+1 != expressions.end())
 				literal += ", ";
 		}
-		literal += "]";
+		literal += "]" + type;
 	}
-
-	return "Block(" + literal + type + ")";
+	return  literal;
 }
 
 void BlockNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
