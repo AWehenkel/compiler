@@ -38,7 +38,7 @@ public :
 	ExpressionNode* getElseAction() const{return e_else_action;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitConditionalNode(this);};
 	int updateType();
 };

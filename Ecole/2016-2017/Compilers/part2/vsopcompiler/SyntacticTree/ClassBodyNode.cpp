@@ -4,12 +4,12 @@
 
 using namespace std;
 
-string ClassBodyNode::getLiteral() const{
+string ClassBodyNode::getLiteral(bool with_type) const{
 
 	//Print fields
 	string literal = "[";
 	for (vector<FieldNode*>::const_iterator it = fields.begin(); it != fields.end(); ++it) {
-		literal += (*it)->getLiteral();
+		literal += (*it)->getLiteral(with_type);
 		if (it+1 != fields.end())
 			literal += ",\n";
 	}
@@ -18,7 +18,7 @@ string ClassBodyNode::getLiteral() const{
 	//Print methods
 	literal += "[";
 	for (vector<MethodNode*>::const_iterator it = methods.begin(); it != methods.end(); ++it) {
-		literal += (*it)->getLiteral();
+		literal += (*it)->getLiteral(with_type);
 		if (it+1 != methods.end())
 			literal += ",\n";
 	}

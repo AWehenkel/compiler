@@ -17,7 +17,7 @@ int AssignNode::updateType(){
   /* It there was a type error in the son e_expr or if the two types are the
   * same, assign the type of e_name to node_type and stop the propagation of
   * errors */
-  if (!strcmp(expr_type->getLiteral().c_str(), "error") || *name_type == *expr_type){
+  if (expr_type->getLiteral() == "error" || *name_type == *expr_type){
     node_type = new TypeIdentifierNode(name_type->getLiteral());
     return 0;
   }
@@ -28,9 +28,11 @@ int AssignNode::updateType(){
   return -1;
 }
 
-string AssignNode::getLiteral() const{
-  string type = node_type ? " : " + node_type->getLiteral() : "";
-  return "Assign(" + e_name->getLiteralWithoutType() + ", " + e_expr->getLiteral() + ")" + type;
+string AssignNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+  return "Assign(" + e_name->getLiteral(with_type) + ", " + e_expr->getLiteral(with_type) + ")" + type;
 }
 
 AssignNode::~AssignNode(){delete e_name; delete e_expr;};

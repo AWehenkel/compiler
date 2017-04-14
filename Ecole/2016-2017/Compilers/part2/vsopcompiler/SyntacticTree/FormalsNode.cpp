@@ -5,11 +5,11 @@
 
 using namespace std;
 
-string FormalsNode::getLiteral() const {
+string FormalsNode::getLiteral(bool with_type) const {
 
 	string literal = "[";
 	for (vector<FormalNode*>::const_iterator it = formals.begin(); it < formals.end(); ++it) {
-		literal += (*it)->getLiteral();
+		literal += (*it)->getLiteral(with_type);
 		if (it+1 != formals.end())
 			literal += ", ";
 	}

@@ -38,7 +38,7 @@ public :
 	ExpressionNode* getScopeExp() const{return e_scope_exp;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	int accept(Visitor* visitor){return visitor->visitLetNode(this);};
 	int updateType();

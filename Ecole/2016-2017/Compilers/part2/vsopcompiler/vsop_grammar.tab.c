@@ -1566,7 +1566,7 @@ yyreduce:
 
   case 4:
 #line 115 "vsop_grammar.y" /* yacc.c:1646  */
-    {SemanticAnalyser::semanticAnalysis((yyvsp[0].program_node)); cout << *(yyvsp[0].program_node);}
+    {SemanticAnalyser::semanticAnalysis((yyvsp[0].program_node)); cout << (yyvsp[0].program_node)->getLiteral(true);}
 #line 1570 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 

@@ -6,11 +6,11 @@
 
 using namespace std;
 
-string FieldNode::getLiteral() const {
+string FieldNode::getLiteral(bool with_type) const {
 
-	string literal = "Field(" + e_name->getLiteral() + ", " + e_type->getLiteral();
+	string literal = "Field(" + e_name->getLiteral(with_type) + ", " + e_type->getLiteral(with_type);
 	if(e_init_expr)
-		literal += ", " + e_init_expr->getLiteral();
+		literal += ", " + e_init_expr->getLiteral(with_type);
 	literal += ")";
 
 	return literal;

@@ -40,7 +40,7 @@ public :
 	ExpressionNode* getOperand() const{return e_operand;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitUnaryOperatorNode(this);};
 	int updateType();
 };

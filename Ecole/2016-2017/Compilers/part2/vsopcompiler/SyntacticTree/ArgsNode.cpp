@@ -3,12 +3,12 @@
 
 using namespace std;
 
-string ArgsNode::getLiteral() const {
+string ArgsNode::getLiteral(bool with_type) const {
 
 	string literal;
 	literal += "[";
 	for (vector<ExpressionNode*>::const_iterator it = expressions.begin(); it != expressions.end(); ++it) {
-		literal += (*it)->getLiteral();
+		literal += (*it)->getLiteral(with_type);
 		if (it+1 != expressions.end())
 			literal += ", ";
 	}

@@ -41,11 +41,13 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
   return NULL;
 }
 
-string LetNode::getLiteral() const{
-  string type = node_type ? " : " + node_type->getLiteral() : "";
-  string literal = "Let(" + e_object_id->getLiteralWithoutType() + ", " + e_object_type->getLiteral() + ", ";
-  string end = e_init_exp ? e_init_exp->getLiteral() + ", " : "";
-  return literal + end + e_scope_exp->getLiteral() + ")" + type;
+string LetNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+  string literal = "Let(" + e_object_id->getLiteral(with_type) + ", " + e_object_type->getLiteral(with_type) + ", ";
+  string end = e_init_exp ? e_init_exp->getLiteral(with_type) + ", " : "";
+  return literal + end + e_scope_exp->getLiteral(with_type) + ")" + type;
 }
 
 LetNode::~LetNode(){delete e_init_exp; delete e_scope_exp;}

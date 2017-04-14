@@ -6,10 +6,16 @@ class B extends A{
       factorial2()
     }
   }
+  fac() : int32{
+    1
+  }
   test : unit;
 }
 class A extends IO{
-  factorial() : int32 { 1 }
+  factorial( var : B) : int32 {
+    var.fac();
+    1
+  }
   factorial2() : int32 { 2 }
   factorial : int32;
 }
@@ -17,28 +23,28 @@ class A extends IO{
 class IO {
   print(s : string) : IO {
   (* print s on stdout, then return self *)
-  0
+  new IO
   }
 
   printBool(b : bool) : IO {
     (* print b on stdout, then return self *)
-    0
+    new IO
   }
 
   printInt32(i : int32) : IO {
     (* print i on stdout, then return self *)
-    0
+    new IO
   }
 
   inputLine() : string {
     (* read one line from stdin, return "" in case of error *)
-    0
+    "connard"
   }
 
   inputBool() : bool {
     (* read one boolean value from stdin, exit with error message in case of
     error *)
-    0
+    false
   }
 
   inputInt32() : int32 {

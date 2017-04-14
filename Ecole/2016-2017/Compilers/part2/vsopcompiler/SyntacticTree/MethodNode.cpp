@@ -7,9 +7,9 @@
 
 using namespace std;
 
-string MethodNode::getLiteral() const {
+string MethodNode::getLiteral(bool with_type) const {
 
-	return "Method(" + e_name->getLiteral() + ", " + e_formals->getLiteral() + ", " + e_ret_type->getLiteral() + "," + e_block->getLiteral() + ")";
+	return "Method(" + e_name->getLiteral(with_type) + ", " + e_formals->getLiteral(with_type) + ", " + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
 }
 
 MethodNode::~MethodNode(){
@@ -30,8 +30,10 @@ int MethodNode::updateType(){
 	}
 
 	// Check if the types are the same
-	if (strcmp(block_type->getLiteral().c_str(), "error") != 0 && *block_type != *e_ret_type){
+	if (block_type->getLiteral() != "error" && *block_type != *e_ret_type){
 		cerr << "Pas le même type dans méthode" << endl;
+		cout << "block_type: " << block_type->getLiteral() << endl;
+		cout << "e_ret_type: " << e_ret_type->getLiteral() << endl;
 		return -1;
 	}
 

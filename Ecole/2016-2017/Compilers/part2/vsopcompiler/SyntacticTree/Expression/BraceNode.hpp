@@ -32,7 +32,7 @@ public :
 	TypeIdentifierNode* getType() const{return node_type;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitBraceNode(this);};
 	int updateType();
 };

@@ -11,8 +11,10 @@ int CallNode::updateType(){
 
   // Get the type of the object
   TypeIdentifierNode* object_type;
-  if (!e_object)
+  if (!e_object){
+    cout << "pas d'objet défini sur " << e_method_name->getLiteral() << endl;
     object_type = current_class->getName();
+  }
   else
     object_type = e_object->getType();
 
@@ -23,7 +25,8 @@ int CallNode::updateType(){
 
   ClassNode* object_class = object_type->getClassType();
   if (!object_class){
-    cerr << "L'objet du call n'est pas une classe" << endl;
+    cerr << "L'objet (" << object_type->getLiteral(true) << ") du call (" << e_method_name->getLiteral() << ") n'est pas une classe" << endl;
+    cout << object_type->getLiteral() << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
@@ -62,23 +65,18 @@ int CallNode::updateType(){
     ++it;
   }
 
-  cout << "return type" << endl;
-  cout << method->getRetType()->getLiteral() << endl;
   node_type = new TypeIdentifierNode(method->getRetType()->getLiteral());
 
   return 0;
 
 }
 
-string CallNode::getLiteral() const{
-  cout << "Object name" << endl;
-  cout << e_object->getLiteral() << endl;
+string CallNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
 
-  string type = node_type ? " : " + node_type->getLiteral() : "";
-  cout << "Call type" << endl;
-  cout << type << endl;
-  //string obj = e_object ? e_object->getLiteral() : "self";
-  return "Call(" + e_object->getLiteral() + ", "  + e_method_name->getLiteral() + ", " + e_args->getLiteral() + ")" + type;
+  return "Call(" + e_object->getLiteral(with_type) + ", "  + e_method_name->getLiteral(with_type) + ", " + e_args->getLiteral(with_type) + ")" + type;
 }
 
 CallNode::~CallNode(){delete e_args; delete e_object;}

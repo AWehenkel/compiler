@@ -23,7 +23,7 @@ public :
 
 	//Public methods
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
 

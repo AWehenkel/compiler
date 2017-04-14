@@ -30,7 +30,9 @@ WhileNode::~WhileNode(){
   delete e_action;
 }
 
-string WhileNode::getLiteral() const{
-  string type = node_type ? " : " + node_type->getLiteral() : "";
-  return "While(" + e_condition->getLiteral() + "," + e_action->getLiteral() + ")" + type;
+string WhileNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+  return "While(" + e_condition->getLiteral(with_type) + "," + e_action->getLiteral(with_type) + ")" + type;
 };

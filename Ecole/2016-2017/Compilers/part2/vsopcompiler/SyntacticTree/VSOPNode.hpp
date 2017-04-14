@@ -30,7 +30,7 @@ public :
 	IN: -
 	OUT: std::string, the literal version of the node.
 	*/
-	virtual std::string getLiteral() const = 0;
+	virtual std::string getLiteral(bool with_type = false) const = 0;
 
 	/*
 	accept

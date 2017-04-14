@@ -47,7 +47,7 @@ public :
 	std::unordered_map<std::string, ClassNode*> getTableClasses() const {return table_classes;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor);
 
 };

@@ -23,9 +23,9 @@ class Cons extends List {
 class Main extends IO {
   main() : int32 {
     let xs : List in {
-      self.print("List has length ");
-      self.printInt32(xs.length());
-      self.print("\n");
+      print("List has length ");
+      printInt32(xs.length());
+      print("\n");
       0
     }
   }
@@ -34,28 +34,28 @@ class Main extends IO {
 class IO {
   print(s : string) : IO {
   (* print s on stdout, then return self *)
-  0
+  new IO
   }
 
   printBool(b : bool) : IO {
     (* print b on stdout, then return self *)
-    0
+    new IO
   }
 
   printInt32(i : int32) : IO {
     (* print i on stdout, then return self *)
-    0
+    new IO
   }
 
   inputLine() : string {
     (* read one line from stdin, return "" in case of error *)
-    0
+    "connard"
   }
 
   inputBool() : bool {
     (* read one boolean value from stdin, exit with error message in case of
     error *)
-    0
+    false
   }
 
   inputInt32() : int32 {

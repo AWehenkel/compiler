@@ -3,11 +3,9 @@
 
 using namespace std;
 
-string ObjectIdentifierNode::getLiteral() const{
-  string type = node_type ? " : " + node_type->getLiteral() : "";
+string ObjectIdentifierNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
   return e_content + type;
-}
-
-string ObjectIdentifierNode::getLiteralWithoutType() const{
-  return e_content;
 }

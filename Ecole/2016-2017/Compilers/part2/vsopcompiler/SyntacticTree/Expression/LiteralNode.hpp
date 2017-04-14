@@ -24,7 +24,7 @@ public :
 	//Public Methods:
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitLiteralNode(this);};
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //LiteralNode_hpp

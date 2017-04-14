@@ -3,8 +3,8 @@
 
 using namespace std;
 
-string FormalNode::getLiteral() const {
-	return e_name->getLiteral() + " : " + e_type->getLiteral();
+string FormalNode::getLiteral(bool with_type) const {
+	return e_name->getLiteral(with_type) + " : " + e_type->getLiteral(with_type);
 }
 
 FormalNode::~FormalNode(){

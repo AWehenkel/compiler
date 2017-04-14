@@ -22,20 +22,17 @@ int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
 
 int CheckUndefinedClassVisitor::visitTypeIdentifierNode(TypeIdentifierNode *node){
 
-  std::string str = node->getLiteral();
-  char * s = new char[str.size() + 1];
-  std::copy(str.begin(), str.end(), s);
-  s[str.size()] = '\0'; // don't forget the terminating 0
+  std::string type_id = node->getLiteral();
 
-  // Check if it is not one the basic types
-  if (!strcmp(s, "int32") || !strcmp(s, "bool")  || !strcmp(s, "string")  || !strcmp(s, "unit"))
+  // Check if it is one the basic types
+  if (type_id == "int32" || type_id == "bool"  || type_id == "string"  || type_id == "unit")
     return 0;
 
   // Check if it is the name of class
-  if (table_class.find(s) == table_class.end())
+  if (table_class.find(type_id) == table_class.end())
     return -1;
 
-  node->setClassType(table_class.find(s)->second);
+  node->setClassType(table_class.find(type_id)->second);
   return 0;
 
 }

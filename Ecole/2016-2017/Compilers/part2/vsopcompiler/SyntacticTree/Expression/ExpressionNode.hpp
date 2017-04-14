@@ -25,7 +25,7 @@ public :
 
 	//Public method
 	//Inherited
-	virtual std::string getLiteral() const = 0;
+	virtual std::string getLiteral(bool with_type = false) const = 0;
 
 	virtual int accept(Visitor* visitor) = 0;
 

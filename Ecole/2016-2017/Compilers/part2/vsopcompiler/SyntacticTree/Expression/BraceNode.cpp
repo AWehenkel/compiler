@@ -19,10 +19,12 @@ int BraceNode::updateType(){
   return 0;
 }
 
-string BraceNode::getLiteral() const{
-  string type = node_type ? " : " + node_type->getLiteral() : "";
+string BraceNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
   string literal = "(";
-  string s_expr = e_expr ? e_expr->getLiteral() : "";
+  string s_expr = e_expr ? e_expr->getLiteral(with_type) : "";
   return literal + s_expr + ")" + type;
 }
 

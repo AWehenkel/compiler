@@ -2,11 +2,11 @@
 
 using namespace std;
 
-string ProgramNode::getLiteral() const{
+string ProgramNode::getLiteral(bool with_type) const{
 
 	string literal = "[";
 	for (vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it) {
-		literal += (*it)->getLiteral();
+		literal += (*it)->getLiteral(with_type);
 		if (it+1 != classes.end())
 			literal += ",\n";
 	}

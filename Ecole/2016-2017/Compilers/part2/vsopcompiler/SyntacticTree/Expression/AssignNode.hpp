@@ -31,7 +31,7 @@ public :
 	ExpressionNode* getExpression() const{return e_expr;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitAssignNode(this);};
 	int updateType();
 };

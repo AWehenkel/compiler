@@ -40,7 +40,7 @@ public :
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
 
 	//Inherited
-	std::string getLiteral() const;
+	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
 	int updateType();
 

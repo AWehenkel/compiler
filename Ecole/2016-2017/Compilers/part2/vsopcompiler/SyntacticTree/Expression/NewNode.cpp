@@ -3,7 +3,9 @@
 
 using namespace std;
 
-string NewNode::getLiteral() const{
-  string type = node_type ? " : " + node_type->getLiteral() : "";
-  return "New(" + e_type_id->getLiteral() + ")" + type;
+string NewNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+  return "New(" + e_type_id->getLiteral(with_type) + ")" + type;
 }

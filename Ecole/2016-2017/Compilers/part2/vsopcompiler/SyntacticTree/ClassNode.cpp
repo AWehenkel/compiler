@@ -7,14 +7,14 @@
 
 using namespace std;
 
-string ClassNode::getLiteral() const{
+string ClassNode::getLiteral(bool with_type) const{
 
-	string literal = "Class(" + e_name->getLiteral() + ", ";
+	string literal = "Class(" + e_name->getLiteral(with_type) + ", ";
 	if(e_extends == NULL)
 		literal += "Object, ";
 	else
-		literal += e_extends->getLiteral() + ", ";
-	literal += e_body->getLiteral() + ")";
+		literal += e_extends->getLiteral(with_type) + ", ";
+	literal += e_body->getLiteral(with_type) + ")";
 
 	return literal;
 

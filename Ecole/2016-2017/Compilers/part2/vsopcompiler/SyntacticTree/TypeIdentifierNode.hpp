@@ -24,7 +24,7 @@ public :
 
 	//Public Methods:
 	//Inherited
-	std::string getLiteral() const{
+	std::string getLiteral(bool with_type = false) const{
 		return t_content;
 	};
 
