@@ -4,6 +4,7 @@
 #include <cstring>
 #include <stdlib.h>
 #include "all_headers.hpp"
+#include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
 using namespace std;
 extern "C" int yylex();
@@ -13,28 +14,9 @@ int start_token;
 extern "C" char *file_name;
 int syntax_error = 0;
 int errors;
-
 extern "C" char *yytext;
 extern "C" int yychar;
 extern "C" int yylineno;
-int yyerror_isinitialized, yymaxstate = 56;
-struct errtable {
-   int i;
-   union {
-      char *msg;
-      struct errtable *p;
-      } u;
-   } errtab[57];
-int yyerror_init()
-{
-   errtab[4].i = 1;
-   errtab[4].u.msg = "Missing class name";
-   errtab[56].i = 1;
-   errtab[56].u.msg = "Missing closing brace at the end of class";
-   errtab[53].i = 1;
-   errtab[53].u.msg = "Missing opening brace at the beginning of class";
-}
-
 
 void yyerror(const char *s);
 %}
@@ -327,32 +309,43 @@ int main (int argc, char *argv[]){
 void yyerror(const char *s)
 {
 
-   int i;
-   char sbuf[128];
+  int i;
+  char sbuf[128];
 
-   if (! yyerror_isinitialized++) yyerror_init();
+  if (! yyerror_isinitialized++) yyerror_init();
 
-   if (!strcmp(s, "stack")) return;
+  if (!strcmp(s, "stack")) return;
 
-   if (errors++ > 10) {
-      fprintf(stderr, "too many errors, aborting");
-      exit(errors);
-	 }
+  if (errors++ > 10) {
+    fprintf(stderr, "Too many errors, aborting");
+    exit(errors);
+	}
 
-	 if ((!strcmp(s, "syntax error") || !strcmp(s,"parse error")) &&
-         (yystate>=0 && yystate<=yymaxstate && errtab[yystate].i==1))
-         s = errtab[yystate].u.msg;
+  if ((!strcmp(s, "syntax error") || !strcmp(s, "parse error")) && (yystate>=0 && yystate<=yymaxstate && errtab[yystate].i != 0)){
+      if (errtab[yystate].i == 1)
+        s = errtab[yystate].u.msg;
+      else {
+        for(i=1; i <= errtab[yystate].i; i++)
+            if(yychar == errtab[yystate].u.p[i].i){
+              s = errtab[yystate].u.p[i].u.msg;
+              break;
+            }
+
+        if(i > errtab[yystate].i)
+          s = errtab[yystate].u.p[0].u.msg;
+       }
+    }
 
    // Lines to comment after error generation
 	 /*if(file_name) fprintf(stderr, "%s:", file_name);
    if (!strcmp(s, "syntax error") || !strcmp(s,"parse error")){
       sprintf(sbuf,"%s (%d;%d)", s, yystate, yychar);
-      s=sbuf;
-      }
+      s = sbuf;
+   }
    fprintf(stderr, "%d: # \"%s\": %s\n", yylineno, yytext, s);
-	 */
+   */
+
+   // Lines to comment when doing error generation
 	 cerr << file_name << ":" << yylloc.first_line << ":" << yylloc.first_column << ": syntax error" << endl;
 	 cerr << s << endl;
-
-	 return;
 }
