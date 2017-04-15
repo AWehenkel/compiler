@@ -6,8 +6,10 @@ using namespace std;
 int BraceNode::updateType(){
 
   string type;
-
-  TypeIdentifierNode *expr_type = e_expr->getType();
+  /*
+  ATTENTION j'ai mis unit quand il y a pas d'expression dans le brace mais je suis pas sur que c'est juste!
+  */
+  TypeIdentifierNode *expr_type = e_expr ? e_expr->getType() : new TypeIdentifierNode("unit");
   if (!expr_type){
     cerr << "Error in the compiler in BraceNode : expr_type is null" << endl;
     return -1;
@@ -15,7 +17,6 @@ int BraceNode::updateType(){
     type = expr_type->getLiteral();
   }
   node_type = new TypeIdentifierNode(type);
-
   return 0;
 }
 

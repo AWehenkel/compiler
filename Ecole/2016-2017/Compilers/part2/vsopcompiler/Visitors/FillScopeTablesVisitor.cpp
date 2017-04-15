@@ -29,6 +29,9 @@ int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
   if(!current_class || current_class->addField(node) < 0)
     return -5;
   node->setClassScope(current_class);
+  ExpressionNode* init_expr = node->getInitExpr();
+  if(init_expr)
+    return init_expr->accept(this);
   return 0;
 }
 
@@ -47,13 +50,13 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
     node->setType(current_class->getName());
     return 0;
   }
+
   TypeIdentifierNode* obj_type = current_scope->getDeclarationType(node->getLiteral());
   if(!obj_type){
     cerr << "erreur variable \"" << node->getLiteral() << "\" utilisée avant déclaration(line:" << node->getLine() << " col:" << node->getCol() << ")" << endl;
     return -6;
   }
   node->setType(obj_type);
-
   return 0;
 }
 

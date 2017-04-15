@@ -7,7 +7,6 @@ using namespace std;
 
 int BinaryOperatorNode::updateType(){
 
-  cout << "BinaryOperatorNode" << endl;
   // Get the types of the two operands
   TypeIdentifierNode* left_type = e_left_operand->getType();
   TypeIdentifierNode* right_type = e_right_operand->getType();
@@ -29,18 +28,16 @@ int BinaryOperatorNode::updateType(){
       node_type = new TypeIdentifierNode("bool");
       break;
     case BinaryOperator::b_op_equal :
-      // !!! à compléter
-      cerr << "pas encore complété" << endl;
-
-
-
-
-
+      if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
+        node_type = new TypeIdentifierNode("error");
+        return -1;
+      }
+      node_type = new TypeIdentifierNode("bool");
       break;
     case BinaryOperator::b_op_leq :
     case BinaryOperator::b_op_less :
       // Check both operands are int32 or errors and return a bool if ok
-      if ((strcmp(s_left_type.c_str(), "int32") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "int32") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
+      if ((s_left_type != "int32" && s_left_type.c_str() != "error" != 0) || (s_right_type != "int32" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
@@ -48,14 +45,12 @@ int BinaryOperatorNode::updateType(){
       node_type = new TypeIdentifierNode("bool");
       break;
     default :
-      cout << "addition" << endl;
       // Check both operands are int32 and return a int32 if ok
       if ((strcmp(s_left_type.c_str(), "int32") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "int32") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
         cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
       }
-      cout << "addition ok" << endl;
       node_type = new TypeIdentifierNode("int32");
   }
 

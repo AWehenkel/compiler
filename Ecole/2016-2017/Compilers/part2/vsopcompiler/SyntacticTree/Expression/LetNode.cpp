@@ -24,6 +24,7 @@ int LetNode::updateType(){
   }
 
   TypeIdentifierNode *scope_expr_type = e_scope_exp->getType();
+
   if (!scope_expr_type){
     cerr << "Error int the compiler in LetNode : scope_expr_type null" << endl;
     return -1;
@@ -45,7 +46,7 @@ string LetNode::getLiteral(bool with_type) const{
   string type = "";
   if(with_type)
    type = node_type ? " : " + node_type->getLiteral(with_type) : "";
-  string literal = "Let(" + e_object_id->getLiteral(with_type) + ", " + e_object_type->getLiteral(with_type) + ", ";
+  string literal = "Let(" + e_object_id->getLiteral(false) + ", " + e_object_type->getLiteral(with_type) + ", ";
   string end = e_init_exp ? e_init_exp->getLiteral(with_type) + ", " : "";
   return literal + end + e_scope_exp->getLiteral(with_type) + ")" + type;
 }

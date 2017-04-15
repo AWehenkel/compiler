@@ -40,4 +40,4 @@ install-tools:
 # directory. You can use it to generate an archive to be submitted for
 # evaluation.
 archive:	clean
-	cd ..; tar cvJf vsopcompiler.tar.xz --exclude=.git --exclude=.svn --exclude=.svn-base vsopcompiler
+	cd ..; tar cvJf vsopcompiler.tar.xz --exclude=.git --exclude=.svn --exclude=.svn-base --exclude=.vsop vsopcompiler

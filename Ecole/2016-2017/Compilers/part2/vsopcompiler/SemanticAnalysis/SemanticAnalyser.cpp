@@ -26,15 +26,15 @@ int SemanticAnalyser::classPass(ProgramNode* program){
       cerr << "il y a un cycle et c'est pas cool" << endl;
       return -3;
     }
-
+  //cout << "CheckUndefinedClassVisitor" << endl;
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
   if (program->accept(visitor) < 0)
     return -4;
-
+  //cout << "CheckUndefinedClassVisitor ok. FillScopeTablesVisitor" << endl;
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   if (program->accept(visitor1) < 0)
     return -5;
-
+  //cout << "FillScopeTablesVisitor ok. CheckTypeVisitor" << endl;
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   if (program->accept(visitor2) < 0)
     return -6;

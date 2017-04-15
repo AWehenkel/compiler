@@ -11,7 +11,6 @@
 class BraceNode : public ExpressionNode {
 private :
 	ExpressionNode* e_expr;
-	TypeIdentifierNode* node_type;
 
 public :
 	//Constructors:
@@ -29,7 +28,6 @@ public :
 	//Public Methods:
 	//getters
 	ExpressionNode* getExpression() const{return e_expr;};
-	TypeIdentifierNode* getType() const{return node_type;};
 
 	//Inherited
 	std::string getLiteral(bool with_type = false) const;

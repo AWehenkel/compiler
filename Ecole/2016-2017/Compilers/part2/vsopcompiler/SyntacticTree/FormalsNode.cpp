@@ -36,7 +36,7 @@ bool FormalsNode::equals(FormalsNode &formals){
 	if(formals.formals.size() != this->formals.size())
 		return false;
 	for(size_t i = 0; i < formals.formals.size(); i++){
-		if(formals.formals.at(i)->getType() != this->formals.at(i)->getType())
+		if(*(formals.formals.at(i)->getType()) != *(this->formals.at(i)->getType()))
 			return false;
 	}
 	return true;
