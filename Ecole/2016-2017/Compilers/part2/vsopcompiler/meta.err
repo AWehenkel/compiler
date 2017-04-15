@@ -1,3 +1,414 @@
-class Main { ::: Missing closing brace at the end of class
-class Main } ::: Missing opening brace at the beginning of class
+ ::: The program should contain at least one class
+Main {} ::: Missing keyword 'class' before definition of a class
 class {} ::: Missing class name
+Class Main {} ::: Wrong class definition keyword, should be 'class'
+class main {} ::: First letter of class is not uppercase
+class Main { ::: Missing closing curly brace at the end of class
+class Main } ::: Missing opening curly brace at the beginning of class
+class Main {{} ::: Too much opening curly braces at the beginning of class
+class Main {}} ::: Too much closing curly braces at the closing of class
+class Main IO {} ::: Missing extension keyword
+class Main inherits IO {} ::: Wrong extension keyword, use 'extends'
+class Main extends io {} ::: Extension can only be applied on objects
+
+class Main {
+  a : ;
+} ::: Missing type in field declaration
+class Main {
+  : int32 ;
+} ::: Missing name in field declaration
+class Main {
+  a int32 ;
+} ::: Missing ':' in field declaration
+class Main {
+  A : int32 ;
+} ::: Field cannot start with a capital letter
+class Main {
+  a : int ;
+} ::: Wrong type in field declaration
+class Main {
+  a : int32
+} ::: Missing ';' at the end of field declaration
+class Main {
+  a : int32 0;
+} ::: Missing '<-' in assignment
+class Main {
+  a : int32 <- ;
+} ::: Mising assignemen value
+
+class Main {
+  () : int32 {}
+} ::: Missing method name in method declaration
+class Main {
+  f() : {}
+} ::: Missing type in method declaration
+class Main {
+  f() int32 {}
+} ::: Missing ':' in method declaration
+class Main {
+  f() : int {}
+} ::: Wrong type in method declaration
+class Main {
+  F() : int32 {}
+} ::: Method cannot start with a capital letter
+class Main {
+  f( : int32 {}
+} ::: Missing closing brackets in method declaration
+class Main {
+  f() : int32 {}
+} ::: Mising opening brackets in method declaration
+class Main {
+  f()) : int32 {}
+} ::: Too many closing brackets in method declaration
+class Main {
+  f(() : int32 {}
+} ::: Too many opening brackets in method declaration
+class Main {
+  f() : int32 {
+} ::: Missing closing curly braces in method declaration
+class Main {
+  f() : int32 }
+} ::: Missing opening curly braces in method declaration
+class Main {
+  f() : int32 {}}
+} ::: Too many closing curly braces in method declaration
+class Main {
+  f() : int32 {{}
+} ::: Too many opening curly braces in method declaration
+class Main {
+  f() : int32 {};
+} ::: Unexpected ';' at the end of method declaration
+class Main {
+  f() ; int32 {};
+} ::: Wrong separator in method declaration
+
+class Main {
+  f(: int32) : int32 {0}
+} ::: Missing name in formal in method declaration
+class Main {
+  f(a :) : int32 {0}
+} ::: Missing type in formal in method declaration
+class Main {
+  f(a int32) : int32 {0}
+} ::: Missing ':' in formal in method declaration
+class Main {
+  f(a : int) : int32 {0}
+} ::: Wrong type in formal in method declaration
+class Main {
+  f(A : int32) : int32 {0}
+} ::: Formal name cannot start with a capital letter
+class Main {
+  f(a : int32, ) : int32 {0}
+} ::: Unexpected ',' after formal in method declaration
+class Main {
+  f(a : int32 b : int32) : int32 {0}
+} ::: Missing ',' to separate formals in method declaration
+class Main {
+  f(a : int32; b : int32) : int32 {0}
+} ::: Wrong separator of formals in method declaration
+
+class Main {
+  f() : int32 {}
+} ::: Block must contain at least one expression
+class Main {
+  f() : int32 {0 1}
+} ::: Missing ';' at the end of expression
+class Main {
+  f() : int32 {0;}
+} ::: Unexpected ';' at the end fof block
+class Main {
+  f() : int32 {}
+} ::: Block must contain at least one expression
+class Main {
+  f() : int32 {0 , 1}
+} ::: Wrong expression separator in block
+class Main {
+  f() : int32 {
+    C
+  }
+} ::: Class names cannot be used as expressions
+
+class Main {
+  f() : int32 {
+    if true
+  }
+} ::: Missing 'then' after 'if'
+class Main {
+  f() : int32 {
+    then 1
+  }
+} ::: Missing 'if' before 'then'
+class Main {
+  f() : int32 {
+    if
+    then 1
+  }
+} ::: Missing expression after 'if'
+class Main {
+  f() : int32 {
+    if true
+    then
+  }
+} ::: Missing expression after 'else'
+class Main {
+  f() : int32 {
+    if true
+    then 1
+    else
+  }
+} ::: Missing expression after 'then'
+class Main {
+  f() : int32 {
+    if true
+    1
+  }
+} ::: Missing 'then' after 'if'
+
+class Main {
+  f() : int32 {
+    do 0
+  }
+} ::: Missing 'while' before 'do'
+class Main {
+  f() : int32 {
+    while 1
+  }
+} ::: Missing 'do' after 'while'
+class Main {
+  f() : int32 {
+    while
+    do 0
+  }
+} ::: Missing expression after 'while'
+class Main {
+  f() : int32 {
+    while 1
+    do
+  }
+} ::: Missing expression after 'do'
+
+class Main {
+  f() : int32 {
+    a : int32 in 0
+  }
+} ::: Missing 'let' in let declaration
+class Main {
+  f() : int32 {
+    let : int32 in 0
+  }
+} ::: Missing variable name in let declaration
+class Main {
+  f() : int32 {
+    let a int32 in 0
+  }
+} ::: Missing ':' in let declaration
+class Main {
+  f() : int32 {
+    let a : in 0
+  }
+} ::: Missing type in let declaration
+class Main {
+  f() : int32 {
+    let a : int in 0
+  }
+} ::: Invalid type in let declaration
+class Main {
+  f() : int32 {
+    let a : int32 0
+  }
+} ::: Missing 'in' in let declaration
+class Main {
+  f() : int32 {
+    let a : int32 in
+  }
+} ::: Missing expression after 'in' in let declaration
+class Main {
+  f() : int32 {
+    let A : int32 in 0
+  }
+} ::: Variable name can not start with a capital letter in let declaration
+class Main {
+  f() : int32 {
+    let a ; int32 <- 0 in 0
+  }
+} ::: Wrong separator in let declaration
+class Main {
+  f() : int32 {
+    let a : int32 0 in 0
+  }
+} ::: Missing '<-' of assignement in let declaration
+class Main {
+  f() : int32 {
+    let a : int32 <- in 0
+  }
+} ::: Missing expression after '<-' in let declaration
+
+class Main {
+  f() : int32 {
+    <- 0
+  }
+} ::: Missing assignee in assignment
+class Main {
+  f() : int32 {
+    a <-
+  }
+} ::: Missing value to assign in assignment
+class Main {
+  f() : int32 {
+    A <- 0
+  }
+} ::: Cannot assign an object to a class
+
+class Main {
+  f() : int32 {
+    not
+  }
+} ::: Missing expression after 'not'
+class Main {
+  f() : int32 {
+    isnull
+  }
+} ::: Missing expression after 'isnull'
+class Main {
+  f() : int32 {
+    new
+  }
+} ::: Missing expression after 'new'
+
+class Main {
+  f() : int32 {
+    0 and
+  }
+} ::: Missing right member in 'and' expression
+class Main {
+  f() : int32 {
+    and 0
+  }
+} :::  Missing left member in 'and' expression
+class Main {
+  f() : int32 {
+    0 =
+  }
+} ::: Missing right member in '=' expression
+class Main {
+  f() : int32 {
+    = 0
+  }
+} :::  Missing left member in '=' expression
+class Main {
+  f() : int32 {
+    0 <
+  }
+} ::: Missing right member in '<' expression
+class Main {
+  f() : int32 {
+    < 0
+  }
+} :::  Missing left member in '<' expression
+class Main {
+  f() : int32 {
+    0 <=
+  }
+} ::: Missing right member in '<=' expression
+class Main {
+  f() : int32 {
+    <= 0
+  }
+} :::  Missing left member in '<=' expression
+class Main {
+  f() : int32 {
+    0 +
+  }
+} ::: Missing right member in '+' expression
+class Main {
+  f() : int32 {
+    + 0
+  }
+} :::  Missing left member in '+' expression
+class Main {
+  f() : int32 {
+    0 -
+  }
+} ::: Missing right member in '-' expression
+class Main {
+  f() : int32 {
+    0 /
+  }
+} ::: Missing right member in '/' expression
+class Main {
+  f() : int32 {
+    / 0
+  }
+} :::  Missing left member in '/' expression
+class Main {
+  f() : int32 {
+    0 *
+  }
+} ::: Missing right member in '*' expression
+class Main {
+  f() : int32 {
+    * 0
+  }
+} :::  Missing left member in '*' expression
+class Main {
+  f() : int32 {
+    0 ^
+  }
+} ::: Missing right member in '^' expression
+class Main {
+  f() : int32 {
+    ^ 0
+  }
+} :::  Missing left member in '^' expression
+
+class Main {
+  f() : int32 {
+    f2(
+  }
+} ::: Missing closing brackets at the end of call
+class Main {
+  f() : int32 {
+    f2)
+  }
+} ::: Missing opening brackets at the beginning of call
+class Main {
+  f() : int32 {
+    F2()
+  }
+} ::: Function call cannot start with a capital letter
+class Main {
+  f() : int32 {
+    f2(, )
+  }
+} ::: Unexpected ',' in function call
+class Main {
+  f() : int32 {
+    f2(0, )
+  }
+} ::: Unexpected ',' in function call
+class Main {
+  f() : int32 {
+    a:f2()
+  }
+} ::: Wrong separator in function call
+
+class Main {
+  f() : int32 {
+    (a
+  }
+} ::: Missing closing brackets
+class Main {
+  f() : int32 {
+    a)
+  }
+} ::: Missing opening brackets
+class Main {
+  f() : int32 {
+    (a))
+  }
+} ::: Too many closing brackets
+class Main {
+  f() : int32 {
+    ((a)
+  }
+} ::: Too any opening brackets

@@ -1,24 +1,22 @@
-#include <stdio.h>
-
 int yyerror_isinitialized, yymaxstate = 163;
 struct errtable {
    int i;
    union {
-      char *msg;
+      const char *msg;
       struct errtable *p;
       } u;
    } errtab[164];
 int yyerror_init()
 {
    errtab[5].i = 2;
-   errtab[5].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[5].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[5].u.p[0].u.msg = "Missing class name";
    errtab[5].u.p[1].i = 277;
    errtab[5].u.p[1].u.msg = "First letter of class is not uppercase";
    errtab[5].u.p[2].i = 281;
    errtab[5].u.p[2].u.msg = "Missing class name";
    errtab[68].i = 5;
-   errtab[68].u.p = calloc(1,6 * sizeof(struct errtable));
+   errtab[68].u.p = (errtable*) calloc(1,6 * sizeof(struct errtable));
    errtab[68].u.p[0].u.msg = "Missing closing brackets in method declaration";
    errtab[68].u.p[1].i = 277;
    errtab[68].u.p[1].u.msg = "Missing ',' to separate formals in method declaration";
@@ -33,7 +31,7 @@ int yyerror_init()
    errtab[89].i = 1;
    errtab[89].u.msg = "Missing expression after 'new'";
    errtab[136].i = 2;
-   errtab[136].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[136].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[136].u.p[0].u.msg = "Missing closing brackets at the end of call";
    errtab[136].u.p[1].i = 282;
    errtab[136].u.p[1].u.msg = "Missing closing brackets at the end of call";
@@ -48,7 +46,7 @@ int yyerror_init()
    errtab[62].i = 1;
    errtab[62].u.msg = "Missing ':' in field declaration";
    errtab[83].i = 2;
-   errtab[83].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[83].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[83].u.p[0].u.msg = "Missing type in method declaration";
    errtab[83].u.p[1].i = 277;
    errtab[83].u.p[1].u.msg = "Wrong type in method declaration";
@@ -59,7 +57,7 @@ int yyerror_init()
    errtab[125].i = 1;
    errtab[125].u.msg = "Missing right member in '=' expression";
    errtab[130].i = 2;
-   errtab[130].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[130].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[130].u.p[0].u.msg = "Missing type in let declaration";
    errtab[130].u.p[1].i = 277;
    errtab[130].u.p[1].u.msg = "Invalid type in let declaration";
@@ -70,7 +68,7 @@ int yyerror_init()
    errtab[67].i = 1;
    errtab[67].u.msg = "Missing ':' in formal in method declaration";
    errtab[88].i = 2;
-   errtab[88].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[88].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[88].u.p[0].u.msg = "Missing variable name in let declaration";
    errtab[88].u.p[1].i = 285;
    errtab[88].u.p[1].u.msg = "Missing variable name in let declaration";
@@ -79,7 +77,7 @@ int yyerror_init()
    errtab[114].i = 1;
    errtab[114].u.msg = "Missing closing brackets";
    errtab[56].i = 3;
-   errtab[56].u.p = calloc(1,4 * sizeof(struct errtable));
+   errtab[56].u.p = (errtable*) calloc(1,4 * sizeof(struct errtable));
    errtab[56].u.p[0].u.msg = "Missing opening curly brace at the beginning of class";
    errtab[56].u.p[1].i = 277;
    errtab[56].u.p[1].u.msg = "Wrong extension keyword, use 'extends'";
@@ -88,7 +86,7 @@ int yyerror_init()
    errtab[56].u.p[3].i = 279;
    errtab[56].u.p[3].u.msg = "Missing extension keyword";
    errtab[77].i = 3;
-   errtab[77].u.p = calloc(1,4 * sizeof(struct errtable));
+   errtab[77].u.p = (errtable*) calloc(1,4 * sizeof(struct errtable));
    errtab[77].u.p[0].u.msg = "Missing ':' in method declaration";
    errtab[77].u.p[1].i = 267;
    errtab[77].u.p[1].u.msg = "Missing ':' in method declaration";
@@ -99,7 +97,7 @@ int yyerror_init()
    errtab[119].i = 1;
    errtab[119].u.msg = "Missing right member in '+' expression";
    errtab[108].i = 2;
-   errtab[108].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[108].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[108].u.p[0].u.msg = "Missing ':' in let declaration";
    errtab[108].u.p[1].i = 267;
    errtab[108].u.p[1].u.msg = "Missing ':' in let declaration";
@@ -108,7 +106,7 @@ int yyerror_init()
    errtab[129].i = 1;
    errtab[129].u.msg = "Missing expression after 'else'";
    errtab[66].i = 2;
-   errtab[66].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[66].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[66].u.p[0].u.msg = "Missing type in field declaration";
    errtab[66].u.p[1].i = 277;
    errtab[66].u.p[1].u.msg = "Wrong type in field declaration";
@@ -121,7 +119,7 @@ int yyerror_init()
    errtab[55].i = 1;
    errtab[55].u.msg = "Extension can only be applied on objects";
    errtab[76].i = 2;
-   errtab[76].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[76].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[76].u.p[0].u.msg = "Missing type in formal in method declaration";
    errtab[76].u.p[1].i = 277;
    errtab[76].u.p[1].u.msg = "Wrong type in formal in method declaration";
@@ -130,7 +128,7 @@ int yyerror_init()
    errtab[118].i = 1;
    errtab[118].u.msg = "Missing right member in 'and' expression";
    errtab[81].i = 2;
-   errtab[81].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[81].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[81].u.p[0].u.msg = "Missing ';' at the end of field declaration";
    errtab[81].u.p[1].i = 282;
    errtab[81].u.p[1].u.msg = "Missing ';' at the end of field declaration";
@@ -141,7 +139,7 @@ int yyerror_init()
    errtab[86].i = 1;
    errtab[86].u.msg = "Missing expression after 'if'";
    errtab[133].i = 4;
-   errtab[133].u.p = calloc(1,5 * sizeof(struct errtable));
+   errtab[133].u.p = (errtable*) calloc(1,5 * sizeof(struct errtable));
    errtab[133].u.p[0].u.msg = "Missing ';' at the end of expression";
    errtab[133].u.p[1].i = 285;
    errtab[133].u.p[1].u.msg = "Wrong separator in function call";
@@ -154,7 +152,7 @@ int yyerror_init()
    errtab[117].i = 1;
    errtab[117].u.msg = "Missing value to assign in assignment";
    errtab[59].i = 5;
-   errtab[59].u.p = calloc(1,6 * sizeof(struct errtable));
+   errtab[59].u.p = (errtable*) calloc(1,6 * sizeof(struct errtable));
    errtab[59].u.p[0].u.msg = "Missing closing curly brace at the end of class";
    errtab[59].u.p[1].i = 0;
    errtab[59].u.p[1].u.msg = "Missing closing curly brace at the end of class";
@@ -167,7 +165,7 @@ int yyerror_init()
    errtab[59].u.p[5].i = 281;
    errtab[59].u.p[5].u.msg = "Too much opening curly braces at the beginning of class";
    errtab[80].i = 2;
-   errtab[80].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[80].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[80].u.p[0].u.msg = "Mising assignemen value";
    errtab[80].u.p[1].i = 266;
    errtab[80].u.p[1].u.msg = "Missing expression after '<-' in let declaration";
@@ -178,7 +176,7 @@ int yyerror_init()
    errtab[127].i = 1;
    errtab[127].u.msg = "Missing right member in '<=' expression";
    errtab[1].i = 2;
-   errtab[1].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[1].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[1].u.p[0].u.msg = "The program should contain at least one class";
    errtab[1].u.p[1].i = 0;
    errtab[1].u.p[1].u.msg = "The program should contain at least one class";
@@ -187,7 +185,7 @@ int yyerror_init()
    errtab[90].i = 1;
    errtab[90].u.msg = "Missing expression after 'not'";
    errtab[106].i = 2;
-   errtab[106].u.p = calloc(1,3 * sizeof(struct errtable));
+   errtab[106].u.p = (errtable*) calloc(1,3 * sizeof(struct errtable));
    errtab[106].u.p[0].u.msg = "Missing 'then' after 'if'";
    errtab[106].u.p[1].i = 282;
    errtab[106].u.p[1].u.msg = "Missing 'then' after 'if'";
@@ -200,7 +198,7 @@ int yyerror_init()
    errtab[153].i = 1;
    errtab[153].u.msg = "Unexpected ',' in function call";
    errtab[95].i = 13;
-   errtab[95].u.p = calloc(1,14 * sizeof(struct errtable));
+   errtab[95].u.p = (errtable*) calloc(1,14 * sizeof(struct errtable));
    errtab[95].u.p[0].u.msg = "Mising opening brackets in method declaration";
    errtab[95].u.p[1].i = 290;
    errtab[95].u.p[1].u.msg = "Missing left member in '*' expression";
@@ -238,39 +236,4 @@ int yyerror_init()
    errtab[126].u.msg = "Missing right member in '<' expression";
    errtab[131].i = 1;
    errtab[131].u.msg = "Missing expression after 'do'";
-}
-
-extern int errors;
-extern char *yyfilename, yytext[];
-extern int yychar, yylineno;
-
-extern short *yyssp;
-
-int yyerror(char *s)
-{
-   int state = *yyssp;
-   int i;
-   char sbuf[128];
-   if (! yyerror_isinitialized++) yyerror_init();
-   if (strstr(s, "stack")) return 0;
-   if (errors++ > 10) {
-      fprintf(stderr, "too many errors, aborting");
-      exit(errors); }
-   if(yyfilename) fprintf(stderr, "%s:", yyfilename);
-   if ((!strcmp(s, "syntax error") || !strcmp(s,"parse error"))&&
-         (state>=0 && state<=yymaxstate))
-       if (errtab[state].i==1)
-         s = errtab[state].u.msg;
-       else {
-          for(i=1;i<=errtab[state].i;i++)
-             if(yychar == errtab[state].u.p[i].i) {
-                s=errtab[state].u.p[i].u.msg;break;}
-          if(i>errtab[state].i)s=errtab[state].u.p[0].u.msg;
-          }
-   if (!strcmp(s, "syntax error") || !strcmp(s,"parse error")){
-      sprintf(sbuf,"%s (%d;%d)", s, state, yychar);
-      s=sbuf;
-      }
-   fprintf(stderr, "%d: # \"%s\": %s\n", yylineno, yytext, s);
-   return 0;
 }
