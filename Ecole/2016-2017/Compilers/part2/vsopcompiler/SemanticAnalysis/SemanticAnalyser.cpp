@@ -13,6 +13,7 @@ ProgramNode* SemanticAnalyser::semanticAnalysis(ProgramNode* program){
 
 int SemanticAnalyser::classPass(ProgramNode* program){
   unordered_map<string, ClassNode*> class_table;
+  class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
   if(program->fillClassTable(class_table) < 0)
     return -1;
 

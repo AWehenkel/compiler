@@ -22,6 +22,8 @@ class CheckTypeVisitor : public Visitor {
     int visitWhileNode(WhileNode *node);
     int visitFieldNode(FieldNode *node);
     int visitMethodNode(MethodNode *node);
+    int visitNewNode(NewNode *node);
+
 };
 
 #endif //check_type_visitor

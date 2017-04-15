@@ -31,7 +31,7 @@ int UnaryOperatorNode::updateType(){
         node_type = new TypeIdentifierNode("error");
         return -1;
       }
-      node_type = new TypeIdentifierNode(s_op_type);
+      node_type = new TypeIdentifierNode("bool");
       break;
     case UnaryOperator::u_op_minus :
     // Check if operand is int32 and return a bool if ok

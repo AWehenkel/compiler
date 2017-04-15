@@ -26,6 +26,7 @@ public :
 	//Inherited
 	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitNewNode(this);};
+	int updateType();
 };
 
 #endif //NewNode_hpp

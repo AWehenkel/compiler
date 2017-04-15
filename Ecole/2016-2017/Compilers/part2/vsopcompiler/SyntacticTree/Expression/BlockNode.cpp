@@ -6,8 +6,9 @@ using namespace std;
 string BlockNode::getLiteral(bool with_type) const {
 	string literal;
 	string type = "";
-	if(with_type)
+	if(with_type){
 	 type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+ }
 	size_t expr_size = expressions.size();
 	if (expr_size == 0)
 		//No empty expression should be generated
@@ -31,7 +32,6 @@ void BlockNode::addExpression(ExpressionNode *expression) { expressions.push_bac
 void BlockNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}
 
 int BlockNode::updateType(){
-
 	string type;
 	for (vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
 		ExpressionNode *expr = *it;
@@ -41,11 +41,9 @@ int BlockNode::updateType(){
 	if (!expr_type){
 		cerr << "Error in the compiler in BlockNode : expr_type is null" << endl;
 		return -1;
-	}else{
-		type = expr_type->getLiteral();
 	}
 	// Put the type of the last instruction, even if it was an error.
-	node_type = new TypeIdentifierNode(type);
+	node_type = expr_type;
 
 	/* Even if there is an error in the last instruction, it wasn't in the block
 	* directly, so we don't return an error code

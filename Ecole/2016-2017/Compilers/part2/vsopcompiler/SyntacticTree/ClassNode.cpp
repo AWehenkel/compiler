@@ -153,3 +153,8 @@ ClassNode::~ClassNode(){
 	delete e_extends;
 	delete e_body;
 }
+
+bool ClassNode::hasParent(ClassNode* candidate){
+	TypeIdentifierNode* common_parent = getCommonParent(candidate);
+	return common_parent && common_parent->getLiteral() == candidate->getName()->getLiteral();
+}

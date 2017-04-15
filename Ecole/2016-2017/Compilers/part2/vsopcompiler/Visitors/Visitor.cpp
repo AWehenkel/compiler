@@ -1,6 +1,8 @@
 #include "Visitor.hpp"
 #include "all_headers.hpp"
 
+using namespace std;
+
 int Visitor::visitAssignNode(AssignNode *node){
   ExpressionNode* expr = node->getExpression();
   if(expr && expr->accept(this) < 0)
@@ -141,6 +143,7 @@ int Visitor::visitFieldNode(FieldNode *node){
   ObjectIdentifierNode* name = node->getName();
   TypeIdentifierNode* type = node->getType();
   ExpressionNode* init_expr = node->getInitExpr();
+
   if((name && name->accept(this) < 0) || (type && type->accept(this) < 0) || (init_expr && init_expr->accept(this) < 0))
     return -1;
   return 0;

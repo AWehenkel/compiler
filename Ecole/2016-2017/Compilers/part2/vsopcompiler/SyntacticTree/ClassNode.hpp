@@ -124,6 +124,14 @@ public :
   OUT : A pointer to the common ancestor type, null if no common ancestor
 	*/
 	TypeIdentifierNode* getCommonParent(ClassNode *other);
+
+	/*
+	hasParent
+	ROLE: Determine if the argument is a parent of the current class.
+	IN : candidate: ClassNode*, the candidate parent.
+	OUT : bool, true if the candidate is a parent of the current class.
+	*/
+	bool hasParent(ClassNode* candidate);
 };
 
 #endif //class_node_hpp
