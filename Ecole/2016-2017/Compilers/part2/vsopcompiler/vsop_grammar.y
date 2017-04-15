@@ -340,20 +340,8 @@ void yyerror(const char *s)
 	 }
 
 	 if ((!strcmp(s, "syntax error") || !strcmp(s,"parse error")) &&
-         (yystate>=0 && yystate<=yymaxstate)){
-   	 if (errtab[yystate].i==1){
+         (yystate>=0 && yystate<=yymaxstate && errtab[yystate].i==1))
          s = errtab[yystate].u.msg;
-     }else{
-          for(i=1;i<=errtab[yystate].i;i++){
-             if(yychar == errtab[yystate].u.p[i].i) {
-                s=errtab[yystate].u.p[i].u.msg;break;
-						 }
-					}
-          if(i>errtab[yystate].i) {
-						s=errtab[yystate].u.p[0].u.msg;
-					}
-      }
-	 }
 
    // Lines to comment after error generation
 	 /*if(file_name) fprintf(stderr, "%s:", file_name);
