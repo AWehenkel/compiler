@@ -15,7 +15,7 @@ int WhileNode::updateType(){
   }
   string s_condition_type = condition_type->getLiteral();
 
-  if (strcmp(s_condition_type.c_str(), "error") != 0  && strcmp(s_condition_type.c_str(), "bool") != 0){
+  if (s_condition_type != "error" && s_condition_type != "bool"){
     cerr << "Condition n'est pas un bool dans while" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;

@@ -16,7 +16,7 @@ int BraceNode::updateType(){
   }else{
     type = expr_type->getLiteral();
   }
-  node_type = new TypeIdentifierNode(type);
+  node_type = expr_type;
   return 0;
 }
 

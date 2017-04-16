@@ -18,7 +18,7 @@ int AssignNode::updateType(){
   * same, assign the type of e_name to node_type and stop the propagation of
   * errors */
   if (expr_type->getLiteral() == "error" || *name_type == *expr_type){
-    node_type = new TypeIdentifierNode(name_type->getLiteral());
+    node_type = name_type;
     return 0;
   }
 

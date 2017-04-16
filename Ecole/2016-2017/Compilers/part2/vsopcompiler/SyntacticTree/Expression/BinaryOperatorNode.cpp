@@ -20,12 +20,12 @@ int BinaryOperatorNode::updateType(){
   switch (e_op){
     case BinaryOperator::b_op_and :
       // Check both operands are bools or errors and return a bool if ok
-      if ((strcmp(s_left_type.c_str(), "bool") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "bool") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
+      if ((s_left_type != "bool" && s_left_type != "error") || (s_right_type != "bool" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des booléans dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
       }
-      node_type = new TypeIdentifierNode("bool");
+      node_type = left_type;
       break;
     case BinaryOperator::b_op_equal :
       if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
@@ -37,7 +37,7 @@ int BinaryOperatorNode::updateType(){
     case BinaryOperator::b_op_leq :
     case BinaryOperator::b_op_less :
       // Check both operands are int32 or errors and return a bool if ok
-      if ((s_left_type != "int32" && s_left_type.c_str() != "error" != 0) || (s_right_type != "int32" && s_right_type != "error")){
+      if ((s_left_type != "int32" && s_left_type != "error" != 0) || (s_right_type != "int32" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
@@ -46,12 +46,12 @@ int BinaryOperatorNode::updateType(){
       break;
     default :
       // Check both operands are int32 and return a int32 if ok
-      if ((strcmp(s_left_type.c_str(), "int32") != 0 && strcmp(s_left_type.c_str(), "error") != 0) || (strcmp(s_right_type.c_str(), "int32") != 0 && strcmp(s_right_type.c_str(), "error") != 0)){
+      if ((s_left_type != "int32" && s_left_type != "error") || (s_right_type != "int32" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
       }
-      node_type = new TypeIdentifierNode("int32");
+      node_type = left_type;
   }
 
   return 0;
