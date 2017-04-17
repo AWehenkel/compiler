@@ -67,7 +67,7 @@ int ConditionalNode::updateType(){
       node_type = then_type;
       return 0;
     }else{
-      cerr << "Types différents dans conditional" << endl;
+      cerr << "Types differents dans conditional" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
     }

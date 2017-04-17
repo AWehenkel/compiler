@@ -53,7 +53,7 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
 
   TypeIdentifierNode* obj_type = current_scope->getDeclarationType(node->getLiteral());
   if(!obj_type){
-    cerr << "erreur variable \"" << node->getLiteral() << "\" utilisée avant déclaration(line:" << node->getLine() << " col:" << node->getCol() << ")" << endl;
+    cerr << "erreur variable \"" << node->getLiteral() << "\" utilisee avant declaration(line:" << node->getLine() << " col:" << node->getCol() << ")" << endl;
     return -6;
   }
   node->setType(obj_type);

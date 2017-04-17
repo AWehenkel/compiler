@@ -83,8 +83,8 @@ int ClassNode::addField(FieldNode* field){
 			fields[field->getName()->getLiteral()] = field;
 			return 0;
 		}
-		//Peut etre remplacer le bool de hasField par le field lui meme comme ça on pourra meme dire où il est déjà déclaré.
-		cerr << "Erreur le champs existe déjà dans la class où dans l'un de ses parents. line: " << old_field->getLine() << " col: " << old_field->getCol() << endl;
+		//Peut etre remplacer le bool de hasField par le field lui meme comme ça on pourra meme dire où il est dejà declare.
+		cerr << "Erreur le champs existe dejà dans la class où dans l'un de ses parents. line: " << old_field->getLine() << " col: " << old_field->getCol() << endl;
 		return -1;
 	}
 	cerr << "Erreur le champs est null." << endl;
@@ -112,10 +112,10 @@ int ClassNode::addMethod(MethodNode* method){
 				methods[method->getName()->getLiteral()] = method;
 				return 0;
 			}
-			cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" est déjà déclarée dans une class parente à la ligne:" << inherit_method->getLine() << " col: " << inherit_method->getCol() << endl;
+			cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" est dejà declaree dans une class parente à la ligne:" << inherit_method->getLine() << " col: " << inherit_method->getCol() << endl;
 			return -1;
 		}
-		cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" existe déjà dans la class à la ligne:" << methods.find(method->getName()->getLiteral())->second->getLine() << " col: " << methods.find(method->getName()->getLiteral())->second->getCol() << endl;
+		cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" existe dejà dans la class à la ligne:" << methods.find(method->getName()->getLiteral())->second->getLine() << " col: " << methods.find(method->getName()->getLiteral())->second->getCol() << endl;
 		return -1;
 	}
 	cerr << "Erreur la methode est null." << endl;

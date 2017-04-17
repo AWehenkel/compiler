@@ -12,7 +12,7 @@ int CallNode::updateType(){
   // Get the type of the object
   TypeIdentifierNode* object_type;
   if (!e_object){
-    cout << "pas d'objet défini sur " << e_method_name->getLiteral() << endl;
+    cout << "pas d'objet defini sur " << e_method_name->getLiteral() << endl;
     object_type = current_class->getName();
   }
   else
@@ -33,7 +33,7 @@ int CallNode::updateType(){
 
   MethodNode *method = object_class->getMethod(e_method_name->getLiteral());
   if (!method){
-    cerr << "La méthode du call n'est pas définie pour cet objet" << endl;
+    cerr << "La methode du call n'est pas definie pour cet objet" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
@@ -42,7 +42,7 @@ int CallNode::updateType(){
   vector<FormalNode*> ls_formals = formals->getFormals();
   vector<ExpressionNode*> ls_args = e_args->getExpressions();
   if (ls_formals.size() != ls_formals.size()){
-    cerr << "La méthode du call ne contient pas le bon nombre d'argument" << endl;
+    cerr << "La methode du call ne contient pas le bon nombre d'argument" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
@@ -58,7 +58,7 @@ int CallNode::updateType(){
       return -1;
     }
     if(arg_type->getLiteral() == "error" != 0 && *arg_type != *formal_type){
-      cerr << "La méthode du call contient des arguments qui ne sont pas du même type" << endl;
+      cerr << "La methode du call contient des arguments qui ne sont pas du même type" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
     }

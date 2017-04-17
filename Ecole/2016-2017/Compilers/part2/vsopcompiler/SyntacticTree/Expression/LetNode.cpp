@@ -18,7 +18,7 @@ int LetNode::updateType(){
     // Compare this type to the type of the let
     if (strcmp(init_expr_type->getLiteral().c_str(), "error") != 0 && *init_expr_type != *e_object_type){
       node_type = new TypeIdentifierNode("error");
-      cerr << "!! Types différents dans let" << endl;
+      cerr << "!! Types differents dans let" << endl;
       return -1;
     }
   }

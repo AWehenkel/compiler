@@ -18,7 +18,7 @@ int UnaryOperatorNode::updateType(){
     case UnaryOperator::u_op_not :
       // Check if operand is bools and return a bool if ok
       if (s_op_type != "error" && s_op_type != "bool"){
-        cerr << "Le membre du not n'est pas un booléan dans unary" << endl;
+        cerr << "Le membre du not n'est pas un boolean dans unary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
       }
