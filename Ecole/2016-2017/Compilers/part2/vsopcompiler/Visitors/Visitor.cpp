@@ -66,7 +66,7 @@ int Visitor::visitConditionalNode(ConditionalNode *node){
 
 int Visitor::visitLetNode(LetNode *node){
   ObjectIdentifierNode* object_id = node->getObjectId();
-  TypeIdentifierNode* type = node->getType();
+  TypeIdentifierNode* type = node->getObjectType();
   ExpressionNode* init_exp = node->getInitExp();
   ExpressionNode* scope_exp = node->getScopeExp();
   if((object_id && object_id->accept(this) < 0) || (type && type->accept(this) < 0) || (init_exp && init_exp->accept(this) < 0) || (scope_exp && scope_exp->accept(this) < 0))

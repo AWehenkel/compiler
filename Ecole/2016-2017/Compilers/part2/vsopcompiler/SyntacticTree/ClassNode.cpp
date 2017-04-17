@@ -94,8 +94,9 @@ int ClassNode::addField(FieldNode* field){
 MethodNode* ClassNode::getMethod(string name){
 	MethodNode* to_ret;
 	if(methods.find(name) == methods.end()){
-		if(parent)
+		if(parent){
 			to_ret = parent->getMethod(name);
+		}
 		else
 			to_ret = NULL;
 	}

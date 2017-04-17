@@ -3,6 +3,7 @@
 #include "LetNode.hpp"
 #include "../TypeIdentifierNode.hpp"
 #include "ObjectIdentifierNode.hpp"
+#include "../ClassNode.hpp"
 
 using namespace std;
 

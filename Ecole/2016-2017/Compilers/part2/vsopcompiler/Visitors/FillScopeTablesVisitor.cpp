@@ -8,6 +8,8 @@
 #include "../SyntacticTree/Expression/ObjectIdentifierNode.hpp"
 #include "../SyntacticTree/Expression/BlockNode.hpp"
 #include "../SyntacticTree/Expression/CallNode.hpp"
+#include "../SyntacticTree/Expression/BlockNode.hpp"
+#include "../SyntacticTree/TypeIdentifierNode.hpp"
 
 using namespace std;
 
@@ -38,6 +40,7 @@ int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
 int FillScopeTablesVisitor::visitLetNode(LetNode *node){
   node->setCurrentScope(current_scope);
   current_scope = (VSOPNode*) node;
+
   return Visitor::visitLetNode(node);
 }
 
@@ -50,7 +53,6 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
     node->setType(current_class->getName());
     return 0;
   }
-
   TypeIdentifierNode* obj_type = current_scope->getDeclarationType(node->getLiteral());
   if(!obj_type){
     cerr << "erreur variable \"" << node->getLiteral() << "\" utilisée avant déclaration(line:" << node->getLine() << " col:" << node->getCol() << ")" << endl;

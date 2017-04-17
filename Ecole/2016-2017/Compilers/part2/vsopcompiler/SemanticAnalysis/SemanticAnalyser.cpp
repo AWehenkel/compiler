@@ -1,19 +1,19 @@
-#include <unordered_map>
-#include <string>
 #include "SemanticAnalyser.hpp"
 #include "../Visitors/CheckUndefinedClassVisitor.hpp"
 #include "../Visitors/FillScopeTablesVisitor.hpp"
 #include "../Visitors/CheckTypeVisitor.hpp"
+
 using namespace std;
 
 ProgramNode* SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   classPass(program);
   return program;
 }
-
+//Attention à faire un destructeur!
 int SemanticAnalyser::classPass(ProgramNode* program){
   unordered_map<string, ClassNode*> class_table;
-  class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
+  addStandardClass(class_table);
+
   if(program->fillClassTable(class_table) < 0)
     return -1;
 
@@ -41,4 +41,33 @@ int SemanticAnalyser::classPass(ProgramNode* program){
     return -6;
 
   return 0;
+}
+
+void SemanticAnalyser::addStandardClass(unordered_map<string, ClassNode*> &class_table){
+  class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
+
+  ClassBodyNode* body = new ClassBodyNode();
+  class_table["IO"] = new ClassNode(new TypeIdentifierNode("IO"), body);
+
+  FormalsNode* formals = new FormalsNode();
+  formals->addFormal(new FormalNode(new ObjectIdentifierNode("s"), new TypeIdentifierNode("string")));
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("print"), formals, new TypeIdentifierNode("IO"), new BlockNode()));
+
+  formals = new FormalsNode();
+  formals->addFormal(new FormalNode(new ObjectIdentifierNode("b"), new TypeIdentifierNode("bool")));
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("printBool"), formals, new TypeIdentifierNode("IO"), new BlockNode()));
+
+  formals = new FormalsNode();
+  formals->addFormal(new FormalNode(new ObjectIdentifierNode("i"), new TypeIdentifierNode("int32")));
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("printInt32"), formals, new TypeIdentifierNode("IO"), new BlockNode()));
+
+  formals = new FormalsNode();
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("inputLine"), formals, new TypeIdentifierNode("string"), new BlockNode()));
+
+  formals = new FormalsNode();
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("inputBool"), formals, new TypeIdentifierNode("bool"), new BlockNode()));
+
+  formals = new FormalsNode();
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("inputInt32"), formals, new TypeIdentifierNode("int32"), new BlockNode()));
+
 }
