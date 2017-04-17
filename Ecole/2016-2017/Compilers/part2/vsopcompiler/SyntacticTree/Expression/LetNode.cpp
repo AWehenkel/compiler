@@ -24,12 +24,11 @@ int LetNode::updateType(){
   }
 
   TypeIdentifierNode *scope_expr_type = e_scope_exp->getType();
-
   if (!scope_expr_type){
     cerr << "Error int the compiler in LetNode : scope_expr_type null" << endl;
     return -1;
   }
-  node_type = new TypeIdentifierNode(scope_expr_type->getLiteral());
+  node_type = scope_expr_type;
 
   return 0;
 }

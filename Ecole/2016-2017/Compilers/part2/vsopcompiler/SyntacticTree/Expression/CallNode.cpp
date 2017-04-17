@@ -65,7 +65,7 @@ int CallNode::updateType(){
     ++it;
   }
 
-  node_type = new TypeIdentifierNode(method->getRetType()->getLiteral());
+  node_type = method->getRetType();
 
   return 0;
 

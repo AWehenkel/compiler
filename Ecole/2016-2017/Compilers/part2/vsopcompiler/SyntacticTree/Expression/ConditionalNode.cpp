@@ -47,24 +47,24 @@ int ConditionalNode::updateType(){
   string s_else_type = else_type->getLiteral();
 
   // Check if one of the branch is a unit
-  if(strcmp(s_then_type.c_str(), "unit") == 0 || strcmp(s_else_type.c_str(), "unit") == 0){
-    node_type = new TypeIdentifierNode("unit");
+  if(s_then_type == "unit" || s_else_type == "unit"){
+    node_type = then_type;
     return 0;
   }
 
   // If one branch is in error, return the type of the other branch
-  if(strcmp(s_then_type.c_str(), "error") == 0){
-    node_type = new TypeIdentifierNode(s_else_type);
+  if(s_then_type == "error"){
+    node_type = else_type;
     return 0;
-  }else if (strcmp(s_else_type.c_str(), "error") == 0){
-    node_type = new TypeIdentifierNode(s_then_type);
+  }else if (s_else_type == "error"){
+    node_type = then_type;
     return 0;
   }
 
   // If one of the branch is a basic type, check if the other one is the same
   if (!then_type->getClassType() || !else_type->getClassType()){
     if(*then_type == *else_type){
-      node_type = new TypeIdentifierNode(s_then_type);
+      node_type = then_type;
       return 0;
     }else{
       cerr << "Types différents dans conditional" << endl;
