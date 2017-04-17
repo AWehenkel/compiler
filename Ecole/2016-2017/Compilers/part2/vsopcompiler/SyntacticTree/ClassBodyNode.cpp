@@ -4,7 +4,21 @@
 
 using namespace std;
 
+ClassBodyNode::~ClassBodyNode(){
+	for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it) {
+		delete (*it);
+	}
+	for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it) {
+		delete (*it);
+	}
+}
+
+void ClassBodyNode::addField(FieldNode *field) { fields.push_back(field);}
+
+void ClassBodyNode::addMethod(MethodNode *method) { methods.push_back(method);}
+
 string ClassBodyNode::getLiteral(bool with_type) const{
+
 	//Print fields
 	string literal = "[";
 	for (vector<FieldNode*>::const_iterator it = fields.begin(); it != fields.end(); ++it) {
@@ -24,17 +38,4 @@ string ClassBodyNode::getLiteral(bool with_type) const{
 	literal += "]";
 
 	return literal;
-}
-
-void ClassBodyNode::addField(FieldNode *field) { fields.push_back(field);}
-
-void ClassBodyNode::addMethod(MethodNode *method) { methods.push_back(method);}
-
-ClassBodyNode::~ClassBodyNode(){
-	for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it) {
-		delete (*it);
-	}
-	for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it) {
-		delete (*it);
-	}
 }

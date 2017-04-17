@@ -13,6 +13,7 @@ private :
 	friend inline bool operator==(ObjectIdentifierNode const &id1, ObjectIdentifierNode const &id2){
 		return id1.equals(id2);
 	};
+
 public :
 	//Constructors:
 	/*

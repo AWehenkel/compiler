@@ -26,13 +26,13 @@ public :
 	~FormalNode();
 
 	//Public methods
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	int accept(Visitor* visitor){return visitor->visitFormalNode(this);};
-
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitFormalNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //formals_node_hpp

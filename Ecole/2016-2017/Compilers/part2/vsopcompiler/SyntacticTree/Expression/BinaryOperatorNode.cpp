@@ -1,9 +1,16 @@
-#include <cstring>
-
 #include "BinaryOperatorNode.hpp"
 #include "../TypeIdentifierNode.hpp"
 
 using namespace std;
+
+BinaryOperatorNode::~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;}
+
+string BinaryOperatorNode::getLiteral(bool with_type) const{
+  string type = "";
+  if(with_type)
+   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+  return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral(with_type) +  ", " + e_right_operand->getLiteral(with_type) + ")" + type;
+}
 
 int BinaryOperatorNode::updateType(){
 
@@ -28,6 +35,7 @@ int BinaryOperatorNode::updateType(){
       node_type = left_type;
       break;
     case BinaryOperator::b_op_equal :
+      // Check if the two types are the same (or errors) and return bool if ok
       if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
         node_type = new TypeIdentifierNode("error");
         return -1;
@@ -55,13 +63,4 @@ int BinaryOperatorNode::updateType(){
   }
 
   return 0;
-}
-
-BinaryOperatorNode::~BinaryOperatorNode(){delete e_left_operand; delete e_right_operand;}
-
-string BinaryOperatorNode::getLiteral(bool with_type) const{
-  string type = "";
-  if(with_type)
-   type = node_type ? " : " + node_type->getLiteral(with_type) : "";
-  return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral(with_type) +  ", " + e_right_operand->getLiteral(with_type) + ")" + type;
 }

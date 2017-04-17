@@ -25,10 +25,6 @@ public :
 	~ArgsNode();
 
 	//Public methods
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	int accept(Visitor* visitor){return visitor->visitArgsNode(this);};
-
 	/*
 	addExpression
 	IN: expression: ExpressionNode*, the expression to add.
@@ -47,6 +43,10 @@ public :
 
 	//Accessor
 	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitArgsNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //args_node_hpp

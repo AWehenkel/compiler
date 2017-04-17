@@ -3,7 +3,18 @@
 
 using namespace std;
 
+ArgsNode::~ArgsNode(){
+	for (std::vector<ExpressionNode*>::const_iterator it = expressions.begin(); it < expressions.end(); ++it) {
+		delete (*it);
+	}
+}
+
+void ArgsNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
+
+void ArgsNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}
+
 string ArgsNode::getLiteral(bool with_type) const {
+
 	string literal;
 	literal += "[";
 	for (vector<ExpressionNode*>::const_iterator it = expressions.begin(); it != expressions.end(); ++it) {
@@ -14,14 +25,4 @@ string ArgsNode::getLiteral(bool with_type) const {
 	literal += "]";
 
 	return literal;
-}
-
-void ArgsNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
-
-void ArgsNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}
-
-ArgsNode::~ArgsNode(){
-	for (std::vector<ExpressionNode*>::const_iterator it = expressions.begin(); it < expressions.end(); ++it) {
-		delete (*it);
-	}
 }

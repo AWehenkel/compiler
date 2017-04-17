@@ -30,8 +30,8 @@ public :
 	ExpressionNode* getExpression() const{return e_expr;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitBraceNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

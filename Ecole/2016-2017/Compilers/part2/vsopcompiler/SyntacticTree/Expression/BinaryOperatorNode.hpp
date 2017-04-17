@@ -2,7 +2,6 @@
 #define BinaryOperatorNode_hpp
 
 #include <string>
-#include <cstring>
 #include <map>
 #include "ExpressionNode.hpp"
 /*
@@ -53,8 +52,8 @@ public :
 	TypeIdentifierNode* getType() const{return node_type;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitBinaryOperatorNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

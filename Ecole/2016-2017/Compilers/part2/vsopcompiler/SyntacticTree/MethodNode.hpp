@@ -1,7 +1,6 @@
 #ifndef method_node_hpp
 #define method_node_hpp
 
-#include <cstring>
 #include <string>
 #include "VSOPNode.hpp"
 /*
@@ -19,7 +18,6 @@ private :
 		return method1.equals(method2);
 	};
 
-
 public :
 	//Constructors
 	MethodNode(ObjectIdentifierNode* name, FormalsNode *formals, TypeIdentifierNode *ret_type, BlockNode *block,int col = 0, int line = 0) :
@@ -29,12 +27,6 @@ public :
 	~MethodNode();
 
 	//Public methods
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	int updateType();
-
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	FormalsNode* getFormals() const {return e_formals;};
@@ -51,6 +43,12 @@ public :
 	OUT: bool, true if the name, the type and the arguments are equal.
 	*/
 	bool equals(MethodNode &method);
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	std::string getLiteral(bool with_type = false) const;
+	int updateType();
 };
 
 #endif //method_node_hpp

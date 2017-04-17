@@ -1,3 +1,7 @@
+#ifndef yyerror_init_h
+#define yyerror_init_h
+
+// Code to use to handle syntax errors automatically
 int yyerror_isinitialized, yymaxstate = 163;
 struct errtable {
    int i;
@@ -237,3 +241,5 @@ int yyerror_init()
    errtab[131].i = 1;
    errtab[131].u.msg = "Missing expression after 'do'";
 }
+
+#endif // yyerror_init_h

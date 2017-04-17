@@ -12,6 +12,7 @@ private :
 	TypeIdentifierNode* e_type;
 	ExpressionNode* e_init_expr;
 	ClassNode* e_class_scope;
+
 public :
 	//Constructors
 	/*
@@ -39,15 +40,15 @@ public :
 	//Setter
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
 
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
-	int updateType();
-
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};
 	ExpressionNode* getInitExpr() const {return e_init_expr;};
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
+	std::string getLiteral(bool with_type = false) const;
+	int updateType();
 };
 
 #endif //field_node_hpp

@@ -1,23 +1,28 @@
-#include <cstring>
-
 #include "ConditionalNode.hpp"
 #include "../TypeIdentifierNode.hpp"
 #include "../ClassNode.hpp"
 
 using namespace std;
 
+ConditionalNode::~ConditionalNode(){
+  delete e_condition;
+  delete e_action;
+  delete e_else_action;
+}
+
 string ConditionalNode::getLiteral(bool with_type) const{
+
   string type = "";
   if(with_type)
    type = node_type ? " : " + node_type->getLiteral(with_type) : "";
   string literal = "If(" + e_condition->getLiteral(with_type) + "," + e_action->getLiteral(with_type);
   string end = e_else_action ? "," + e_else_action->getLiteral(with_type) : "";
+
   return literal + end + ")" + type;
 }
 
 int ConditionalNode::updateType(){
 
-  // Check if the condition is of type bool
   TypeIdentifierNode *condition_type = e_condition->getType();
   if (!condition_type){
     cerr << "Error in the compiler in ConditionalNode : condition_type is null" << endl;
@@ -25,7 +30,8 @@ int ConditionalNode::updateType(){
   }
   string s_condition_type = condition_type->getLiteral();
 
-  if (strcmp(s_condition_type.c_str(), "error") != 0 && strcmp(s_condition_type.c_str(), "bool") != 0){
+    // Check if the condition is of type bool
+  if (s_condition_type != "error" && s_condition_type != "bool"){
     cerr << "Condition is not bool in conditional" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
@@ -37,6 +43,7 @@ int ConditionalNode::updateType(){
   if(e_else_action)
     else_type = e_else_action->getType();
   else
+    // If there is no else branch, consider that its type is unit
     else_type = new TypeIdentifierNode("unit");
 
   if(!then_type || !else_type){
@@ -85,10 +92,4 @@ int ConditionalNode::updateType(){
   }
 
   return 0;
-}
-
-ConditionalNode::~ConditionalNode(){
-  delete e_condition;
-  delete e_action;
-  delete e_else_action;
 }

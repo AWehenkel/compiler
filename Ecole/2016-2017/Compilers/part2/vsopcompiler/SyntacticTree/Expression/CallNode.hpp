@@ -15,6 +15,7 @@ private :
 	ArgsNode* e_args;
 	ExpressionNode* e_object;
 	ClassNode *current_class;
+
 public :
 	//Constructors:
 	/*
@@ -41,10 +42,8 @@ public :
 	ExpressionNode* getObject() const{return e_object;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-
 	int accept(Visitor* visitor){return visitor->visitCallNode(this);};
-
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

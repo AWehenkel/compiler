@@ -1,10 +1,9 @@
-#include <cstring>
-
 #include "CheckUndefinedClassVisitor.hpp"
 #include "../SyntacticTree/TypeIdentifierNode.hpp"
 #include "../SyntacticTree/ProgramNode.hpp"
 
 using namespace std;
+
 int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
 
   // Get the class tables
@@ -37,8 +36,7 @@ int CheckUndefinedClassVisitor::visitTypeIdentifierNode(TypeIdentifierNode *node
   // Check if it is the name of class
   if (table_class.find(type_id) == table_class.end())
     return -1;
-
   node->setClassType(table_class.find(type_id)->second);
-  return 0;
 
+  return 0;
 }

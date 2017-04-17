@@ -111,6 +111,15 @@ int CheckTypeVisitor::visitLetNode(LetNode *node){
   return 0;
 }
 
+int CheckTypeVisitor::visitNewNode(NewNode *node){
+  if (node->updateType() < 0){
+    std::cerr << "Erreur dans le type de method " << std::endl;
+    return -1;
+  }
+
+  return 0;
+}
+
 int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
 //cout"visitUnaryOperatorNode" << endl;
   if(Visitor::visitUnaryOperatorNode(node) < 0){
@@ -164,15 +173,6 @@ int CheckTypeVisitor::visitMethodNode(MethodNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
-    std::cerr << "Erreur dans le type de method " << std::endl;
-    return -1;
-  }
-
-  return 0;
-}
-
-int CheckTypeVisitor::visitNewNode(NewNode *node){
   if (node->updateType() < 0){
     std::cerr << "Erreur dans le type de method " << std::endl;
     return -1;

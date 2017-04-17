@@ -1,4 +1,5 @@
 %{
+
 #include <cstdio>
 #include <iostream>
 #include <cstring>
@@ -6,19 +7,23 @@
 #include "all_headers.hpp"
 #include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
+
 using namespace std;
+
 extern "C" int yylex();
 extern "C" int yyparse();
 extern "C" FILE *yyin;
-int start_token;
 extern "C" char *file_name;
-int semantic_error = 0;
-int errors;
 extern "C" char *yytext;
 extern "C" int yychar;
 extern "C" int yylineno;
 
+int semantic_error = 0;
+int errors;
+int start_token;
+
 void yyerror(const char *s);
+
 %}
 
 %locations
@@ -98,57 +103,57 @@ start :
 																											semantic_error = -1;
 																										else
 																											cout << $2->getLiteral(true);
-																										}
+																									}
 ;
 
 Input :
 
 	| Input T_AND        		{ cout << yylloc.first_line << "," << yylloc.first_column << ",and" << endl; }
-	| Input T_BOOL     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",bool" << endl; }
-	| Input T_CLASS    		{ cout << yylloc.first_line << "," << yylloc.first_column << ",class" << endl; }
-	| Input T_DO       		{ cout << yylloc.first_line << "," << yylloc.first_column << ",do" << endl; }
-	| Input T_ELSE     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",else" << endl; }
-	| Input T_EXTENDS  		{ cout << yylloc.first_line << "," << yylloc.first_column << ",extends" << endl; }
-	| Input T_FALSE    		{ cout << yylloc.first_line << "," << yylloc.first_column << ",false" << endl; }
-	| Input T_IF       		{ cout << yylloc.first_line << "," << yylloc.first_column << ",if" << endl; }
-	| Input T_IN       		{ cout << yylloc.first_line << "," << yylloc.first_column << ",in" << endl; }
-	| Input T_INT32    		{ cout << yylloc.first_line << "," << yylloc.first_column << ",int32" << endl; }
-	| Input T_ISNULL   		{ cout << yylloc.first_line << "," << yylloc.first_column << ",isnull" << endl; }
-	| Input T_LET      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",let" << endl; }
-	| Input T_NEW      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",new" << endl; }
-	| Input T_NOT      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",not" << endl; }
-	| Input T_STRING   		{ cout << yylloc.first_line << "," << yylloc.first_column << ",string" << endl; }
-	| Input T_THEN     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",then" << endl; }
-	| Input T_TRUE     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",true" << endl; }
-	| Input T_UNIT     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",unit" << endl; }
-	| Input T_WHILE    		{ cout << yylloc.first_line << "," << yylloc.first_column << ",while" << endl; }
-	| Input T_OBJ_ID   		{ cout << yylloc.first_line << "," << yylloc.first_column << ",object-identifier," << yylval.sval << endl; }
-	| Input T_INT_LIT     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",integer-literal," << yylval.ival << endl; }
-	| Input T_TYPE_ID     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",type-identifier," << yylval.sval << endl; }
-	| Input T_STRING_LIT    	{ cout << yylloc.first_line << "," << yylloc.first_column << ",string-literal," << yylval.sval << endl; }
-	| Input T_L_BRACE     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",lbrace" << endl; }
-	| Input T_R_BRACE     		{ cout << yylloc.first_line << "," << yylloc.first_column << ",rbrace" << endl; }
+	| Input T_BOOL     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",bool" << endl; }
+	| Input T_CLASS    			{ cout << yylloc.first_line << "," << yylloc.first_column << ",class" << endl; }
+	| Input T_DO       			{ cout << yylloc.first_line << "," << yylloc.first_column << ",do" << endl; }
+	| Input T_ELSE     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",else" << endl; }
+	| Input T_EXTENDS  			{ cout << yylloc.first_line << "," << yylloc.first_column << ",extends" << endl; }
+	| Input T_FALSE    			{ cout << yylloc.first_line << "," << yylloc.first_column << ",false" << endl; }
+	| Input T_IF       			{ cout << yylloc.first_line << "," << yylloc.first_column << ",if" << endl; }
+	| Input T_IN       			{ cout << yylloc.first_line << "," << yylloc.first_column << ",in" << endl; }
+	| Input T_INT32    			{ cout << yylloc.first_line << "," << yylloc.first_column << ",int32" << endl; }
+	| Input T_ISNULL   			{ cout << yylloc.first_line << "," << yylloc.first_column << ",isnull" << endl; }
+	| Input T_LET      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",let" << endl; }
+	| Input T_NEW      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",new" << endl; }
+	| Input T_NOT      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",not" << endl; }
+	| Input T_STRING   			{ cout << yylloc.first_line << "," << yylloc.first_column << ",string" << endl; }
+	| Input T_THEN     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",then" << endl; }
+	| Input T_TRUE     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",true" << endl; }
+	| Input T_UNIT     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",unit" << endl; }
+	| Input T_WHILE    			{ cout << yylloc.first_line << "," << yylloc.first_column << ",while" << endl; }
+	| Input T_OBJ_ID   			{ cout << yylloc.first_line << "," << yylloc.first_column << ",object-identifier," << yylval.sval << endl; }
+	| Input T_INT_LIT     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",integer-literal," << yylval.ival << endl; }
+	| Input T_TYPE_ID     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",type-identifier," << yylval.sval << endl; }
+	| Input T_STRING_LIT    { cout << yylloc.first_line << "," << yylloc.first_column << ",string-literal," << yylval.sval << endl; }
+	| Input T_L_BRACE     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",lbrace" << endl; }
+	| Input T_R_BRACE     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",rbrace" << endl; }
 	| Input T_R_PAR      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",rpar" << endl; }
 	| Input T_L_PAR      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",lpar" << endl; }
 	| Input T_COLON      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",colon" << endl; }
-	| Input T_SEMI_COLON    	{ cout << yylloc.first_line << "," << yylloc.first_column << ",semicolon" << endl; }
+	| Input T_SEMI_COLON    { cout << yylloc.first_line << "," << yylloc.first_column << ",semicolon" << endl; }
 	| Input T_COMMA      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",comma" << endl; }
 	| Input T_PLUS      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",plus" << endl; }
 	| Input T_MINUS      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",minus" << endl; }
 	| Input T_TIMES      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",times" << endl; }
-	| Input T_DIV      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",div" << endl; }
-	| Input T_POW      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",pow" << endl; }
-	| Input T_DOT      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",dot" << endl; }
+	| Input T_DIV      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",div" << endl; }
+	| Input T_POW      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",pow" << endl; }
+	| Input T_DOT      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",dot" << endl; }
 	| Input T_EQUAL      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",equal" << endl; }
 	| Input T_LOWER      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",lower" << endl; }
-	| Input T_LEQ      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",lower-equal" << endl; }
-	| Input T_ASSIGN      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",assign" << endl; }
+	| Input T_LEQ      			{ cout << yylloc.first_line << "," << yylloc.first_column << ",lower-equal" << endl; }
+	| Input T_ASSIGN      	{ cout << yylloc.first_line << "," << yylloc.first_column << ",assign" << endl; }
 	| Input T_COMMENTS
 ;
 
 program :
-	class            								{$$ = new ProgramNode($1);}
-	| program class  								{$1->addClass($2); $$ = $1;}
+	class            				{$$ = new ProgramNode($1);}
+	| program class  				{$1->addClass($2); $$ = $1;}
 ;
 
 t_type_id :
@@ -166,14 +171,14 @@ class :
 ;
 
 extend :
-																{$$ = NULL;}
-	| T_EXTENDS t_type_id					{$$ = $2;}
+														{$$ = NULL;}
+	| T_EXTENDS t_type_id			{$$ = $2;}
 ;
 
 class-body :
-																{$$ = new ClassBodyNode();}
-	| class-body field						{$1->addField($2); $$ = $1;}
-	| class-body method						{$1->addMethod($2); $$ = $1;}
+														{$$ = new ClassBodyNode();}
+	| class-body field				{$1->addField($2); $$ = $1;}
+	| class-body method				{$1->addMethod($2); $$ = $1;}
 ;
 
 field :
@@ -194,16 +199,16 @@ method :
 ;
 
 type :
-	t_type_id						{$$ = $1;}
-	| T_INT32						{$$ = new TypeIdentifierNode("int32", yylloc.first_column, yylloc.first_line);}
-	| T_BOOL						{$$ = new TypeIdentifierNode("bool", yylloc.first_column, yylloc.first_line);}
-	| T_STRING					{$$ = new TypeIdentifierNode("string", yylloc.first_column, yylloc.first_line);}
-	| T_UNIT						{$$ = new TypeIdentifierNode("unit", yylloc.first_column, yylloc.first_line);}
+	t_type_id									{$$ = $1;}
+	| T_INT32									{$$ = new TypeIdentifierNode("int32", yylloc.first_column, yylloc.first_line);}
+	| T_BOOL									{$$ = new TypeIdentifierNode("bool", yylloc.first_column, yylloc.first_line);}
+	| T_STRING								{$$ = new TypeIdentifierNode("string", yylloc.first_column, yylloc.first_line);}
+	| T_UNIT									{$$ = new TypeIdentifierNode("unit", yylloc.first_column, yylloc.first_line);}
 ;
 
 formals :
-																	{$$ = new FormalsNode();}
-	| formal virgul-formals					{$2->insertFormal($1); $$ = $2;}
+														{$$ = new FormalsNode();}
+	| formal virgul-formals		{$2->insertFormal($1); $$ = $2;}
 ;
 
 virgul-formals :
@@ -212,16 +217,16 @@ virgul-formals :
 ;
 
 formal :
-	t_obj_id T_COLON type					{$$ = new FormalNode($1, $3, $1->getCol(), $1->getLine());}
+	t_obj_id T_COLON type									{$$ = new FormalNode($1, $3, $1->getCol(), $1->getLine());}
 ;
 
 block :
-	T_L_BRACE expr sc-expr T_R_BRACE						{$3->insertExpr($2); $$ = $3;}
+	T_L_BRACE expr sc-expr T_R_BRACE			{$3->insertExpr($2); $$ = $3;}
 ;
 
 sc-expr :
-																		{$$ = new BlockNode();}
-	| T_SEMI_COLON expr sc-expr				{$3->insertExpr($2); $$ = $3;}
+																				{$$ = new BlockNode();}
+	| T_SEMI_COLON expr sc-expr						{$3->insertExpr($2); $$ = $3;}
 ;
 
 expr :
@@ -253,24 +258,24 @@ expr :
 ;
 
 args :
-														{$$ = new ArgsNode();}
-	| expr comma-arg					{$2->insertExpr($1); $$ = $2;}
+															{$$ = new ArgsNode();}
+	| expr comma-arg						{$2->insertExpr($1); $$ = $2;}
 ;
 
 comma-arg :
-																	{$$ = new ArgsNode();}
-	| T_COMMA expr comma-arg				{$3->insertExpr($2); $$ = $3;}
+															{$$ = new ArgsNode();}
+	| T_COMMA expr comma-arg		{$3->insertExpr($2); $$ = $3;}
 ;
 
 literal :
-	T_INT_LIT									{$$ = new LiteralNode($1, "int32", yylloc.first_column, yylloc.first_line);}
-	| T_STRING_LIT						{string tmp = $1; free $1; $$ = new LiteralNode(tmp, "string", yylloc.first_column, yylloc.first_line);}
-	| boolean-literal					{$$ = $1;}
+	T_INT_LIT										{$$ = new LiteralNode($1, "int32", yylloc.first_column, yylloc.first_line);}
+	| T_STRING_LIT							{string tmp = $1; free $1; $$ = new LiteralNode(tmp, "string", yylloc.first_column, yylloc.first_line);}
+	| boolean-literal						{$$ = $1;}
 ;
 
 boolean-literal :
-	T_TRUE							{$$ = new LiteralNode("true", "bool", yylloc.first_column, yylloc.first_line);}
-	| T_FALSE						{$$ = new LiteralNode("false", "bool", yylloc.first_column, yylloc.first_line);}
+	T_TRUE											{$$ = new LiteralNode("true", "bool", yylloc.first_column, yylloc.first_line);}
+	| T_FALSE										{$$ = new LiteralNode("false", "bool", yylloc.first_column, yylloc.first_line);}
 ;
 
 %%
@@ -280,6 +285,7 @@ int main (int argc, char *argv[]){
 	if(argc != 2 && argc != 3){
 		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
 		cerr << "Usage for both lexer and parse: ./main <Source_File>" << endl;
+		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
 		return -1;
 	}
 
@@ -292,7 +298,6 @@ int main (int argc, char *argv[]){
 
 	FILE *myfile = fopen(argv[argc-1], "r");
 	file_name = argv[argc-1];
-	// make sure it is valid:
 	if (!myfile) {
 	 	cerr << "Could not open " << file_name << endl;
 		return -1;

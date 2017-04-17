@@ -2,7 +2,6 @@
 #define WhileNode_hpp
 
 #include <string>
-#include <cstring>
 #include <vector>
 #include "ExpressionNode.hpp"
 /*
@@ -34,8 +33,8 @@ public :
 	ExpressionNode* getAction() const{return e_action;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitWhileNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

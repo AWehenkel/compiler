@@ -16,6 +16,7 @@ private :
 	UnaryOperator e_op;
 	ExpressionNode* e_operand;
 	std::map<UnaryOperator, std::string> literal_op_table;
+
 public :
 	//Constructors:
 	/*
@@ -40,8 +41,8 @@ public :
 	ExpressionNode* getOperand() const{return e_operand;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitUnaryOperatorNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

@@ -8,18 +8,24 @@ using namespace std;
 int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   return classPass(program);
 }
+
 //Attention à faire un destructeur!
 int SemanticAnalyser::classPass(ProgramNode* program){
+
   unordered_map<string, ClassNode*> class_table;
+  // Adding Object class to the class table
   class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
+  // Adding IO class to the class table (maybe good to replace with include system)
   ClassNode* io_class = createIOClass();
   program->addClass(io_class);
 
+  // Fill the class table with the other class in the program
   if(program->fillClassTable(class_table) < 0){
     cerr << "fill class table n'a pas fonctionne :'(" << endl;
     return -1;
   }
 
+  // Set the parents of each class (Object if no parents specified)
   for(auto it = class_table.begin(); it != class_table.end(); ++it){
     if(it->first != "Object" && (it->second)->setParent(class_table) < 0){
       cerr << "Pas reussi à set le parent" << endl;
@@ -27,27 +33,35 @@ int SemanticAnalyser::classPass(ProgramNode* program){
     }
   }
 
+  // Check for cycles
   for(auto it = class_table.begin(); it != class_table.end(); ++it)
     if((it->second)->inCycle()){
       cerr << "il y a un cycle et c'est pas cool" << endl;
       return -3;
     }
+
+  // Check if any unkown class is used
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
   if (program->accept(visitor) < 0){
     cerr << "problem in CheckUndefinedClassVisitor" << endl;
     return -4;
   }
+
+  // Record all the methods, fields and local variables
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   if (program->accept(visitor1) < 0){
     cerr << "problem in FillScopeTablesVisitor" << endl;
     return -5;
   }
+
+  // Check all the types
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   if (program->accept(visitor2) < 0){
     cerr << "problem in CheckTypeVisitor" << endl;
     return -6;
   }
 
+  // Remove IO class for the class table
   program->removeClass(io_class);
   return 0;
 }

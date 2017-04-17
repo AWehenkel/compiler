@@ -1,5 +1,3 @@
-#include <cstring>
-
 #include "FieldNode.hpp"
 #include "ClassNode.hpp"
 #include "TypeIdentifierNode.hpp"
@@ -7,7 +5,14 @@
 
 using namespace std;
 
+FieldNode::~FieldNode(){
+	delete e_name;
+	delete e_type;
+	delete e_init_expr;
+}
+
 string FieldNode::getLiteral(bool with_type) const {
+
 	string literal = "Field(" + e_name->getLiteral(with_type) + ", " + e_type->getLiteral(with_type);
 	if(e_init_expr)
 		literal += ", " + e_init_expr->getLiteral(with_type);
@@ -18,6 +23,7 @@ string FieldNode::getLiteral(bool with_type) const {
 
 int FieldNode::updateType(){
 
+	// Check if the type of the initialization expression if any
 	if (e_init_expr){
 		TypeIdentifierNode *init_expr_type = e_init_expr->getType();
 		if (!init_expr_type){
@@ -31,11 +37,6 @@ int FieldNode::updateType(){
 			return -1;
 		}
 	}
-	return 0;
-}
 
-FieldNode::~FieldNode(){
-	delete e_name;
-	delete e_type;
-	delete e_init_expr;
+	return 0;
 }

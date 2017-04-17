@@ -42,8 +42,8 @@ public :
 	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitBlockNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

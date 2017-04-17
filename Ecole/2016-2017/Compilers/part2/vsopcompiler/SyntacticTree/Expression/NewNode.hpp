@@ -9,6 +9,7 @@
 class NewNode : public ExpressionNode {
 private :
 	TypeIdentifierNode* e_type_id;
+	
 public :
 	//Constructors:
 	/*
@@ -24,8 +25,8 @@ public :
 	TypeIdentifierNode* getTypeId() const{return e_type_id;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitNewNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

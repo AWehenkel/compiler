@@ -25,6 +25,9 @@ class ObjectIdentifierNode;
 class UnaryOperatorNode;
 class WhileNode;
 
+/*
+* This abstract class is used to visit the nodes of the syntactic tree.
+*/
 class Visitor {
   public :
     virtual int visitAssignNode(AssignNode *node);

@@ -14,6 +14,7 @@ private :
 	friend inline bool operator==(FormalsNode &formals1, FormalsNode &formals2){
 		return formals1.equals(formals2);
 	};
+
 public :
 	//Constructors
 	FormalsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
@@ -22,11 +23,6 @@ public :
 	~FormalsNode();
 
 	//Public methods
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
-
 	/*
 	addFormal
 	IN: formal: FormalNode*, the formal to add.
@@ -53,6 +49,11 @@ public :
 
 	//Accessors
 	std::vector<FormalNode*> getFormals() const {return formals;};
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //formals_node_hpp

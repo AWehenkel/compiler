@@ -48,8 +48,8 @@ public :
 	void removeClass(ClassNode* node);
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor);
+	std::string getLiteral(bool with_type = false) const;
 
 };
 

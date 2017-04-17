@@ -3,7 +3,16 @@
 
 using namespace std;
 
+void BlockNode::addExpression(ExpressionNode *expression){
+	expressions.push_back(expression);
+}
+
+void BlockNode::insertExpr(ExpressionNode *expression){
+	expressions.insert(expressions.begin(), expression);
+}
+
 string BlockNode::getLiteral(bool with_type) const {
+
 	string literal;
 	string type = "";
 	if(with_type){
@@ -27,11 +36,8 @@ string BlockNode::getLiteral(bool with_type) const {
 	return  literal;
 }
 
-void BlockNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
-
-void BlockNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}
-
 int BlockNode::updateType(){
+
 	string type;
 	for (vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
 		ExpressionNode *expr = *it;

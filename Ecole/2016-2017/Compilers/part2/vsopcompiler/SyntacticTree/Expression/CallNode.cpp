@@ -7,12 +7,25 @@
 
 using namespace std;
 
+CallNode::~CallNode(){delete e_args; delete e_object;}
+
+string CallNode::getLiteral(bool with_type) const{
+
+  string type = "";
+  if(with_type)
+    type = node_type ? " : " + node_type->getLiteral(with_type) : "";
+
+  string obj_name = e_object ? e_object->getLiteral(with_type) : "self";
+
+  return "Call(" + obj_name + ", "  + e_method_name->getLiteral(with_type) + ", " + e_args->getLiteral(with_type) + ")" + type;
+}
+
 int CallNode::updateType(){
 
   // Get the type of the object
   TypeIdentifierNode* object_type;
   if (!e_object){
-    cerr << "pas d'objet defini sur " << e_method_name->getLiteral() << endl;
+    // If no objet identifier, the call is made on the current object
     object_type = current_class->getName();
   }
   else
@@ -23,14 +36,15 @@ int CallNode::updateType(){
     return -1;
   }
 
+  // Check if the call is indeed made on an object
   ClassNode* object_class = object_type->getClassType();
   if (!object_class){
     cerr << "L'objet (" << object_type->getLiteral(true) << ") du call (" << e_method_name->getLiteral() << ") n'est pas une classe" << endl;
-    cerr << object_type->getLiteral() << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
 
+  // Check if the method called exists for the given object
   MethodNode *method = object_class->getMethod(e_method_name->getLiteral());
   if (!method){
     cerr << "La methode du call n'est pas definie pour cet objet" << endl;
@@ -38,6 +52,7 @@ int CallNode::updateType(){
     return -1;
   }
 
+  // Check if the arguments correspond to the formals of the method
   FormalsNode *formals = method->getFormals();
   vector<FormalNode*> ls_formals = formals->getFormals();
   vector<ExpressionNode*> ls_args = e_args->getExpressions();
@@ -54,8 +69,6 @@ int CallNode::updateType(){
     TypeIdentifierNode* formal_type = formal->getType();
     TypeIdentifierNode* arg_type = arg->getType();
     if (!formal_type || !arg_type){
-      cerr << formal->getLiteral(true) << endl;
-      cerr << arg->getLiteral(true) << endl;
       cerr << "Error in the compiler in CallNode : formal_type or arg_type is null(l: " << e_method_name->getLine() << ", c: " << e_method_name->getCol() << ")" << endl;
       return -1;
     }
@@ -72,15 +85,3 @@ int CallNode::updateType(){
   return 0;
 
 }
-
-string CallNode::getLiteral(bool with_type) const{
-  string type = "";
-  if(with_type)
-    type = node_type ? " : " + node_type->getLiteral(with_type) : "";
-
-  string obj_name = e_object ? e_object->getLiteral(with_type) : "self";
-
-  return "Call(" + obj_name + ", "  + e_method_name->getLiteral(with_type) + ", " + e_args->getLiteral(with_type) + ")" + type;
-}
-
-CallNode::~CallNode(){delete e_args; delete e_object;}

@@ -7,16 +7,10 @@
 
 using namespace std;
 
-string ClassNode::getLiteral(bool with_type) const{
-	string literal = "Class(" + e_name->getLiteral(with_type) + ", ";
-	if(e_extends == NULL)
-		literal += "Object, ";
-	else
-		literal += e_extends->getLiteral(with_type) + ", ";
-	literal += e_body->getLiteral(with_type) + ")";
-
-	return literal;
-
+ClassNode::~ClassNode(){
+	delete e_name;
+	delete e_extends;
+	delete e_body;
 }
 
 int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
@@ -33,9 +27,10 @@ int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
 	}
 	return -1;
 }
+
 bool ClassNode::hasField(FieldNode* field) const{
 	return ((fields.find(field->getName()->getLiteral()) != fields.end()) || (parent && parent->hasField(field)));
-};;
+}
 
 bool ClassNode::hasMethod(MethodNode* method) const{
 	return ((methods.find(method->getName()->getLiteral()) != methods.end()) || (parent && parent->hasMethod(method)));
@@ -45,27 +40,8 @@ bool ClassNode::parentHasMethod(MethodNode* method) const{
 	return (parent && parent->hasMethod(method));
 }
 
-int ClassNode::fillClassTable(unordered_map<string, ClassNode*> &table){
-	if(table.find(e_name->getLiteral()) != table.end())
-		return -1;
-	table[e_name->getLiteral()] = this;
-	return 0;
-}
-
-TypeIdentifierNode* ClassNode::getDeclarationType(string id){
-
-	if(fields.find(id) != fields.end())
-		return fields.find(id)->second->getType();
-	else if(parent)
-		return parent->getDeclarationType(id);
-	return NULL;
-}
-
-int ClassNode::accept(Visitor* visitor){
-	return visitor->visitClassNode(this);
-}
-
 FieldNode* ClassNode::getField(string name){
+
 	FieldNode* to_ret;
 	if(fields.find(name) == fields.end()){
 		if(parent)
@@ -75,10 +51,12 @@ FieldNode* ClassNode::getField(string name){
 	}
 	else
 		to_ret = fields.find(name)->second;
+
 	return to_ret;
 }
 
 int ClassNode::addField(FieldNode* field){
+
 	if(field){
 		FieldNode* old_field = getField(field->getName()->getLiteral());
 		if(!old_field){
@@ -90,10 +68,12 @@ int ClassNode::addField(FieldNode* field){
 		return -1;
 	}
 	cerr << "Erreur le champs est null." << endl;
+
 	return -1;
 }
 
 MethodNode* ClassNode::getMethod(string name){
+
 	MethodNode* to_ret;
 	if(methods.find(name) == methods.end()){
 		if(parent){
@@ -104,10 +84,12 @@ MethodNode* ClassNode::getMethod(string name){
 	}
 	else
 		to_ret = methods.find(name)->second;
+
 	return to_ret;
 }
 
 int ClassNode::addMethod(MethodNode* method){
+
 	if(method){
 		if(methods.find(method->getName()->getLiteral()) == methods.end()){
 			MethodNode* inherit_method = parent ? parent->getMethod(method->getName()->getLiteral()) : NULL;
@@ -122,14 +104,17 @@ int ClassNode::addMethod(MethodNode* method){
 		return -1;
 	}
 	cerr << "Erreur la methode est null." << endl;
+
 	return -1;
 }
 
 bool ClassNode::inCycle(){
+
 	if(!in_cycle){
 		in_cycle = true;
 		in_cycle = parent == NULL ? false : parent->inCycle();
 	}
+
 	return in_cycle;
 }
 
@@ -138,11 +123,13 @@ TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
 	TypeIdentifierNode* common_parent =  NULL;
 	if(other == NULL)
 		return NULL;
+
 	// Check if there is a direct parent linkage
 	TypeIdentifierNode* other_type = other->getName();
 	if (*other_type == *e_name)
 		common_parent = e_name;
 
+	// If not check if there is a common ancestor
 	if (!common_parent && parent)
 		common_parent = parent->getCommonParent(other);
 
@@ -152,13 +139,42 @@ TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
 	return common_parent;
 }
 
-ClassNode::~ClassNode(){
-	delete e_name;
-	delete e_extends;
-	delete e_body;
-}
-
 bool ClassNode::hasParent(ClassNode* candidate){
 	TypeIdentifierNode* common_parent = getCommonParent(candidate);
 	return common_parent && common_parent->getLiteral() == candidate->getName()->getLiteral();
+}
+
+int ClassNode::accept(Visitor* visitor){
+	return visitor->visitClassNode(this);
+}
+
+int ClassNode::fillClassTable(unordered_map<string, ClassNode*> &table){
+
+	if(table.find(e_name->getLiteral()) != table.end())
+		return -1;
+	table[e_name->getLiteral()] = this;
+
+	return 0;
+}
+
+TypeIdentifierNode* ClassNode::getDeclarationType(string id){
+
+	if(fields.find(id) != fields.end())
+		return fields.find(id)->second->getType();
+	else if(parent)
+		return parent->getDeclarationType(id);
+
+	return NULL;
+}
+
+string ClassNode::getLiteral(bool with_type) const{
+
+	string literal = "Class(" + e_name->getLiteral(with_type) + ", ";
+	if(e_extends == NULL)
+		literal += "Object, ";
+	else
+		literal += e_extends->getLiteral(with_type) + ", ";
+	literal += e_body->getLiteral(with_type) + ")";
+
+	return literal;
 }

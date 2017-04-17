@@ -57,6 +57,7 @@ public :
 	virtual TypeIdentifierNode* getDeclarationType(std::string id){
 		return NULL;
 	};
+	
 	//Accessors
 	const int getLine() const{
 		return n_line;

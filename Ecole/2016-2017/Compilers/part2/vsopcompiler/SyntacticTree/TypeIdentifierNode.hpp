@@ -17,6 +17,7 @@ private :
 	friend inline bool operator!=(TypeIdentifierNode &id1, TypeIdentifierNode &id2){
 		return !(id1 == id2);
 	};
+
 public :
 
 	//Constructors:
@@ -24,16 +25,6 @@ public :
 	TypeIdentifierNode(std::string content, ClassNode* class_type, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(class_type){};
 
 	//Public Methods:
-	//Inherited
-	std::string getLiteral(bool with_type = false) const{
-		return t_content;
-	};
-
-
-	int accept(Visitor* visitor){
-		return visitor->visitTypeIdentifierNode(this);
-	};
-
 	//Setter
 	void setClassType(ClassNode* class_type){
 		t_class_type = class_type;
@@ -51,6 +42,11 @@ public :
 	bool equals(TypeIdentifierNode &id){
 		return id.t_content == t_content;
 	};
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitTypeIdentifierNode(this);};
+	std::string getLiteral(bool with_type = false) const{return t_content;};
+
 };
 
 #endif //TypeIdentifierNode_hpp

@@ -1,5 +1,5 @@
 %{
-using namespace std;
+
 #include <unordered_map>
 #include <stdlib.h>
 #include <string>
@@ -8,12 +8,24 @@ using namespace std;
 #include <iostream>
 #include <vector>
 #include <stack>
-#define YY_DECL extern "C" int yylex()
 #include "vsop_grammar.tab.h"
-void yyerror(const char *s);
-void lexicalError();
+
+#define YY_DECL extern "C" int yylex()
+
+using namespace std;
+
 char *file_name;
 extern int start_token;
+
+void yyerror(const char *s);
+
+/*
+ROLE: Prints out an error message if a lexical error is found
+IN: Error message to be printed out
+OUT: -
+*/
+void lexicalError();
+
 /*
 ROLE:   This function is used to replace any occurence of sub string into a string.
 IN:     text: string, the text to transform.

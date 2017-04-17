@@ -25,11 +25,6 @@ public :
 	~ClassBodyNode();
 
 	//Public methods
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	int accept(Visitor* visitor){return visitor->visitClassBodyNode(this);};
-
-
 	/*
 	addField
 	IN: expression: FieldNode*, the field to add.
@@ -49,6 +44,10 @@ public :
 	//Accessors
 	std::vector<FieldNode*> getFields() const {return fields;};
 	std::vector<MethodNode*> getMethods() const {return methods;};
+
+	//Inherited
+	int accept(Visitor* visitor){return visitor->visitClassBodyNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //class_body_node_hpp

@@ -1,7 +1,6 @@
 #ifndef ConditionalNode_hpp
 #define ConditionalNode_hpp
 
-#include <cstring>
 #include <string>
 #include <vector>
 #include "ExpressionNode.hpp"
@@ -38,8 +37,8 @@ public :
 	ExpressionNode* getElseAction() const{return e_else_action;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitConditionalNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

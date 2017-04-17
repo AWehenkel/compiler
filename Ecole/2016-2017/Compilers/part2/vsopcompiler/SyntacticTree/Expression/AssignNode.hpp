@@ -4,12 +4,13 @@
 #include <string>
 #include "ExpressionNode.hpp"
 /*
-	Class used to represent a syntaxic node containing an assignment
+*	Class used to represent a syntaxic node containing an assignment.
 */
 class AssignNode : public ExpressionNode {
 private :
 	ObjectIdentifierNode* e_name;
 	ExpressionNode* e_expr;
+	
 public :
 	//Constructors:
 	/*
@@ -31,8 +32,8 @@ public :
 	ExpressionNode* getExpression() const{return e_expr;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitAssignNode(this);};
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 };
 

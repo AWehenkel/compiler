@@ -39,9 +39,9 @@ public :
 	VSOPNode* getCurrentScope() const{return e_current_scope;};
 
 	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	TypeIdentifierNode* getDeclarationType(std::string id);
 	int accept(Visitor* visitor){return visitor->visitLetNode(this);};
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	std::string getLiteral(bool with_type = false) const;
 	int updateType();
 
 	//Setters

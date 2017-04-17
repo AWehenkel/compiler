@@ -41,6 +41,7 @@ private :
 	OUT: bool, true if the method is already declared.
 	*/
 	bool parentHasMethod(MethodNode* method) const;
+
 public :
 	//Constructors
 
@@ -58,12 +59,6 @@ public :
 	~ClassNode();
 
 	//Public methods
-	//Inherited
-	std::string getLiteral(bool with_type = false) const;
-	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	int accept(Visitor* visitor);
-
 	//Accesors
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
@@ -132,6 +127,12 @@ public :
 	OUT : bool, true if the candidate is a parent of the current class.
 	*/
 	bool hasParent(ClassNode* candidate);
+
+	//Inherited
+	int accept(Visitor* visitor);
+	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //class_node_hpp
