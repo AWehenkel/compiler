@@ -24,6 +24,8 @@ class FillScopeTablesVisitor : public Visitor {
     int visitLetNode(LetNode *node);
     int visitFormalNode(FormalNode *node);
     int visitCallNode(CallNode *node);
+    int visitFormalsNode(FormalsNode *node);
+    int visitAssignNode(AssignNode *node);
 };
 
 #endif //fill_scope_tables_visitor

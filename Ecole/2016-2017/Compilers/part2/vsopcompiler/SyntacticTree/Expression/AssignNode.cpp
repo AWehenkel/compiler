@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "AssignNode.hpp"
+#include "../ClassNode.hpp"
 #include "../TypeIdentifierNode.hpp"
 #include "ObjectIdentifierNode.hpp"
 
@@ -17,7 +18,7 @@ int AssignNode::updateType(){
   /* It there was a type error in the son e_expr or if the two types are the
   * same, assign the type of e_name to node_type and stop the propagation of
   * errors */
-  if (expr_type->getLiteral() == "error" || *name_type == *expr_type){
+  if (expr_type->getLiteral() == "error" || *name_type == *expr_type || (expr_type->getClassType() && expr_type->getClassType()->hasParent(name_type->getClassType()))){
     node_type = name_type;
     return 0;
   }

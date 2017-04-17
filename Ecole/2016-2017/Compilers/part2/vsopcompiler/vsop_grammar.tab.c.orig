@@ -2440,6 +2440,8 @@ int main (int argc, char *argv[]){
 			return -1;
 	} while (!feof(yyin));
 
+	if(semantic_error < 0)
+		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
 	return semantic_error;
 }
 

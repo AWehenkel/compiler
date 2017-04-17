@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "FieldNode.hpp"
+#include "ClassNode.hpp"
 #include "TypeIdentifierNode.hpp"
 #include "Expression/ObjectIdentifierNode.hpp"
 
@@ -24,13 +25,12 @@ int FieldNode::updateType(){
 			return -1;
 		}
 
-		if (init_expr_type->getLiteral() == "error"|| init_expr_type->getLiteral() != e_type->getLiteral()){
-			cerr << init_expr_type->getLiteral() << " " << e_type->getLiteral() << endl;
+		if (init_expr_type->getLiteral() != "error" && init_expr_type->getLiteral() != e_type->getLiteral() &&
+		 (!init_expr_type->getClassType() || !init_expr_type->getClassType()->hasParent(e_type->getClassType()))){
 			cerr << "Pas le même type dans field" << endl;
 			return -1;
 		}
 	}
-
 	return 0;
 }
 

@@ -12,9 +12,15 @@ int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
 
   // Get the classes
   std::vector<ClassNode*> classes = node->getClasses();
+  bool as_main_class = false;
   for(std::vector<ClassNode*>::iterator it = classes.begin(); it != classes.end(); ++it){
-    if((*it)->accept(this) < 0)
+    as_main_class = (*it)->getName()->getLiteral() == "Main" ? true : as_main_class;
+    if((*it)->accept(this) < 0 )
       return -1;
+  }
+  if(!as_main_class){
+    cerr << "No Main class defined." << endl;
+    return -1;
   }
 
   return 0;

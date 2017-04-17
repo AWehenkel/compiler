@@ -21,7 +21,7 @@ int SemanticAnalyser::classPass(ProgramNode* program){
   }
 
   for(auto it = class_table.begin(); it != class_table.end(); ++it){
-    if((it->second)->setParent(class_table) < 0){
+    if(it->first != "Object" && (it->second)->setParent(class_table) < 0){
       cerr << "Pas reussi à set le parent" << endl;
       return -2;
     }
@@ -37,7 +37,6 @@ int SemanticAnalyser::classPass(ProgramNode* program){
     cerr << "problem in CheckUndefinedClassVisitor" << endl;
     return -4;
   }
-
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   if (program->accept(visitor1) < 0){
     cerr << "problem in FillScopeTablesVisitor" << endl;

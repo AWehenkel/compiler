@@ -22,8 +22,10 @@ string ClassNode::getLiteral(bool with_type) const{
 int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
 
 	// Can have no parents
-	if (!e_extends)
+	if (!e_extends){
+		parent = table.find("Object")->second;
 		return 0;
+	}
 
 	if(table.find(e_extends->getLiteral()) != table.end()){
 		parent = table.find(e_extends->getLiteral())->second;
@@ -134,7 +136,8 @@ bool ClassNode::inCycle(){
 TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
 
 	TypeIdentifierNode* common_parent =  NULL;
-
+	if(other == NULL)
+		return NULL;
 	// Check if there is a direct parent linkage
 	TypeIdentifierNode* other_type = other->getName();
 	if (*other_type == *e_name)

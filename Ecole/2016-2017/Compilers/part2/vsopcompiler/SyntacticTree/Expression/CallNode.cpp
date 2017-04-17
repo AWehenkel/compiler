@@ -41,7 +41,7 @@ int CallNode::updateType(){
   FormalsNode *formals = method->getFormals();
   vector<FormalNode*> ls_formals = formals->getFormals();
   vector<ExpressionNode*> ls_args = e_args->getExpressions();
-  if (ls_formals.size() != ls_formals.size()){
+  if (ls_formals.size() != ls_args.size()){
     cerr << "La methode du call ne contient pas le bon nombre d'argument" << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
@@ -59,7 +59,8 @@ int CallNode::updateType(){
       cerr << "Error in the compiler in CallNode : formal_type or arg_type is null(l: " << e_method_name->getLine() << ", c: " << e_method_name->getCol() << ")" << endl;
       return -1;
     }
-    if(arg_type->getLiteral() == "error" != 0 && *arg_type != *formal_type && (!arg_type->getClassType() || !arg_type->getClassType()->hasParent(formal_type->getClassType()))){
+
+    if(arg_type->getLiteral() != "error" && *arg_type != *formal_type && (!arg_type->getClassType() || !arg_type->getClassType()->hasParent(formal_type->getClassType()))){
       cerr << "La methode du call contient des arguments qui ne sont pas du même type" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
