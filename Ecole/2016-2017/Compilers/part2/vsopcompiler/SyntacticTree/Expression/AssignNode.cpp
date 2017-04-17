@@ -24,7 +24,7 @@ int AssignNode::updateType(){
 
   // If the two types were different, assign "error" to e_name and return -1
   node_type = new TypeIdentifierNode("error");
-  cerr << "!! Les deux types sont differents dans assign" << endl;
+  cerr << "!! Les deux types(" << name_type->getLiteral() <<" et " <<  expr_type->getLiteral() <<") sont differents dans assign" << endl;
   return -1;
 }
 

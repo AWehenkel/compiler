@@ -40,8 +40,9 @@ int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
 int FillScopeTablesVisitor::visitLetNode(LetNode *node){
   node->setCurrentScope(current_scope);
   current_scope = (VSOPNode*) node;
-
-  return Visitor::visitLetNode(node);
+  int result = Visitor::visitLetNode(node);
+  current_scope = node->getCurrentScope();
+  return result;
 }
 
 int FillScopeTablesVisitor::visitFormalNode(FormalNode *node){

@@ -51,15 +51,15 @@ void SemanticAnalyser::addStandardClass(unordered_map<string, ClassNode*> &class
 
   FormalsNode* formals = new FormalsNode();
   formals->addFormal(new FormalNode(new ObjectIdentifierNode("s"), new TypeIdentifierNode("string")));
-  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("print"), formals, new TypeIdentifierNode("IO"), new BlockNode()));
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("print"), formals, new TypeIdentifierNode("IO", class_table["IO"]), new BlockNode()));
 
   formals = new FormalsNode();
   formals->addFormal(new FormalNode(new ObjectIdentifierNode("b"), new TypeIdentifierNode("bool")));
-  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("printBool"), formals, new TypeIdentifierNode("IO"), new BlockNode()));
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("printBool"), formals, new TypeIdentifierNode("IO", class_table["IO"]), new BlockNode()));
 
   formals = new FormalsNode();
   formals->addFormal(new FormalNode(new ObjectIdentifierNode("i"), new TypeIdentifierNode("int32")));
-  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("printInt32"), formals, new TypeIdentifierNode("IO"), new BlockNode()));
+  class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("printInt32"), formals, new TypeIdentifierNode("IO", class_table["IO"]), new BlockNode()));
 
   formals = new FormalsNode();
   class_table["IO"]->addMethod(new MethodNode(new ObjectIdentifierNode("inputLine"), formals, new TypeIdentifierNode("string"), new BlockNode()));

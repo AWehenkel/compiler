@@ -21,6 +21,7 @@ public :
 
 	//Constructors:
 	TypeIdentifierNode(std::string content, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(NULL){};
+	TypeIdentifierNode(std::string content, ClassNode* class_type, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(class_type){};
 
 	//Public Methods:
 	//Inherited

@@ -36,6 +36,7 @@ public :
 	TypeIdentifierNode* getObjectType() const{return e_object_type;};
 	ExpressionNode* getInitExp() const{return e_init_exp;};
 	ExpressionNode* getScopeExp() const{return e_scope_exp;};
+	VSOPNode* getCurrentScope() const{return e_current_scope;};
 
 	//Inherited
 	std::string getLiteral(bool with_type = false) const;
