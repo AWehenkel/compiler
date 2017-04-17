@@ -21,7 +21,7 @@ int BinaryOperatorNode::updateType(){
     case BinaryOperator::b_op_and :
       // Check both operands are bools or errors and return a bool if ok
       if ((s_left_type != "bool" && s_left_type != "error") || (s_right_type != "bool" && s_right_type != "error")){
-        cerr << "Les deux membres ne sont pas des booléans dans binary" << endl;
+        cerr << "Les deux membres ne sont pas des booleans dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
         return -1;
       }
