@@ -35,6 +35,7 @@ public :
 	ROLE: Add a class at the end of the program.
 	*/
 	void addClass(ClassNode *new_class);
+	
 	/*
 	fillClassTable
 	IN: std::unordered_maptable, a reference to the table to fill with the class contained in the subnode of the current node.

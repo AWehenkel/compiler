@@ -14,6 +14,6 @@ public:
   *      pass when it occured
   */
   void printError(){
-    std::cerr << m_message << "(" << m_context_node->getMessageNode() << ")" << std::endl;
+    std::cerr << m_context_node->getLine() << ":" << m_context_node->getCol() << ": semantic error :\n    " << m_message << std::endl;
   };
 };
