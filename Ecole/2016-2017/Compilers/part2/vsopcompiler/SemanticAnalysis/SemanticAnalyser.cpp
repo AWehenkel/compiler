@@ -6,12 +6,7 @@
 using namespace std;
 
 int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
-  return classPass(program);
-}
-
-//Attention à faire un destructeur!
-int SemanticAnalyser::classPass(ProgramNode* program){
-
+  
   unordered_map<string, ClassNode*> class_table;
   // Adding Object class to the class table
   class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
