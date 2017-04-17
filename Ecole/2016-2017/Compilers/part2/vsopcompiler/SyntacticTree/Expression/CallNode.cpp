@@ -12,7 +12,7 @@ int CallNode::updateType(){
   // Get the type of the object
   TypeIdentifierNode* object_type;
   if (!e_object){
-    cout << "pas d'objet defini sur " << e_method_name->getLiteral() << endl;
+    cerr << "pas d'objet defini sur " << e_method_name->getLiteral() << endl;
     object_type = current_class->getName();
   }
   else
@@ -26,7 +26,7 @@ int CallNode::updateType(){
   ClassNode* object_class = object_type->getClassType();
   if (!object_class){
     cerr << "L'objet (" << object_type->getLiteral(true) << ") du call (" << e_method_name->getLiteral() << ") n'est pas une classe" << endl;
-    cout << object_type->getLiteral() << endl;
+    cerr << object_type->getLiteral() << endl;
     node_type = new TypeIdentifierNode("error");
     return -1;
   }
@@ -54,17 +54,18 @@ int CallNode::updateType(){
     TypeIdentifierNode* formal_type = formal->getType();
     TypeIdentifierNode* arg_type = arg->getType();
     if (!formal_type || !arg_type){
-      cerr << "Error in the compiler in CallNode : formal_type or arg_type is null" << endl;
+      cerr << formal->getLiteral(true) << endl;
+      cerr << arg->getLiteral(true) << endl;
+      cerr << "Error in the compiler in CallNode : formal_type or arg_type is null(l: " << e_method_name->getLine() << ", c: " << e_method_name->getCol() << ")" << endl;
       return -1;
     }
-    if(arg_type->getLiteral() == "error" != 0 && *arg_type != *formal_type){
+    if(arg_type->getLiteral() == "error" != 0 && *arg_type != *formal_type && (!arg_type->getClassType() || !arg_type->getClassType()->hasParent(formal_type->getClassType()))){
       cerr << "La methode du call contient des arguments qui ne sont pas du même type" << endl;
       node_type = new TypeIdentifierNode("error");
       return -1;
     }
     ++it;
   }
-
   node_type = method->getRetType();
 
   return 0;

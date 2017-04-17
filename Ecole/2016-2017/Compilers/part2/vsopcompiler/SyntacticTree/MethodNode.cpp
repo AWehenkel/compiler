@@ -31,8 +31,8 @@ int MethodNode::updateType(){
 	// Check if the types are the same or the block type class inherits from the return type class.
 	if (block_type->getLiteral() != "error" && *block_type != *e_ret_type && (!block_type->getClassType() || !block_type->getClassType()->hasParent(e_ret_type->getClassType()))){
 		cerr << "Pas le même type dans methode" << endl;
-		cout << "block_type: " << block_type->getLiteral() << endl;
-		cout << "e_ret_type: " << e_ret_type->getLiteral() << endl;
+		cerr << "block_type: " << block_type->getLiteral() << endl;
+		cerr << "e_ret_type: " << e_ret_type->getLiteral() << endl;
 		return -1;
 	}
 

@@ -9,9 +9,9 @@
 class SemanticAnalyser{
 private:
   static int classPass(ProgramNode* program);
-  static void addStandardClass(std::unordered_map<std::string, ClassNode*> &class_table);
+  static ClassNode* createIOClass();
 public:
-  static ProgramNode* semanticAnalysis(ProgramNode* program);
+  static int semanticAnalysis(ProgramNode* program);
 };
 
 #endif

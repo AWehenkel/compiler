@@ -45,6 +45,7 @@ public :
 	//Accessor
 	std::vector<ClassNode*> getClasses() const {return classes;};
 	std::unordered_map<std::string, ClassNode*> getTableClasses() const {return table_classes;};
+	void removeClass(ClassNode* node);
 
 	//Inherited
 	std::string getLiteral(bool with_type = false) const;

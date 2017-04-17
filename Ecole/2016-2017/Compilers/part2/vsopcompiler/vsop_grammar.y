@@ -12,7 +12,7 @@ extern "C" int yyparse();
 extern "C" FILE *yyin;
 int start_token;
 extern "C" char *file_name;
-int syntax_error = 0;
+int semantic_error = 0;
 int errors;
 extern "C" char *yytext;
 extern "C" int yychar;
@@ -94,7 +94,11 @@ void yyerror(const char *s);
 start :
 	START_LEXICAL Input
 	| START_SYNTAX program													{cout << *$2;}
-  | START_SEMANTIC program                        {SemanticAnalyser::semanticAnalysis($2); cout << $2->getLiteral(true);}
+  | START_SEMANTIC program                        {	if(SemanticAnalyser::semanticAnalysis($2) < 0)
+																											semantic_error = -1;
+																										else
+																											cout << $2->getLiteral(true);
+																										}
 ;
 
 Input :
@@ -148,10 +152,10 @@ program :
 ;
 
 t_type_id :
-  T_TYPE_ID               {$$ = new TypeIdentifierNode($1, yylloc.first_line, yylloc.first_column);}
+  T_TYPE_ID               {$$ = new TypeIdentifierNode($1, yylloc.first_column, yylloc.first_line);}
 ;
 t_obj_id :
-  T_OBJ_ID                {$$ = new ObjectIdentifierNode($1, yylloc.first_line, yylloc.first_column);}
+  T_OBJ_ID                {$$ = new ObjectIdentifierNode($1, yylloc.first_column, yylloc.first_line);}
 
 class :
 	T_CLASS t_type_id extend T_L_BRACE class-body T_R_BRACE	{if($3){
@@ -174,9 +178,9 @@ class-body :
 
 field :
 	t_obj_id T_COLON type assign T_SEMI_COLON		{if($4)
-																								$$ = new FieldNode($1, $3, $4, $1->getLine(), $1->getCol());
+																								$$ = new FieldNode($1, $3, $4, $1->getCol(), $1->getLine());
 																							 else
-																								$$ = new FieldNode($1, $3, $1->getLine(), $1->getCol());
+																								$$ = new FieldNode($1, $3, $1->getCol(), $1->getLine());
 																							}
 ;
 
@@ -186,7 +190,7 @@ assign :
 ;
 
 method :
-	t_obj_id T_L_PAR formals T_R_PAR T_COLON type block	{$$ = new MethodNode($1, $3, $6, $7, $1->getLine(), $1->getCol());}
+	t_obj_id T_L_PAR formals T_R_PAR T_COLON type block	{$$ = new MethodNode($1, $3, $6, $7, $1->getCol(), $1->getLine());}
 ;
 
 type :
@@ -208,7 +212,7 @@ virgul-formals :
 ;
 
 formal :
-	t_obj_id T_COLON type					{$$ = new FormalNode($1, $3, $1->getLine(), $1->getCol());}
+	t_obj_id T_COLON type					{$$ = new FormalNode($1, $3, $1->getCol(), $1->getLine());}
 ;
 
 block :
@@ -238,7 +242,7 @@ expr :
 	| expr T_TIMES expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3);}
 	| expr T_DIV expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3);}
 	| expr T_POW expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3);}
-	| t_obj_id T_L_PAR args T_R_PAR										{$$ = new CallNode($1, $3, NULL, $1->getLine(), $1->getCol());}
+	| t_obj_id T_L_PAR args T_R_PAR										{$$ = new CallNode($1, $3, NULL, $1->getCol(), $1->getLine());}
 	| expr T_DOT t_obj_id T_L_PAR args T_R_PAR				{$$ = new CallNode($3, $5, $1);}
 	| T_NEW t_type_id																	{$$ = new NewNode($2);}
 	| t_obj_id																				{$$ = $1;}
@@ -290,7 +294,7 @@ int main (int argc, char *argv[]){
 	file_name = argv[argc-1];
 	// make sure it is valid:
 	if (!myfile) {
-		cout << "Could not open " << file_name << endl;
+	 	cerr << "Could not open " << file_name << endl;
 		return -1;
 	}
 
@@ -303,7 +307,9 @@ int main (int argc, char *argv[]){
 			return -1;
 	} while (!feof(yyin));
 
-	return syntax_error;
+	if(semantic_error < 0)
+		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
+	return semantic_error;
 }
 
 void yyerror(const char *s)

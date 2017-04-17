@@ -65,10 +65,8 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
 
 int FillScopeTablesVisitor::visitCallNode(CallNode *node){
   node->setCurrentClass(current_class);
-  if(node->getObject())
-    return node->getObject()->accept(this);
-
-  node->setObject(new ObjectIdentifierNode("self"));
+  if(!node->getObject())
+    node->setObject(new ObjectIdentifierNode("self"));
 
   if(node->getObject()->accept(this) < 0)
     return -1;

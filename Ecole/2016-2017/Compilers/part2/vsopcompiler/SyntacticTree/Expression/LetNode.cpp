@@ -17,7 +17,7 @@ int LetNode::updateType(){
     }
 
     // Compare this type to the type of the let
-    if (strcmp(init_expr_type->getLiteral().c_str(), "error") != 0 && *init_expr_type != *e_object_type){
+    if (init_expr_type->getLiteral().c_str() != "error" && *init_expr_type != *e_object_type && (!init_expr_type->getClassType() || !init_expr_type->getClassType()->hasParent(e_object_type->getClassType()))){
       node_type = new TypeIdentifierNode("error");
       cerr << "!! Types differents dans let" << endl;
       return -1;

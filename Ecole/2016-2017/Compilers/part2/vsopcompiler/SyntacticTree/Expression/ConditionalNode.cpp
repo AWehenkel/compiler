@@ -47,11 +47,14 @@ int ConditionalNode::updateType(){
   string s_else_type = else_type->getLiteral();
 
   // Check if one of the branch is a unit
-  if(s_then_type == "unit" || s_else_type == "unit"){
+  if(s_then_type == "unit" ){
     node_type = then_type;
     return 0;
   }
-
+  if(s_else_type == "unit" ){
+    node_type = else_type;
+    return 0;
+  }
   // If one branch is in error, return the type of the other branch
   if(s_then_type == "error"){
     node_type = else_type;

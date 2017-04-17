@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "ProgramNode.hpp"
 
 using namespace std;
@@ -34,4 +36,8 @@ int ProgramNode::accept(Visitor* visitor){
 ProgramNode::~ProgramNode(){
 	for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it)
 		delete (*it);
+}
+
+void ProgramNode::removeClass(ClassNode* node){
+	classes.erase(std::remove(classes.begin(), classes.end(), node), classes.end());
 }
