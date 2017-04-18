@@ -21,6 +21,7 @@ extern "C" int yylineno;
 int semantic_error = 0;
 int errors;
 int start_token;
+int syntax_error;
 
 void yyerror(const char *s);
 
@@ -98,11 +99,17 @@ void yyerror(const char *s);
 
 start :
 	START_LEXICAL Input
-	| START_SYNTAX program													{cout << *$2; delete $2;}
-  | START_SEMANTIC program                        {	if(SemanticAnalyser::semanticAnalysis($2) < 0)
-																											semantic_error = -1;
-																										else
-																											cout << $2->getLiteral(true);
+	| START_SYNTAX program													{	if(!syntax_error)
+																											cout << *$2;
+																										delete $2;
+																									 }
+  | START_SEMANTIC program                        {
+																										if(!syntax_error){
+																											if(SemanticAnalyser::semanticAnalysis($2) < 0)
+																												semantic_error = -1;
+																											else
+																												cout << $2->getLiteral(true);
+																										}
 																										delete $2;
 																									}
 ;
@@ -188,6 +195,8 @@ field :
 																							 else
 																								$$ = new FieldNode($1, $3, $1->getCol(), $1->getLine());
 																							}
+| t_obj_id T_COLON error T_SEMI_COLON					{delete $1;$$ = NULL;cout << "recovery" << endl;syntax_error++;}
+| error T_COLON type assign T_SEMI_COLON			{delete $3; delete $4;$$ = NULL;cout << "recovery" << endl;syntax_error++;}
 ;
 
 assign :
@@ -256,6 +265,7 @@ expr :
 	| T_L_PAR T_R_PAR																	{$$ = new BraceNode(NULL, yylloc.first_column, yylloc.first_line);}
 	| T_L_PAR expr T_R_PAR														{$$ = $2;}
 	| block																						{$$ = $1;}
+	| error																						{cout << "erreur detectée et recovery" << endl;}
 ;
 
 args :
@@ -278,6 +288,8 @@ boolean-literal :
 	T_TRUE											{$$ = new LiteralNode("true", "bool", yylloc.first_column, yylloc.first_line);}
 	| T_FALSE										{$$ = new LiteralNode("false", "bool", yylloc.first_column, yylloc.first_line);}
 ;
+
+
 
 %%
 
@@ -315,13 +327,15 @@ int main (int argc, char *argv[]){
 	yyin = myfile;
 
 	// parse through the input until there is no more:
+	syntax_error = 0;
 	do {
 		if(yyparse() == 1){
-			//fclose(myfile);
-			//free(myfile);
-			return -1;
+			syntax_error++;
 		}
 	} while (!feof(yyin));
+
+	if(syntax_error)
+		return -1;
 
 	if(semantic_error < 0)
 		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;

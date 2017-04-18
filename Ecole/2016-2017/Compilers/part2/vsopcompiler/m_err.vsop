@@ -1,4 +1,6 @@
-class MyClass {
-    myMethod(c : bool) : unit { if c then () }
+class Main {
+  a : ;
 }
-class Main { main() : int32 { 0 } }
+class Main {
+  : int32 ;
+}

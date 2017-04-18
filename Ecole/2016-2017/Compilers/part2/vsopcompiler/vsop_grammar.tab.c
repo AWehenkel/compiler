@@ -1305,11 +1305,12 @@ int yynerrs;
 /*----------.
 | yyparse.  |
 `----------*/
+int yystate;
 
 int
 yyparse (void)
 {
-    int yystate;
+    //int yystate;
     /* Number of tokens to shift before error messages enabled.  */
     int yyerrstatus;
 
