@@ -16,3 +16,7 @@ int NewNode::updateType(){
   node_type = e_type_id;
   return 0;
 }
+
+NewNode::~NewNode(){
+  delete e_type_id;
+}

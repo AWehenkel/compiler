@@ -23,7 +23,7 @@ public :
 	BraceNode(ExpressionNode* expr = NULL, int col = 0, int line = 0) : ExpressionNode(col, line), e_expr(expr){};
 
 	//Destructor:
-	~BraceNode();
+	virtual ~BraceNode();
 
 	//Public Methods:
 	//getters

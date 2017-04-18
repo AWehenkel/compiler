@@ -5,7 +5,12 @@
 
 using namespace std;
 
-LetNode::~LetNode(){delete e_init_exp; delete e_scope_exp;}
+LetNode::~LetNode(){
+  delete e_init_exp;
+  delete e_scope_exp;
+  delete e_object_id;
+  delete e_object_type;
+}
 
 TypeIdentifierNode* LetNode::getDeclarationType(string id){
 
@@ -42,6 +47,7 @@ int LetNode::updateType(){
     if (init_expr_type->getLiteral() != "error" && *init_expr_type != *e_object_type
         && (!init_expr_type->getClassType() || !init_expr_type->getClassType()->hasParent(e_object_type->getClassType()))){
       node_type = new TypeIdentifierNode("error");
+      self_type = true;
       cerr << "Types differents dans let" << endl;
       return -1;
     }

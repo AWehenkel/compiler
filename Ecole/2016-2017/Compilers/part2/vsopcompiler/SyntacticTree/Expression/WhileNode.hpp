@@ -25,7 +25,7 @@ public :
 		e_condition(condition), e_action(action){};
 
 	//Destructor:
-	~WhileNode();
+	virtual ~WhileNode();
 
 	//Public Methods:
 	//Accessors:

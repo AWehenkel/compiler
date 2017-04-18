@@ -9,7 +9,10 @@ using namespace std;
 
 
 MethodNode::~MethodNode(){
-	delete e_name; delete e_ret_type; delete e_ret_type; delete e_block;
+	delete e_name;
+	delete e_ret_type;
+	delete e_formals;
+	delete e_block;
 }
 
 bool MethodNode::equals(MethodNode &method){

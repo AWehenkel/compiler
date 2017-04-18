@@ -9,7 +9,7 @@
 class NewNode : public ExpressionNode {
 private :
 	TypeIdentifierNode* e_type_id;
-	
+
 public :
 	//Constructors:
 	/*
@@ -19,6 +19,9 @@ public :
 			line:			int, the line where the node is present.
 	*/
 	NewNode(TypeIdentifierNode* type_id, int col = 0, int line = 0) : ExpressionNode(type_id, col, line), e_type_id(type_id){};
+
+	//Destructor
+	virtual ~NewNode();
 
 	//Public Methods:
 	//Accessors:

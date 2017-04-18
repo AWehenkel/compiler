@@ -24,7 +24,7 @@ public :
 		VSOPNode(col, line), e_name(name), e_formals(formals), e_ret_type(ret_type), e_block(block) {};
 
 	//Destructor
-	~MethodNode();
+	virtual ~MethodNode();
 
 	//Public methods
 	//Accesors

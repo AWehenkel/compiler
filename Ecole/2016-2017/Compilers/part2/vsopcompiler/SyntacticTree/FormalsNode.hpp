@@ -20,7 +20,7 @@ public :
 	FormalsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
 	//Destructor
-	~FormalsNode();
+	virtual ~FormalsNode();
 
 	//Public methods
 	/*

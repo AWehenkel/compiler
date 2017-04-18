@@ -2,15 +2,15 @@
 #include "FieldNode.hpp"
 #include "MethodNode.hpp"
 
+//To delete
+#include "Expression/ObjectIdentifierNode.hpp"
 using namespace std;
 
 ClassBodyNode::~ClassBodyNode(){
-	for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it) {
+	for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it)
 		delete (*it);
-	}
-	for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it) {
+	for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it)
 		delete (*it);
-	}
 }
 
 void ClassBodyNode::addField(FieldNode *field) { fields.push_back(field);}

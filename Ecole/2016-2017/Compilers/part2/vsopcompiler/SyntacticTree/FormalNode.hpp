@@ -23,7 +23,7 @@ public :
 	FormalNode(ObjectIdentifierNode* name, TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), e_name(name), e_type(type){};
 
 	//Destructor
-	~FormalNode();
+	virtual ~FormalNode();
 
 	//Public methods
 	//Accesors

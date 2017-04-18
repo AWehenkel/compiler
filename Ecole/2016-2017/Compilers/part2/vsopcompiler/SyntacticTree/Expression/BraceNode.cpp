@@ -3,7 +3,9 @@
 
 using namespace std;
 
-BraceNode::~BraceNode(){delete e_expr;}
+BraceNode::~BraceNode(){
+  delete e_expr;
+}
 
 string BraceNode::getLiteral(bool with_type) const{
 
@@ -17,19 +19,12 @@ string BraceNode::getLiteral(bool with_type) const{
 }
 
 int BraceNode::updateType(){
-
-  string type;
   /*
   ATTENTION j'ai mis unit quand il y a pas d'expression dans le brace mais je suis pas sur que c'est juste!
   */
   TypeIdentifierNode *expr_type = e_expr ? e_expr->getType() : new TypeIdentifierNode("unit");
-  if (!expr_type){
-    cerr << "Error in the compiler in BraceNode : expr_type is null" << endl;
-    return -1;
-  }else{
-    type = expr_type->getLiteral();
-  }
   node_type = expr_type;
-
+  if(!e_expr)
+    self_type = true;
   return 0;
 }

@@ -21,6 +21,9 @@ public :
 	*/
 	BlockNode(int col = 0, int line = 0) : ExpressionNode(col, line){};
 
+	//Destructor
+	virtual ~BlockNode();
+
 	//Public methods
 	/*
 	addExpression

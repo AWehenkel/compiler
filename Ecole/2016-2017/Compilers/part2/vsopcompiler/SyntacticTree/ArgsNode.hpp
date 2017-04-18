@@ -22,7 +22,7 @@ public :
 	ArgsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
 	//Destructor
-	~ArgsNode();
+	virtual ~ArgsNode();
 
 	//Public methods
 	/*

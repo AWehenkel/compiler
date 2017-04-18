@@ -9,7 +9,7 @@
 class ExpressionNode : public VSOPNode {
 protected :
 	TypeIdentifierNode* node_type;
-	
+	bool self_type = false;
 public :
 	//Constructors
 	/*
@@ -22,7 +22,7 @@ public :
 	ExpressionNode(TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), node_type(type){};
 
 	//Destructor
-	//~ExpressionNode();
+	virtual ~ExpressionNode();
 
 	//Public method
 	//Inherited

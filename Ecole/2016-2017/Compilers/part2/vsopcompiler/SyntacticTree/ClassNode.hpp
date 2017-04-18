@@ -12,7 +12,7 @@ private :
 	TypeIdentifierNode* e_name;
 	TypeIdentifierNode* e_extends;
 	ClassBodyNode *e_body;
-	ClassNode *parent;
+	ClassNode *parent = NULL;
 	std::unordered_map<std::string, FieldNode*> fields;
 	std::unordered_map<std::string, MethodNode*> methods;
 	bool in_cycle;
@@ -56,7 +56,7 @@ public :
 	 	e_name(name), e_extends(extends), e_body(body), in_cycle(false), fields(), methods() {};
 
 	//Destructor
-	~ClassNode();
+	virtual ~ClassNode();
 
 	//Public methods
 	//Accesors

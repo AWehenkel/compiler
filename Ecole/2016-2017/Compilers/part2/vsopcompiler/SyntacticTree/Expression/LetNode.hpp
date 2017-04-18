@@ -25,10 +25,11 @@ public :
 			col: 				int, the column where the node is present.
 			line:				int, the line where the node is present.
 	*/
-	LetNode(ObjectIdentifierNode* object_id, TypeIdentifierNode* type, ExpressionNode* scope_exp, ExpressionNode* init_exp = NULL, int col = 0, int line = 0) : ExpressionNode(col, line), e_object_id(object_id), e_object_type(type), e_scope_exp(scope_exp), e_init_exp(init_exp) {};
+	LetNode(ObjectIdentifierNode* object_id, TypeIdentifierNode* type, ExpressionNode* scope_exp, ExpressionNode* init_exp = NULL, int col = 0, int line = 0) : ExpressionNode(col, line),
+		e_object_id(object_id), e_object_type(type), e_scope_exp(scope_exp), e_init_exp(init_exp) {};
 
 	//Destructor:
-	~LetNode();
+	virtual ~LetNode();
 
 	//Public Methods:
 	//Accessors

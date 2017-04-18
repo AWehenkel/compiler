@@ -43,7 +43,7 @@ public :
 	};
 
 	//Destructor:
-	~BinaryOperatorNode();
+	virtual ~BinaryOperatorNode();
 
 	//Public Methods:
 	//getters

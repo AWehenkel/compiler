@@ -109,12 +109,10 @@ int ClassNode::addMethod(MethodNode* method){
 }
 
 bool ClassNode::inCycle(){
-
 	if(!in_cycle){
 		in_cycle = true;
-		in_cycle = parent == NULL ? false : parent->inCycle();
+		in_cycle = !parent ? false : parent->inCycle();
 	}
-
 	return in_cycle;
 }
 

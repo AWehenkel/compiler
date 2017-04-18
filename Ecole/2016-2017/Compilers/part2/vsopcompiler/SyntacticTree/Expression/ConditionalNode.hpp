@@ -28,7 +28,7 @@ public :
 		e_condition(condition), e_action(action), e_else_action(else_action){};
 
 	//Destructor:
-	~ConditionalNode();
+	virtual ~ConditionalNode();
 
 	//Public Methods:
 	//getters

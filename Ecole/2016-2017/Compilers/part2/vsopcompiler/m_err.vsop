@@ -1,4 +1,4 @@
 class MyClass {
-    myField : int32 <- new Object;
+    myMethod(c : bool) : unit { if c then () }
 }
 class Main { main() : int32 { 0 } }

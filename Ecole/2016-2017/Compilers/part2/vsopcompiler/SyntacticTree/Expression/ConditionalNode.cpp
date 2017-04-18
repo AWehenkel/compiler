@@ -34,17 +34,21 @@ int ConditionalNode::updateType(){
   if (s_condition_type != "error" && s_condition_type != "bool"){
     cerr << "Condition is not bool in conditional" << endl;
     node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return -1;
   }
 
   // Check the types of the two branches
   TypeIdentifierNode *then_type = e_action->getType();
   TypeIdentifierNode *else_type;
+  bool is_else_new_type = false;
   if(e_else_action)
     else_type = e_else_action->getType();
-  else
+  else{
     // If there is no else branch, consider that its type is unit
     else_type = new TypeIdentifierNode("unit");
+    is_else_new_type = true;
+  }
 
   if(!then_type || !else_type){
     cerr << "Error in the compiler in ConditionalNode : then_type or else_type null" << endl;
@@ -56,10 +60,13 @@ int ConditionalNode::updateType(){
   // Check if one of the branch is a unit
   if(s_then_type == "unit" ){
     node_type = then_type;
+    if(is_else_new_type)
+      delete else_type;
     return 0;
   }
   if(s_else_type == "unit" ){
     node_type = else_type;
+    self_type = is_else_new_type;
     return 0;
   }
   // If one branch is in error, return the type of the other branch
@@ -79,6 +86,7 @@ int ConditionalNode::updateType(){
     }else{
       cerr << "Types differents dans conditional" << endl;
       node_type = new TypeIdentifierNode("error");
+      self_type = true;
       return -1;
     }
   }
@@ -88,6 +96,7 @@ int ConditionalNode::updateType(){
   if(!node_type){
     cerr << "Pas d'ancêtres en commun dans conditional" << endl;
     node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return -1;
   }
 

@@ -30,9 +30,10 @@ int WhileNode::updateType(){
   if (s_condition_type != "error" && s_condition_type != "bool"){
     cerr << "Condition n'est pas un bool dans while" << endl;
     node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return -1;
   }
   node_type = new TypeIdentifierNode("unit");
-
+  self_type = true;
   return 0;
 }

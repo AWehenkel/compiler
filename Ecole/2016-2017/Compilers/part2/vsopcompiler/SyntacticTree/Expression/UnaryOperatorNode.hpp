@@ -33,7 +33,7 @@ public :
 	};
 
 	//Destructor:
-	~UnaryOperatorNode();
+	virtual ~UnaryOperatorNode();
 
 	//Public Methods:
 	//Accessors:

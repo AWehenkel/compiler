@@ -30,6 +30,7 @@ int BinaryOperatorNode::updateType(){
       if ((s_left_type != "bool" && s_left_type != "error") || (s_right_type != "bool" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des booleans dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
+        self_type = true;
         return -1;
       }
       node_type = left_type;
@@ -38,9 +39,11 @@ int BinaryOperatorNode::updateType(){
       // Check if the two types are the same (or errors) and return bool if ok
       if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
         node_type = new TypeIdentifierNode("error");
+        self_type = true;
         return -1;
       }
       node_type = new TypeIdentifierNode("bool");
+      self_type = true;
       break;
     case BinaryOperator::b_op_leq :
     case BinaryOperator::b_op_less :
@@ -48,15 +51,18 @@ int BinaryOperatorNode::updateType(){
       if ((s_left_type != "int32" && s_left_type != "error" != 0) || (s_right_type != "int32" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
+        self_type = true;
         return -1;
       }
       node_type = new TypeIdentifierNode("bool");
+      self_type = true;
       break;
     default :
       // Check both operands are int32 and return a int32 if ok
       if ((s_left_type != "int32" && s_left_type != "error") || (s_right_type != "int32" && s_right_type != "error")){
         cerr << "Les deux membres ne sont pas des ints dans binary" << endl;
         node_type = new TypeIdentifierNode("error");
+        self_type = true;
         return -1;
       }
       node_type = left_type;

@@ -10,7 +10,7 @@ class AssignNode : public ExpressionNode {
 private :
 	ObjectIdentifierNode* e_name;
 	ExpressionNode* e_expr;
-	
+
 public :
 	//Constructors:
 	/*
@@ -24,7 +24,7 @@ public :
 		e_name(name), e_expr(expr){};
 
 	//Destructor:
-	~AssignNode();
+	virtual ~AssignNode();
 
 	//Public Methods:
 	//Getter

@@ -10,7 +10,7 @@ class FieldNode : public VSOPNode {
 private :
 	ObjectIdentifierNode* e_name;
 	TypeIdentifierNode* e_type;
-	ExpressionNode* e_init_expr;
+	ExpressionNode* e_init_expr = NULL;
 	ClassNode* e_class_scope;
 
 public :
@@ -34,7 +34,7 @@ public :
 	 	e_name(name), e_type(type), e_init_expr(init_expr) {};
 
 	//Destructor
-	~FieldNode();
+	virtual ~FieldNode();
 
 	//Public methods
 	//Setter

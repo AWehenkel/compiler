@@ -26,6 +26,7 @@ class Main extends IO {
       print("List has length ");
       printInt32(xs.length());
       print("\n");
+      ();
       0
     }
   }

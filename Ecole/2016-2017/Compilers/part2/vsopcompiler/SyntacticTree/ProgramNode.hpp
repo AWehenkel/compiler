@@ -14,7 +14,7 @@ class ProgramNode : public VSOPNode {
 private :
 	std::vector<ClassNode*> classes;
 	std::unordered_map<std::string, ClassNode*> table_classes;
-
+	std::vector<ClassNode*> to_delete;
 public :
 	//Constructors
 	/*
@@ -25,7 +25,7 @@ public :
 	ProgramNode(ClassNode *new_class, int col = 0, int line = 0) : VSOPNode(col, line){addClass(new_class);};
 
 	//Destructors
-	~ProgramNode();
+	virtual ~ProgramNode();
 
 	//Public methods
 	/*
@@ -35,7 +35,9 @@ public :
 	ROLE: Add a class at the end of the program.
 	*/
 	void addClass(ClassNode *new_class);
-	
+
+	void addClassToDelete(ClassNode *new_class);
+
 	/*
 	fillClassTable
 	IN: std::unordered_maptable, a reference to the table to fill with the class contained in the subnode of the current node.

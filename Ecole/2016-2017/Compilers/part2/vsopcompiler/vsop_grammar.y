@@ -98,11 +98,12 @@ void yyerror(const char *s);
 
 start :
 	START_LEXICAL Input
-	| START_SYNTAX program													{cout << *$2;}
+	| START_SYNTAX program													{cout << *$2; delete $2;}
   | START_SEMANTIC program                        {	if(SemanticAnalyser::semanticAnalysis($2) < 0)
 																											semantic_error = -1;
 																										else
 																											cout << $2->getLiteral(true);
+																										delete $2;
 																									}
 ;
 
@@ -127,10 +128,10 @@ Input :
 	| Input T_TRUE     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",true" << endl; }
 	| Input T_UNIT     			{ cout << yylloc.first_line << "," << yylloc.first_column << ",unit" << endl; }
 	| Input T_WHILE    			{ cout << yylloc.first_line << "," << yylloc.first_column << ",while" << endl; }
-	| Input T_OBJ_ID   			{ cout << yylloc.first_line << "," << yylloc.first_column << ",object-identifier," << yylval.sval << endl; }
+	| Input T_OBJ_ID   			{ cout << yylloc.first_line << "," << yylloc.first_column << ",object-identifier," << yylval.sval << endl; free(yylval.sval);}
 	| Input T_INT_LIT     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",integer-literal," << yylval.ival << endl; }
-	| Input T_TYPE_ID     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",type-identifier," << yylval.sval << endl; }
-	| Input T_STRING_LIT    { cout << yylloc.first_line << "," << yylloc.first_column << ",string-literal," << yylval.sval << endl; }
+	| Input T_TYPE_ID     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",type-identifier," << yylval.sval << endl; free(yylval.sval);}
+	| Input T_STRING_LIT    { cout << yylloc.first_line << "," << yylloc.first_column << ",string-literal," << yylval.sval << endl; free(yylval.sval);}
 	| Input T_L_BRACE     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",lbrace" << endl; }
 	| Input T_R_BRACE     	{ cout << yylloc.first_line << "," << yylloc.first_column << ",rbrace" << endl; }
 	| Input T_R_PAR      		{ cout << yylloc.first_line << "," << yylloc.first_column << ",rpar" << endl; }
@@ -157,10 +158,10 @@ program :
 ;
 
 t_type_id :
-  T_TYPE_ID               {$$ = new TypeIdentifierNode($1, yylloc.first_column, yylloc.first_line);}
+  T_TYPE_ID               {string tmp = $1; free($1); $$ = new TypeIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
 ;
 t_obj_id :
-  T_OBJ_ID                {$$ = new ObjectIdentifierNode($1, yylloc.first_column, yylloc.first_line);}
+  T_OBJ_ID                {string tmp = $1; free($1); $$ = new ObjectIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
 
 class :
 	T_CLASS t_type_id extend T_L_BRACE class-body T_R_BRACE	{if($3){
@@ -252,7 +253,7 @@ expr :
 	| T_NEW t_type_id																	{$$ = new NewNode($2);}
 	| t_obj_id																				{$$ = $1;}
 	| literal																					{$$ = $1;}
-	| T_L_PAR T_R_PAR																	{$$ = new BraceNode();}
+	| T_L_PAR T_R_PAR																	{$$ = new BraceNode(NULL, yylloc.first_column, yylloc.first_line);}
 	| T_L_PAR expr T_R_PAR														{$$ = $2;}
 	| block																						{$$ = $1;}
 ;
@@ -282,7 +283,7 @@ boolean-literal :
 
 int main (int argc, char *argv[]){
 
-	if(argc != 2 && argc != 3){
+	if(argc != 3){
 		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
 		cerr << "Usage for both lexer and parse: ./main <Source_File>" << endl;
 		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
@@ -293,8 +294,15 @@ int main (int argc, char *argv[]){
 		start_token = START_LEXICAL;
 	else if(!strcmp(argv[1], "-check"))
     start_token = START_SEMANTIC;
-  else
+  else if(!strcmp(argv[1], "-parse"))
 		start_token = START_SYNTAX;
+	else{
+		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
+		cerr << "Usage for both lexer and parse: ./main -parse <Source_File>" << endl;
+		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
+		return -1;
+	}
+
 
 	FILE *myfile = fopen(argv[argc-1], "r");
 	file_name = argv[argc-1];
@@ -308,12 +316,17 @@ int main (int argc, char *argv[]){
 
 	// parse through the input until there is no more:
 	do {
-		if(yyparse() == 1)
+		if(yyparse() == 1){
+			//fclose(myfile);
+			//free(myfile);
 			return -1;
+		}
 	} while (!feof(yyin));
 
 	if(semantic_error < 0)
 		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
+	//fclose(myfile);
+	//free(myfile);
 	return semantic_error;
 }
 

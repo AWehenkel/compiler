@@ -6,7 +6,7 @@
 using namespace std;
 
 int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
-  
+
   unordered_map<string, ClassNode*> class_table;
   // Adding Object class to the class table
   class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
@@ -38,26 +38,30 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   // Check if any unkown class is used
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
   if (program->accept(visitor) < 0){
+    delete visitor;
     cerr << "problem in CheckUndefinedClassVisitor" << endl;
     return -4;
   }
-
+  delete visitor;
   // Record all the methods, fields and local variables
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   if (program->accept(visitor1) < 0){
+    delete visitor1;
     cerr << "problem in FillScopeTablesVisitor" << endl;
     return -5;
   }
-
+  delete visitor1;
   // Check all the types
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   if (program->accept(visitor2) < 0){
+    delete visitor2;
     cerr << "problem in CheckTypeVisitor" << endl;
     return -6;
   }
-
+  delete visitor2;
   // Remove IO class for the class table
   program->removeClass(io_class);
+  program->addClassToDelete(class_table["Object"]);
   return 0;
 }
 

@@ -56,3 +56,8 @@ int BlockNode::updateType(){
 	*/
 	return 0;
 }
+
+BlockNode::~BlockNode(){
+	for(vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
+		delete *it;
+}

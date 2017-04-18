@@ -2,15 +2,24 @@
 
 #include "ProgramNode.hpp"
 
+//To remove:
+#include "TypeIdentifierNode.hpp"
+
 using namespace std;
 
 ProgramNode::~ProgramNode(){
 	for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it)
 		delete (*it);
+	for (std::vector<ClassNode*>::const_iterator it = to_delete.begin(); it < to_delete.end(); ++it)
+		delete (*it);
 }
 
 void ProgramNode::addClass(ClassNode *new_class) {
 	classes.push_back(new_class);
+}
+
+void ProgramNode::addClassToDelete(ClassNode *new_class) {
+	to_delete.push_back(new_class);
 }
 
 int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
@@ -25,6 +34,7 @@ int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &tab
 
 void ProgramNode::removeClass(ClassNode* node){
 	classes.erase(std::remove(classes.begin(), classes.end(), node), classes.end());
+	to_delete.push_back(node);
 }
 
 int ProgramNode::accept(Visitor* visitor){

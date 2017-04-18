@@ -7,7 +7,11 @@
 
 using namespace std;
 
-CallNode::~CallNode(){delete e_args; delete e_object;}
+CallNode::~CallNode(){
+  delete e_args;
+  delete e_object;
+  delete e_method_name;
+}
 
 string CallNode::getLiteral(bool with_type) const{
 
@@ -41,6 +45,7 @@ int CallNode::updateType(){
   if (!object_class){
     cerr << "L'objet (" << object_type->getLiteral(true) << ") du call (" << e_method_name->getLiteral() << ") n'est pas une classe" << endl;
     node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return -1;
   }
 
@@ -49,6 +54,7 @@ int CallNode::updateType(){
   if (!method){
     cerr << "La methode du call n'est pas definie pour cet objet" << endl;
     node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return -1;
   }
 
@@ -59,6 +65,7 @@ int CallNode::updateType(){
   if (ls_formals.size() != ls_args.size()){
     cerr << "La methode du call ne contient pas le bon nombre d'argument" << endl;
     node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return -1;
   }
 
@@ -76,6 +83,7 @@ int CallNode::updateType(){
     if(arg_type->getLiteral() != "error" && *arg_type != *formal_type && (!arg_type->getClassType() || !arg_type->getClassType()->hasParent(formal_type->getClassType()))){
       cerr << "La methode du call contient des arguments qui ne sont pas du même type" << endl;
       node_type = new TypeIdentifierNode("error");
+      self_type = true;
       return -1;
     }
     ++it;
