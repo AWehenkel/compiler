@@ -1,0 +1,11 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  f() : int32 {
+    while true
+    do "infinite loop";
+    0
+    }
+}

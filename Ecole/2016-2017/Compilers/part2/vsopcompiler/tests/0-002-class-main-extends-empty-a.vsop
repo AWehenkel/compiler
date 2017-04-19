@@ -1,0 +1,5 @@
+class A {}
+
+class Main extends A {
+  main() : int32 {0}
+}

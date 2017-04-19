@@ -1,0 +1,11 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  f() : string {
+    if true
+    then "true"
+    else "false"
+  }
+}

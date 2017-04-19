@@ -1,0 +1,8 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  f(a : int32) : bool {false}
+  g(b : bool) : bool {b}
+}

@@ -1,0 +1,8 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  a : int32;
+  b : string;
+}
