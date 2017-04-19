@@ -1,6 +1,3 @@
 class Main {
-  a : ;
-}
-class Main {
-  : int32 ;
+  main() : int32 {}
 }

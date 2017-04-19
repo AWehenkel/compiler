@@ -265,7 +265,6 @@ expr :
 	| T_L_PAR T_R_PAR																	{$$ = new BraceNode(NULL, yylloc.first_column, yylloc.first_line);}
 	| T_L_PAR expr T_R_PAR														{$$ = $2;}
 	| block																						{$$ = $1;}
-	| error																						{cout << "erreur detectée et recovery" << endl;}
 ;
 
 args :
