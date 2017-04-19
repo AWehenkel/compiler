@@ -12,7 +12,7 @@ int CheckTypeVisitor::visitAssignNode(AssignNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de assign " << std::endl;
     return -1;
   }
@@ -27,7 +27,7 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de binary " << std::endl;
     return -1;
   }
@@ -41,7 +41,7 @@ int CheckTypeVisitor::visitBlockNode(BlockNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de block " << std::endl;
     return -1;
   }
@@ -57,7 +57,7 @@ int CheckTypeVisitor::visitBraceNode(BraceNode *node){
     return -1;
   }
 //cout"visitBraceNode update" << endl;
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de brace " << std::endl;
     return -1;
   }
@@ -72,7 +72,7 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de call " << std::endl;
     return -1;
   }
@@ -87,7 +87,7 @@ int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de conditional " << std::endl;
     return -1;
   }
@@ -103,7 +103,7 @@ int CheckTypeVisitor::visitLetNode(LetNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de let " << std::endl;
     return -1;
   }
@@ -112,7 +112,7 @@ int CheckTypeVisitor::visitLetNode(LetNode *node){
 }
 
 int CheckTypeVisitor::visitNewNode(NewNode *node){
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de method " << std::endl;
     return -1;
   }
@@ -127,7 +127,7 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de unary " << std::endl;
     return -1;
   }
@@ -142,7 +142,7 @@ int CheckTypeVisitor::visitWhileNode(WhileNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de while " << std::endl;
     return -1;
   }
@@ -156,7 +156,7 @@ int CheckTypeVisitor::visitFieldNode(FieldNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de field " << std::endl;
     return -1;
   }
@@ -173,7 +173,7 @@ int CheckTypeVisitor::visitMethodNode(MethodNode *node){
     return -1;
   }
 
-  if (node->updateType() < 0){
+  if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de method " << std::endl;
     return -1;
   }

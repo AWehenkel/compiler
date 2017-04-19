@@ -24,7 +24,7 @@ string CallNode::getLiteral(bool with_type) const{
   return "Call(" + obj_name + ", "  + e_method_name->getLiteral(with_type) + ", " + e_args->getLiteral(with_type) + ")" + type;
 }
 
-int CallNode::updateType(){
+int CallNode::updateType(Visitor* visitor){
 
   // Get the type of the object
   TypeIdentifierNode* object_type;

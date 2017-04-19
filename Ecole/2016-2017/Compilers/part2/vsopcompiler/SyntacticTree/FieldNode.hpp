@@ -48,7 +48,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType();
+	int updateType(Visitor* visitor);
 };
 
 #endif //field_node_hpp

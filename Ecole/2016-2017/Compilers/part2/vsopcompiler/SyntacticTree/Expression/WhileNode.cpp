@@ -17,7 +17,7 @@ string WhileNode::getLiteral(bool with_type) const{
   return "While(" + e_condition->getLiteral(with_type) + "," + e_action->getLiteral(with_type) + ")" + type;
 };
 
-int WhileNode::updateType(){
+int WhileNode::updateType(Visitor* visitor){
 
   // Check if the condition is a bool
   TypeIdentifierNode *condition_type = e_condition->getType();

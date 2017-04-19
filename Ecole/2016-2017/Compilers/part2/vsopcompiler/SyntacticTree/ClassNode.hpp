@@ -128,6 +128,12 @@ public :
 	*/
 	bool hasParent(ClassNode* candidate);
 
+	//setters
+	void setExtends(TypeIdentifierNode* node){
+		e_extends = node;
+		in_cycle = false;
+		parent = NULL;
+	};
 	//Inherited
 	int accept(Visitor* visitor);
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);

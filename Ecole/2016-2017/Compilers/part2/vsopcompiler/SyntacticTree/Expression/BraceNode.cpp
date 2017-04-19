@@ -18,7 +18,7 @@ string BraceNode::getLiteral(bool with_type) const{
   return literal + s_expr + ")" + type;
 }
 
-int BraceNode::updateType(){
+int BraceNode::updateType(Visitor* visitor){
   /*
   ATTENTION j'ai mis unit quand il y a pas d'expression dans le brace mais je suis pas sur que c'est juste!
   */

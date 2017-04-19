@@ -21,7 +21,7 @@ string ConditionalNode::getLiteral(bool with_type) const{
   return literal + end + ")" + type;
 }
 
-int ConditionalNode::updateType(){
+int ConditionalNode::updateType(Visitor* visitor){
 
   TypeIdentifierNode *condition_type = e_condition->getType();
   if (!condition_type){

@@ -33,7 +33,7 @@ string LetNode::getLiteral(bool with_type) const{
   return literal + end + e_scope_exp->getLiteral(with_type) + ")" + type;
 }
 
-int LetNode::updateType(){
+int LetNode::updateType(Visitor* visitor){
 
   // Check the type of the initialization expression, if any
   if (e_init_exp){

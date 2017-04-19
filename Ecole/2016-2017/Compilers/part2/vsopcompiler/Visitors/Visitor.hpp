@@ -1,6 +1,10 @@
 #ifndef visitor_hpp
 #define visitor_hpp
 
+#include <vector>
+
+#include "../SemanticAnalysis/SemanticError.hpp"
+
 class ArgsNode;
 class ClassBodyNode;
 class ClassNode;
@@ -29,7 +33,13 @@ class WhileNode;
 * This abstract class is used to visit the nodes of the syntactic tree.
 */
 class Visitor {
+  protected :
+    std::vector<SemanticError> errors;
   public :
+    std::vector<SemanticError>& getErrors();
+
+    void addError(SemanticError& error);
+
     virtual int visitAssignNode(AssignNode *node);
 
     virtual int visitBinaryOperatorNode(BinaryOperatorNode *node);

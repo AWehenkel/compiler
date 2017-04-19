@@ -2,11 +2,18 @@
 #include "../Visitors/CheckUndefinedClassVisitor.hpp"
 #include "../Visitors/FillScopeTablesVisitor.hpp"
 #include "../Visitors/CheckTypeVisitor.hpp"
+#include "SemanticError.hpp"
 
 using namespace std;
 
-int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
+std::ostream& operator << (std::ostream& out, const std::vector<SemanticError>& errors){
+  for(std::vector<SemanticError>::const_iterator it = errors.begin(); it < errors.end(); ++it)
+    out << it->getErrorMessage() << std::endl;
+  return out;
+};
 
+int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
+  vector<SemanticError> errors;
   unordered_map<string, ClassNode*> class_table;
   // Adding Object class to the class table
   class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
@@ -15,40 +22,66 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   program->addClass(io_class);
 
   // Fill the class table with the other class in the program
-  if(program->fillClassTable(class_table) < 0){
-    cerr << "fill class table n'a pas fonctionne :'(" << endl;
-    return -1;
+  if(program->fillClassTable(class_table)){
+    SemanticError error("Internal failure of the compiler during the first pass.");
+    errors.push_back(error);
+    cout << errors << endl;
+    program->removeClass(io_class);
+    program->addClassToDelete(class_table["Object"]);
+    return 1;
   }
 
   // Set the parents of each class (Object if no parents specified)
   for(auto it = class_table.begin(); it != class_table.end(); ++it){
     if(it->first != "Object" && (it->second)->setParent(class_table) < 0){
-      cerr << "Pas reussi à set le parent" << endl;
-      return -2;
+      SemanticError error("Unable to find parent class(" + it->second->getExtends()->getLiteral() + ") of class: " + it->first, it->second);
+      errors.push_back(error);
+      //Recovery by setting the parent at Object by default.
+      delete it->second->getExtends();
+      it->second->setExtends(new TypeIdentifierNode("Object"));
     }
   }
 
   // Check for cycles
   for(auto it = class_table.begin(); it != class_table.end(); ++it)
     if((it->second)->inCycle()){
-      cerr << "il y a un cycle et c'est pas cool" << endl;
-      return -3;
+      SemanticError error("Inheritance cycle detetected between class: " + it->first + " and class: " + it->second->getExtends()->getLiteral(), it->second);
+      errors.push_back(error);
+      //Recovery by setting the parent at Object by default. TODO changer pour que ça laisse tel quel et que toutes les fonctions qui peuvent dépendre d'un cycle soient robuste.
+      delete it->second->getExtends();
+      it->second->setExtends(new TypeIdentifierNode("Object"));
     }
-
   // Check if any unkown class is used
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
-  if (program->accept(visitor) < 0){
-    delete visitor;
-    cerr << "problem in CheckUndefinedClassVisitor" << endl;
-    return -4;
+  int result = program->accept(visitor);
+  if(result){
+    vector<SemanticError> errors_generated = visitor->getErrors();
+    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
+    //If negative then it is an unrecoverable error.
+    if(result < 0){
+      delete visitor;
+      cout << errors << endl;
+      program->removeClass(io_class);
+      program->addClassToDelete(class_table["Object"]);
+      return result;
+    }
   }
   delete visitor;
   // Record all the methods, fields and local variables
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
-  if (program->accept(visitor1) < 0){
-    delete visitor1;
-    cerr << "problem in FillScopeTablesVisitor" << endl;
-    return -5;
+  int current_result = program->accept(visitor1);
+  result += current_result;
+  if(current_result){
+    vector<SemanticError> errors_generated = visitor1->getErrors();
+    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
+    //If negative then it is an unrecoverable error.
+    if(current_result < 0){
+      delete visitor1;
+      cout << errors << endl;
+      program->removeClass(io_class);
+      program->addClassToDelete(class_table["Object"]);
+      return current_result;
+    }
   }
   delete visitor1;
   // Check all the types
@@ -62,7 +95,8 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   // Remove IO class for the class table
   program->removeClass(io_class);
   program->addClassToDelete(class_table["Object"]);
-  return 0;
+  cerr << errors;
+  return errors.size();
 }
 
 ClassNode* SemanticAnalyser::createIOClass(){

@@ -1,4 +1,4 @@
-class List {
+class List extends Nil{
   isNil() : bool { true }
   length() : int32 { 0 }
 }
@@ -20,7 +20,7 @@ class Cons extends List {
   length() : int32 { 1 + tail.length() }
 }
 
-class Main extends IO {
+(*class Main extends IO {
   main() : int32 {
     let xs : List in {
       print("List has length ");
@@ -30,4 +30,4 @@ class Main extends IO {
       0
     }
   }
-}
+}*)

@@ -34,7 +34,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitAssignNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType();
+	int updateType(Visitor* visitor);
 };
 
 #endif //AssignNode_hpp

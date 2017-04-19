@@ -21,7 +21,7 @@ string FieldNode::getLiteral(bool with_type) const {
 	return literal;
 }
 
-int FieldNode::updateType(){
+int FieldNode::updateType(Visitor* visitor){
 
 	// Check if the type of the initialization expression if any
 	if (e_init_expr){

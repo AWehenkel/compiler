@@ -33,7 +33,7 @@ string MethodNode::getLiteral(bool with_type) const {
 									 + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
 }
 
-int MethodNode::updateType(){
+int MethodNode::updateType(Visitor* visitor){
 
 	// Get block type
 	TypeIdentifierNode *block_type = e_block->getType();
@@ -43,7 +43,7 @@ int MethodNode::updateType(){
 	}
 
 	// Check if the types are the same or the block type class inherits from the return type class.
-	if (block_type->getLiteral() != "error" && *block_type != *e_ret_type &&
+	if (e_ret_type->getLiteral() != "error" && block_type->getLiteral() != "error" && *block_type != *e_ret_type &&
 			(!block_type->getClassType() || !block_type->getClassType()->hasParent(e_ret_type->getClassType()))){
 		cerr << "Pas le même type dans methode" << endl;
 		return -1;

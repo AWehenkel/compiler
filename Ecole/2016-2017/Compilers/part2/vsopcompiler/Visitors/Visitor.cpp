@@ -3,6 +3,14 @@
 
 using namespace std;
 
+std::vector<SemanticError>& Visitor::getErrors(){
+  return errors;
+}
+
+void Visitor::addError(SemanticError& error){
+  errors.push_back(error);
+}
+
 int Visitor::visitAssignNode(AssignNode *node){
 
   ExpressionNode* expr = node->getExpression();

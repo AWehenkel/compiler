@@ -14,7 +14,7 @@ string UnaryOperatorNode::getLiteral(bool with_type) const{
   return "UnOp(" + (literal_op_table.find(e_op))->second + ","  + e_operand->getLiteral(with_type) + ")" + type;
 }
 
-int UnaryOperatorNode::updateType(){
+int UnaryOperatorNode::updateType(Visitor* visitor){
 
   // Get the type of the operand
   TypeIdentifierNode* op_type = e_operand->getType();

@@ -12,7 +12,7 @@ string NewNode::getLiteral(bool with_type) const{
   return "New(" + e_type_id->getLiteral(with_type) + ")" + type;
 }
 
-int NewNode::updateType(){
+int NewNode::updateType(Visitor* visitor){
   node_type = e_type_id;
   return 0;
 }

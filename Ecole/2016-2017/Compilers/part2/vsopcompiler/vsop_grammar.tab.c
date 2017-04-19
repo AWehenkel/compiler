@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.2"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -72,6 +72,7 @@
 #include "all_headers.hpp"
 #include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
+#include "SemanticAnalysis/SemanticError.hpp"
 
 using namespace std;
 
@@ -91,7 +92,7 @@ int syntax_error;
 void yyerror(const char *s);
 
 
-#line 95 "vsop_grammar.tab.c" /* yacc.c:339  */
+#line 96 "vsop_grammar.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -176,10 +177,10 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
+
 union YYSTYPE
 {
-#line 32 "vsop_grammar.y" /* yacc.c:355  */
+#line 33 "vsop_grammar.y" /* yacc.c:355  */
 
 	int ival;
   char *sval;
@@ -198,8 +199,10 @@ union YYSTYPE
 	class ArgsNode* args_node;
 	class LiteralNode* literal_node;
 
-#line 202 "vsop_grammar.tab.c" /* yacc.c:355  */
+#line 203 "vsop_grammar.tab.c" /* yacc.c:355  */
 };
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -227,7 +230,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 231 "vsop_grammar.tab.c" /* yacc.c:358  */
+#line 234 "vsop_grammar.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -531,7 +534,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   101,   101,   102,   106,   117,   119,   120,   121,   122,
+       0,   102,   102,   103,   107,   117,   119,   120,   121,   122,
      123,   124,   125,   126,   127,   128,   129,   130,   131,   132,
      133,   134,   135,   136,   137,   138,   139,   140,   141,   142,
      143,   144,   145,   146,   147,   148,   149,   150,   151,   152,
@@ -1550,330 +1553,329 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 102 "vsop_grammar.y" /* yacc.c:1646  */
+#line 103 "vsop_grammar.y" /* yacc.c:1646  */
     {	if(!syntax_error)
 																											cout << *(yyvsp[0].program_node);
 																										delete (yyvsp[0].program_node);
 																									 }
-#line 1558 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1561 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 106 "vsop_grammar.y" /* yacc.c:1646  */
+#line 107 "vsop_grammar.y" /* yacc.c:1646  */
     {
 																										if(!syntax_error){
-																											if(SemanticAnalyser::semanticAnalysis((yyvsp[0].program_node)) < 0)
-																												semantic_error = -1;
-																											else
+																											semantic_error = SemanticAnalyser::semanticAnalysis((yyvsp[0].program_node));
+																											if(!semantic_error)
 																												cout << (yyvsp[0].program_node)->getLiteral(true);
 																										}
 																										delete (yyvsp[0].program_node);
 																									}
-#line 1572 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1574 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 119 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",and" << endl; }
-#line 1578 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1580 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 120 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",bool" << endl; }
-#line 1584 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1586 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 121 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",class" << endl; }
-#line 1590 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1592 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 122 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",do" << endl; }
-#line 1596 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1598 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
 #line 123 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",else" << endl; }
-#line 1602 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1604 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
 #line 124 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",extends" << endl; }
-#line 1608 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1610 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 125 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",false" << endl; }
-#line 1614 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1616 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
 #line 126 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",if" << endl; }
-#line 1620 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1622 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 127 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",in" << endl; }
-#line 1626 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1628 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 128 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",int32" << endl; }
-#line 1632 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1634 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
 #line 129 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",isnull" << endl; }
-#line 1638 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1640 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
 #line 130 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",let" << endl; }
-#line 1644 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1646 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
 #line 131 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",new" << endl; }
-#line 1650 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1652 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 132 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",not" << endl; }
-#line 1656 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1658 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
 #line 133 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",string" << endl; }
-#line 1662 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1664 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
 #line 134 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",then" << endl; }
-#line 1668 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1670 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 135 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",true" << endl; }
-#line 1674 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1676 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 136 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",unit" << endl; }
-#line 1680 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1682 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 137 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",while" << endl; }
-#line 1686 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1688 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 138 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",object-identifier," << yylval.sval << endl; free(yylval.sval);}
-#line 1692 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1694 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 139 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",integer-literal," << yylval.ival << endl; }
-#line 1698 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1700 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 140 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",type-identifier," << yylval.sval << endl; free(yylval.sval);}
-#line 1704 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1706 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 141 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",string-literal," << yylval.sval << endl; free(yylval.sval);}
-#line 1710 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1712 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 142 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",lbrace" << endl; }
-#line 1716 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1718 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
 #line 143 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",rbrace" << endl; }
-#line 1722 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1724 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
 #line 144 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",rpar" << endl; }
-#line 1728 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1730 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
 #line 145 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",lpar" << endl; }
-#line 1734 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1736 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
 #line 146 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",colon" << endl; }
-#line 1740 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1742 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
 #line 147 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",semicolon" << endl; }
-#line 1746 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1748 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
 #line 148 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",comma" << endl; }
-#line 1752 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1754 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 149 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",plus" << endl; }
-#line 1758 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1760 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
 #line 150 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",minus" << endl; }
-#line 1764 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1766 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
 #line 151 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",times" << endl; }
-#line 1770 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1772 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
 #line 152 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",div" << endl; }
-#line 1776 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1778 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 153 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",pow" << endl; }
-#line 1782 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1784 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 154 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",dot" << endl; }
-#line 1788 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1790 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
 #line 155 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",equal" << endl; }
-#line 1794 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1796 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
 #line 156 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",lower" << endl; }
-#line 1800 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1802 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
 #line 157 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",lower-equal" << endl; }
-#line 1806 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1808 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 158 "vsop_grammar.y" /* yacc.c:1646  */
     { cout << yylloc.first_line << "," << yylloc.first_column << ",assign" << endl; }
-#line 1812 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1814 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
 #line 163 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.program_node) = new ProgramNode((yyvsp[0].class_node));}
-#line 1818 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1820 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
 #line 164 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[-1].program_node)->addClass((yyvsp[0].class_node)); (yyval.program_node) = (yyvsp[-1].program_node);}
-#line 1824 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1826 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
 #line 168 "vsop_grammar.y" /* yacc.c:1646  */
     {string tmp = (yyvsp[0].sval); free((yyvsp[0].sval)); (yyval.type_identifier_node) = new TypeIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
-#line 1830 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1832 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
 #line 171 "vsop_grammar.y" /* yacc.c:1646  */
     {string tmp = (yyvsp[0].sval); free((yyvsp[0].sval)); (yyval.object_identifier_node) = new ObjectIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
-#line 1836 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1838 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
 #line 174 "vsop_grammar.y" /* yacc.c:1646  */
     {if((yyvsp[-3].type_identifier_node)){
-																														(yyval.class_node) = new ClassNode((yyvsp[-4].type_identifier_node), (yyvsp[-1].class_body_node), (yyvsp[-3].type_identifier_node));
+																														(yyval.class_node) = new ClassNode((yyvsp[-4].type_identifier_node), (yyvsp[-1].class_body_node), (yyvsp[-3].type_identifier_node), (yyvsp[-4].type_identifier_node)->getCol(), (yyvsp[-4].type_identifier_node)->getLine());
 																													 }else
-																														(yyval.class_node) = new ClassNode((yyvsp[-4].type_identifier_node), (yyvsp[-1].class_body_node));
+																														(yyval.class_node) = new ClassNode((yyvsp[-4].type_identifier_node), (yyvsp[-1].class_body_node), NULL, (yyvsp[-4].type_identifier_node)->getCol(), (yyvsp[-4].type_identifier_node)->getLine());
 																													}
-#line 1846 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1848 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
 #line 182 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = NULL;}
-#line 1852 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1854 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
 #line 183 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = (yyvsp[0].type_identifier_node);}
-#line 1858 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1860 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
 #line 187 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.class_body_node) = new ClassBodyNode();}
-#line 1864 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1866 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
 #line 188 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[-1].class_body_node)->addField((yyvsp[0].field_node)); (yyval.class_body_node) = (yyvsp[-1].class_body_node);}
-#line 1870 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1872 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
 #line 189 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[-1].class_body_node)->addMethod((yyvsp[0].method_node)); (yyval.class_body_node) = (yyvsp[-1].class_body_node);}
-#line 1876 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1878 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
@@ -1883,323 +1885,323 @@ yyreduce:
 																							 else
 																								(yyval.field_node) = new FieldNode((yyvsp[-4].object_identifier_node), (yyvsp[-2].type_identifier_node), (yyvsp[-4].object_identifier_node)->getCol(), (yyvsp[-4].object_identifier_node)->getLine());
 																							}
-#line 1886 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1888 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
 #line 198 "vsop_grammar.y" /* yacc.c:1646  */
     {delete (yyvsp[-3].object_identifier_node);(yyval.field_node) = NULL;cout << "recovery" << endl;syntax_error++;}
-#line 1892 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1894 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
 #line 199 "vsop_grammar.y" /* yacc.c:1646  */
     {delete (yyvsp[-2].type_identifier_node); delete (yyvsp[-1].expression_node);(yyval.field_node) = NULL;cout << "recovery" << endl;syntax_error++;}
-#line 1898 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1900 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
 #line 203 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = NULL;}
-#line 1904 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1906 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
 #line 204 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = (yyvsp[0].expression_node);}
-#line 1910 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1912 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
 #line 208 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.method_node) = new MethodNode((yyvsp[-6].object_identifier_node), (yyvsp[-4].formals_node), (yyvsp[-1].type_identifier_node), (yyvsp[0].block_node), (yyvsp[-6].object_identifier_node)->getCol(), (yyvsp[-6].object_identifier_node)->getLine());}
-#line 1916 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1918 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
 #line 212 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = (yyvsp[0].type_identifier_node);}
-#line 1922 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1924 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
 #line 213 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = new TypeIdentifierNode("int32", yylloc.first_column, yylloc.first_line);}
-#line 1928 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1930 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
 #line 214 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = new TypeIdentifierNode("bool", yylloc.first_column, yylloc.first_line);}
-#line 1934 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1936 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
 #line 215 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = new TypeIdentifierNode("string", yylloc.first_column, yylloc.first_line);}
-#line 1940 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1942 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
 #line 216 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.type_identifier_node) = new TypeIdentifierNode("unit", yylloc.first_column, yylloc.first_line);}
-#line 1946 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1948 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
 #line 220 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.formals_node) = new FormalsNode();}
-#line 1952 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1954 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
 #line 221 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[0].formals_node)->insertFormal((yyvsp[-1].formal_node)); (yyval.formals_node) = (yyvsp[0].formals_node);}
-#line 1958 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1960 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
 #line 225 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.formals_node) = new FormalsNode();}
-#line 1964 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1966 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
 #line 226 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[0].formals_node)->insertFormal((yyvsp[-1].formal_node)); (yyval.formals_node) = (yyvsp[0].formals_node);}
-#line 1970 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1972 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
 #line 230 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.formal_node) = new FormalNode((yyvsp[-2].object_identifier_node), (yyvsp[0].type_identifier_node), (yyvsp[-2].object_identifier_node)->getCol(), (yyvsp[-2].object_identifier_node)->getLine());}
-#line 1976 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1978 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
 #line 234 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[-1].block_node)->insertExpr((yyvsp[-2].expression_node)); (yyval.block_node) = (yyvsp[-1].block_node);}
-#line 1982 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1984 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
 #line 238 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.block_node) = new BlockNode();}
-#line 1988 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1990 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
 #line 239 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[0].block_node)->insertExpr((yyvsp[-1].expression_node)); (yyval.block_node) = (yyvsp[0].block_node);}
-#line 1994 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 1996 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
 #line 243 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new ConditionalNode((yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2000 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2002 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
 #line 244 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new ConditionalNode((yyvsp[-4].expression_node), (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2006 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2008 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
 #line 245 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new WhileNode((yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2012 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2014 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
 #line 246 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new LetNode((yyvsp[-5].object_identifier_node), (yyvsp[-3].type_identifier_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node));}
-#line 2018 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2020 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
 #line 247 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new AssignNode((yyvsp[-2].object_identifier_node), (yyvsp[0].expression_node));}
-#line 2024 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2026 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
 #line 248 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_not, (yyvsp[0].expression_node));}
-#line 2030 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2032 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
 #line 249 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_minus, (yyvsp[0].expression_node));}
-#line 2036 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2038 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
 #line 250 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_isnull, (yyvsp[0].expression_node));}
-#line 2042 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2044 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
 #line 251 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_plus, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2048 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2050 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
 #line 252 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_and, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2054 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2056 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
 #line 253 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_equal, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2060 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2062 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
 #line 254 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_leq, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2066 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2068 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
 #line 255 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_less, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2072 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2074 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
 #line 256 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_minus, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2078 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2080 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
 #line 257 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_times, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2084 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2086 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
 #line 258 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_div, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2090 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2092 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
 #line 259 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_pow, (yyvsp[-2].expression_node), (yyvsp[0].expression_node));}
-#line 2096 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2098 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
 #line 260 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new CallNode((yyvsp[-3].object_identifier_node), (yyvsp[-1].args_node), NULL, (yyvsp[-3].object_identifier_node)->getCol(), (yyvsp[-3].object_identifier_node)->getLine());}
-#line 2102 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2104 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
 #line 261 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new CallNode((yyvsp[-3].object_identifier_node), (yyvsp[-1].args_node), (yyvsp[-5].expression_node));}
-#line 2108 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2110 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
 #line 262 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new NewNode((yyvsp[0].type_identifier_node));}
-#line 2114 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2116 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
 #line 263 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = (yyvsp[0].object_identifier_node);}
-#line 2120 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2122 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
 #line 264 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = (yyvsp[0].literal_node);}
-#line 2126 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2128 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
 #line 265 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = new BraceNode(NULL, yylloc.first_column, yylloc.first_line);}
-#line 2132 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2134 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
 #line 266 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = (yyvsp[-1].expression_node);}
-#line 2138 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2140 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
 #line 267 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.expression_node) = (yyvsp[0].block_node);}
-#line 2144 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2146 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
 #line 271 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.args_node) = new ArgsNode();}
-#line 2150 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2152 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
 #line 272 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[0].args_node)->insertExpr((yyvsp[-1].expression_node)); (yyval.args_node) = (yyvsp[0].args_node);}
-#line 2156 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2158 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
 #line 276 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.args_node) = new ArgsNode();}
-#line 2162 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2164 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
 #line 277 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyvsp[0].args_node)->insertExpr((yyvsp[-1].expression_node)); (yyval.args_node) = (yyvsp[0].args_node);}
-#line 2168 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2170 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
 #line 281 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.literal_node) = new LiteralNode((yyvsp[0].ival), "int32", yylloc.first_column, yylloc.first_line);}
-#line 2174 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2176 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
 #line 282 "vsop_grammar.y" /* yacc.c:1646  */
     {string tmp = (yyvsp[0].sval); free (yyvsp[0].sval); (yyval.literal_node) = new LiteralNode(tmp, "string", yylloc.first_column, yylloc.first_line);}
-#line 2180 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2182 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
 #line 283 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.literal_node) = (yyvsp[0].literal_node);}
-#line 2186 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2188 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 108:
 #line 287 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.literal_node) = new LiteralNode("true", "bool", yylloc.first_column, yylloc.first_line);}
-#line 2192 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2194 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 109:
 #line 288 "vsop_grammar.y" /* yacc.c:1646  */
     {(yyval.literal_node) = new LiteralNode("false", "bool", yylloc.first_column, yylloc.first_line);}
-#line 2198 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2200 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2202 "vsop_grammar.tab.c" /* yacc.c:1646  */
+#line 2204 "vsop_grammar.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2466,7 +2468,7 @@ int main (int argc, char *argv[]){
 	 	cerr << "Could not open " << file_name << endl;
 		return -1;
 	}
-
+	SemanticError::FILE_NAME = file_name;
 	// set flex to read from it instead of defaulting to STDIN:
 	yyin = myfile;
 
@@ -2481,7 +2483,7 @@ int main (int argc, char *argv[]){
 	if(syntax_error)
 		return -1;
 
-	if(semantic_error < 0)
+	if(semantic_error)
 		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
 	//fclose(myfile);
 	//free(myfile);

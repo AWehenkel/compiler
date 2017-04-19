@@ -46,7 +46,7 @@ public :
 	IN : -
 	OUT : int, a return code
 	*/
-	virtual int updateType(){return 0;};
+	virtual int updateType(Visitor* visitor){return 0;};
 
 	/*
 	getDeclarationType

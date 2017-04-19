@@ -7,6 +7,7 @@
 #include "all_headers.hpp"
 #include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
+#include "SemanticAnalysis/SemanticError.hpp"
 
 using namespace std;
 
@@ -105,9 +106,8 @@ start :
 																									 }
   | START_SEMANTIC program                        {
 																										if(!syntax_error){
-																											if(SemanticAnalyser::semanticAnalysis($2) < 0)
-																												semantic_error = -1;
-																											else
+																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
+																											if(!semantic_error)
 																												cout << $2->getLiteral(true);
 																										}
 																										delete $2;
@@ -172,9 +172,9 @@ t_obj_id :
 
 class :
 	T_CLASS t_type_id extend T_L_BRACE class-body T_R_BRACE	{if($3){
-																														$$ = new ClassNode($2, $5, $3);
+																														$$ = new ClassNode($2, $5, $3, $2->getCol(), $2->getLine());
 																													 }else
-																														$$ = new ClassNode($2, $5);
+																														$$ = new ClassNode($2, $5, NULL, $2->getCol(), $2->getLine());
 																													}
 ;
 
@@ -321,7 +321,7 @@ int main (int argc, char *argv[]){
 	 	cerr << "Could not open " << file_name << endl;
 		return -1;
 	}
-
+	SemanticError::FILE_NAME = file_name;
 	// set flex to read from it instead of defaulting to STDIN:
 	yyin = myfile;
 
@@ -336,7 +336,7 @@ int main (int argc, char *argv[]){
 	if(syntax_error)
 		return -1;
 
-	if(semantic_error < 0)
+	if(semantic_error)
 		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
 	//fclose(myfile);
 	//free(myfile);

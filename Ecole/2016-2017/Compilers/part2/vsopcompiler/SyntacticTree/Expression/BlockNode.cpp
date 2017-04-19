@@ -36,7 +36,7 @@ string BlockNode::getLiteral(bool with_type) const {
 	return  literal;
 }
 
-int BlockNode::updateType(){
+int BlockNode::updateType(Visitor* visitor){
 
 	string type;
 	for (vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)

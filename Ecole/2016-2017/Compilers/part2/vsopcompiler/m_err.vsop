@@ -1,3 +1,11 @@
-class Main {
-  main() : int32 {}
+class A extends B{
+  isNil() : bool { true }
+}
+
+class B extends C{
+  isNil() : bool { true }
+}
+
+class C extends A{
+  isNil() : D { true }
 }

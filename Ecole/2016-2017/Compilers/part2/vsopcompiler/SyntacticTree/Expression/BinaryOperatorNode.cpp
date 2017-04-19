@@ -12,7 +12,7 @@ string BinaryOperatorNode::getLiteral(bool with_type) const{
   return "BinOp(" + (literal_op_table.find(e_op))->second + ", "  + e_left_operand->getLiteral(with_type) +  ", " + e_right_operand->getLiteral(with_type) + ")" + type;
 }
 
-int BinaryOperatorNode::updateType(){
+int BinaryOperatorNode::updateType(Visitor* visitor){
 
   // Get the types of the two operands
   TypeIdentifierNode* left_type = e_left_operand->getType();

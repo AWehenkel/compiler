@@ -30,6 +30,10 @@ public :
 		t_class_type = class_type;
 	};
 
+	void setContent(std::string content){
+		t_content = content;
+	};
+
 	// getters
 	ClassNode* getClassType(){return t_class_type;};
 

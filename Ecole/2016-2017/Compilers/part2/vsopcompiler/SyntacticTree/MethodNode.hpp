@@ -48,7 +48,7 @@ public :
 	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	std::string getLiteral(bool with_type = false) const;
-	int updateType();
+	int updateType(Visitor* visitor);
 };
 
 #endif //method_node_hpp

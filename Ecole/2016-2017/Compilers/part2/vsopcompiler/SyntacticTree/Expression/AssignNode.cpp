@@ -14,7 +14,7 @@ string AssignNode::getLiteral(bool with_type) const{
   return "Assign(" + e_name->getLiteral(false) + ", " + e_expr->getLiteral(with_type) + ")" + type;
 }
 
-int AssignNode::updateType(){
+int AssignNode::updateType(Visitor* visitor){
 
   // Get types
   TypeIdentifierNode *name_type = e_name->getType();
