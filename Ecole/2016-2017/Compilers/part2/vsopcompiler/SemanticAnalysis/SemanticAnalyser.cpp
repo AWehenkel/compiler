@@ -71,9 +71,12 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   int current_result = program->accept(visitor1);
   result += current_result;
+  //TODO QUand la prise en charge de FillScopeTablesVisitor sera finie il faut remettre les deux lignes ci dessous dans le if.
+  vector<SemanticError> errors_generated = visitor1->getErrors();
+  errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
   if(current_result){
-    vector<SemanticError> errors_generated = visitor1->getErrors();
-    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
+    //vector<SemanticError> errors_generated = visitor1->getErrors();
+    //errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     //If negative then it is an unrecoverable error.
     if(current_result < 0){
       delete visitor1;
@@ -89,6 +92,8 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   if (program->accept(visitor2) < 0){
     delete visitor2;
     cerr << "problem in CheckTypeVisitor" << endl;
+    program->removeClass(io_class);
+    program->addClassToDelete(class_table["Object"]);
     return -6;
   }
   delete visitor2;

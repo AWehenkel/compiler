@@ -19,8 +19,16 @@ using namespace std;
 int FillScopeTablesVisitor::visitAssignNode(AssignNode *node){
 
   if(node->getName()->getLiteral() == "self"){
-    cerr << "self assignment is forbiden" << endl;
-    return -1;
+    cerr << "bizarre" << endl;
+    SemanticError error("self assignment is forbiden.", node);
+    //Error recovery consists in setting a type for self which is linked to the current class.
+    TypeIdentifierNode* self_type = new TypeIdentifierNode(current_class->getName()->getLiteral(), current_class);
+    node->getName()->setType(self_type, true);
+    errors.push_back(error);
+    int result = node->getExpression()->accept(this);
+    if(result < 0)
+      return -1;
+    return 1 + result;
   }
 
   return Visitor::visitAssignNode(node);

@@ -30,7 +30,7 @@ public :
 	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
 
 	//Setters
-	void setType(TypeIdentifierNode* node){node_type = node;};
+	void setType(TypeIdentifierNode* node, bool newly_created = false){node_type = node;self_type = newly_created;};
 
 	/*
 	equals
