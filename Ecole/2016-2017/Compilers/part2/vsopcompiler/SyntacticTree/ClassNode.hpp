@@ -4,6 +4,9 @@
 #include <string>
 #include <unordered_map>
 #include "VSOPNode.hpp"
+
+class SemanticError;
+
 /*
 	Class used to represent a syntaxic node containing a class
 */
@@ -78,7 +81,7 @@ public :
 	IN:		field, FieldNode*, a pointer toward the field to add.
 	OUT: -
 	*/
-	int addField(FieldNode* field);
+	SemanticError addField(FieldNode* field);
 
 	/*
 	getMethod
@@ -94,7 +97,7 @@ public :
 	IN:		method, MethodNode*, a pointer toward the method to add.
 	OUT: -
 	*/
-	int addMethod(MethodNode* method);
+	SemanticError addMethod(MethodNode* method);
 
 	/*
 	setParent

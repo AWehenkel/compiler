@@ -4,6 +4,7 @@
 #include "FieldNode.hpp"
 #include "Expression/ObjectIdentifierNode.hpp"
 #include "MethodNode.hpp"
+#include "../SemanticAnalysis/SemanticError.hpp"
 
 using namespace std;
 
@@ -55,21 +56,16 @@ FieldNode* ClassNode::getField(string name){
 	return to_ret;
 }
 
-int ClassNode::addField(FieldNode* field){
+SemanticError ClassNode::addField(FieldNode* field){
 
-	if(field){
-		FieldNode* old_field = getField(field->getName()->getLiteral());
-		if(!old_field){
-			fields[field->getName()->getLiteral()] = field;
-			return 0;
-		}
-		//Peut etre remplacer le bool de hasField par le field lui meme comme ça on pourra meme dire où il est dejà declare.
-		cerr << "Erreur le champs existe dejà dans la class où dans l'un de ses parents. line: " << old_field->getLine() << " col: " << old_field->getCol() << endl;
-		return -1;
+	FieldNode* old_field = getField(field->getName()->getLiteral());
+	SemanticError error;
+	if(!old_field){
+		fields[field->getName()->getLiteral()] = field;
 	}
-	cerr << "Erreur le champs est null." << endl;
-
-	return -1;
+	else
+		error = SemanticError("Error the field \"" + field->getName()->getLiteral() + "\" has already been declared in a parent class(" + to_string(old_field->getLine()) + ":" + to_string(old_field->getCol()) +").", field);
+	return error;
 }
 
 MethodNode* ClassNode::getMethod(string name){
@@ -88,24 +84,21 @@ MethodNode* ClassNode::getMethod(string name){
 	return to_ret;
 }
 
-int ClassNode::addMethod(MethodNode* method){
+SemanticError ClassNode::addMethod(MethodNode* method){
 
-	if(method){
-		if(methods.find(method->getName()->getLiteral()) == methods.end()){
-			MethodNode* inherit_method = parent ? parent->getMethod(method->getName()->getLiteral()) : NULL;
-			if(!inherit_method || *method == *inherit_method){
-				methods[method->getName()->getLiteral()] = method;
-				return 0;
-			}
-			cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" est dejà declaree dans une class parente à la ligne:" << inherit_method->getLine() << " col: " << inherit_method->getCol() << endl;
-			return -1;
+	if(methods.find(method->getName()->getLiteral()) == methods.end()){
+		MethodNode* inherit_method = parent ? parent->getMethod(method->getName()->getLiteral()) : NULL;
+		if(!inherit_method || *method == *inherit_method){
+			methods[method->getName()->getLiteral()] = method;
+			return SemanticError();
 		}
-		cerr << "Erreur la methode \"" << method->getName()->getLiteral() << "\" existe dejà dans la class à la ligne:" << methods.find(method->getName()->getLiteral())->second->getLine() << " col: " << methods.find(method->getName()->getLiteral())->second->getCol() << endl;
-		return -1;
+		SemanticError error("The method \"" + method->getName()->getLiteral() + "\" has already been declared in a parent class(" +
+			to_string(inherit_method->getLine()) + ":" + to_string(inherit_method->getCol()) + ") ", method);
+		return error;
 	}
-	cerr << "Erreur la methode est null." << endl;
-
-	return -1;
+	SemanticError error("The method \"" + method->getName()->getLiteral() + "\" has already been declared in the class(" +
+		to_string((methods.find(method->getName()->getLiteral())->second)->getLine()) + ":" + to_string((methods.find(method->getName()->getLiteral())->second)->getCol()) + ") ", method);
+	return error;
 }
 
 bool ClassNode::inCycle(){

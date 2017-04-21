@@ -244,7 +244,7 @@ expr :
 	| T_IF expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6);}
 	| T_WHILE expr T_DO expr													{$$ = new WhileNode($2, $4);}
 	| T_LET t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5);}
-	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3);}
+	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3, $1->getCol(), $1->getLine());}
 	| T_NOT expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2);}
 	| T_MINUS expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2);}
 	| T_ISNULL expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2);}

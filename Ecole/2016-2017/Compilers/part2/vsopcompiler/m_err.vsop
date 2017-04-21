@@ -6,9 +6,21 @@ class B extends C{
   isNil() : bool { true }
 }
 
-class C extends A{
-  isNil(var : C) : D {
+class C{
+  head : bool;
+  isNil(var : C, var : int32) : D {
     self <- var;
-    true
+    let b : int32 in b <- c;
+    new D
+  }
+}
+class D extends C{
+  head : int32 <- 10;
+}
+
+class Main{
+  main() : int32{
+    b;
+    1
   }
 }

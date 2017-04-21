@@ -34,7 +34,6 @@ string LetNode::getLiteral(bool with_type) const{
 }
 
 int LetNode::updateType(Visitor* visitor){
-
   // Check the type of the initialization expression, if any
   if (e_init_exp){
     TypeIdentifierNode *init_expr_type = e_init_exp->getType();
@@ -60,6 +59,5 @@ int LetNode::updateType(Visitor* visitor){
     return -1;
   }
   node_type = scope_expr_type;
-
   return 0;
 }

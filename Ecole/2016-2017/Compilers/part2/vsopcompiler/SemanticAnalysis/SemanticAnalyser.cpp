@@ -11,7 +11,12 @@ std::ostream& operator << (std::ostream& out, const std::vector<SemanticError>& 
     out << it->getErrorMessage() << std::endl;
   return out;
 };
-
+/*TODO Donc en gros pour le moment j'essaie de faire du recovery sur plusieurs pass d'affilées(sauf les erreurs impossible à recovery)
+mais pour les deux dernieres pass je suis pas sur que ça soit le mieux car on est obligé de mettre plein d'erreur comme non recoverable alor qu'on pourrait
+encore analyser les trucs suivant dans la pass. Donc en gros deux choix: Soit on se contente de faire la pass fillscopeVisitor dans le cas où il y a des erreurs dedans
+soit on rend le code un peu plus robuste pour faire en sorte que même si le fillscopevisitor n'a pas pu passer sur tout les noeuds une partie de la pass suivantes peut
+etre faite correctement.
+*/
 int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   vector<SemanticError> errors;
   unordered_map<string, ClassNode*> class_table;
@@ -25,7 +30,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   if(program->fillClassTable(class_table)){
     SemanticError error("Internal failure of the compiler during the first pass.");
     errors.push_back(error);
-    cout << errors << endl;
+    cerr << errors;
     program->removeClass(io_class);
     program->addClassToDelete(class_table["Object"]);
     return 1;
@@ -60,7 +65,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     //If negative then it is an unrecoverable error.
     if(result < 0){
       delete visitor;
-      cout << errors << endl;
+      cerr << errors;
       program->removeClass(io_class);
       program->addClassToDelete(class_table["Object"]);
       return result;
@@ -71,16 +76,14 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   int current_result = program->accept(visitor1);
   result += current_result;
-  //TODO QUand la prise en charge de FillScopeTablesVisitor sera finie il faut remettre les deux lignes ci dessous dans le if.
-  vector<SemanticError> errors_generated = visitor1->getErrors();
-  errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
+  //TODO Quand la prise en charge de FillScopeTablesVisitor sera finie il faut remettre les deux lignes ci dessous dans le if.
   if(current_result){
-    //vector<SemanticError> errors_generated = visitor1->getErrors();
-    //errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
+    vector<SemanticError> errors_generated = visitor1->getErrors();
+    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     //If negative then it is an unrecoverable error.
     if(current_result < 0){
       delete visitor1;
-      cout << errors << endl;
+      cerr << errors;
       program->removeClass(io_class);
       program->addClassToDelete(class_table["Object"]);
       return current_result;
@@ -91,6 +94,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   if (program->accept(visitor2) < 0){
     delete visitor2;
+    cerr << errors;
     cerr << "problem in CheckTypeVisitor" << endl;
     program->removeClass(io_class);
     program->addClassToDelete(class_table["Object"]);

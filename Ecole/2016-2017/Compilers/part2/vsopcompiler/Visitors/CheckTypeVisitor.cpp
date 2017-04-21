@@ -6,7 +6,7 @@
 using namespace std;
 
 int CheckTypeVisitor::visitAssignNode(AssignNode *node){
-  //cout"AssignNode" << endl;
+  //cout<<"AssignNode" << endl;
   if(Visitor::visitAssignNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de assign " << std::endl;
     return -1;
@@ -21,7 +21,7 @@ int CheckTypeVisitor::visitAssignNode(AssignNode *node){
 }
 
 int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
-  //cout"visitBinaryOperatorNode" << endl;
+  //cout<<"visitBinaryOperatorNode" << endl;
   if(Visitor::visitBinaryOperatorNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de binary " << std::endl;
     return -1;
@@ -51,12 +51,12 @@ int CheckTypeVisitor::visitBlockNode(BlockNode *node){
 }
 
 int CheckTypeVisitor::visitBraceNode(BraceNode *node){
-//cout"visitBraceNode" << endl;
+//cout<<"visitBraceNode" << endl;
   if(Visitor::visitBraceNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de brace " << std::endl;
     return -1;
   }
-//cout"visitBraceNode update" << endl;
+//cout<<"visitBraceNode update" << endl;
   if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de brace " << std::endl;
     return -1;
@@ -66,7 +66,7 @@ int CheckTypeVisitor::visitBraceNode(BraceNode *node){
 }
 
 int CheckTypeVisitor::visitCallNode(CallNode *node){
-//cout"visitCallNode" << endl;
+//cout<<"visitCallNode" << endl;
   if(Visitor::visitCallNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de call " << std::endl;
     return -1;
@@ -81,7 +81,7 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
 }
 
 int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
-//cout"visitConditionalNode" << endl;
+//cout<<"visitConditionalNode" << endl;
   if(Visitor::visitConditionalNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de conditional " << std::endl;
     return -1;
@@ -96,13 +96,13 @@ int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
 }
 
 int CheckTypeVisitor::visitLetNode(LetNode *node){
-  //cout"visitLetNode" << endl;
+  //cout << "visitLetNode" << endl;
   current_scope = (VSOPNode*) node;
   if(Visitor::visitLetNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de let " << std::endl;
     return -1;
   }
-
+  //cout << "visitLetNode" << endl;
   if (node->updateType(this) < 0){
     std::cerr << "Erreur dans le type de let " << std::endl;
     return -1;
@@ -121,7 +121,7 @@ int CheckTypeVisitor::visitNewNode(NewNode *node){
 }
 
 int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
-//cout"visitUnaryOperatorNode" << endl;
+//cout<<"visitUnaryOperatorNode" << endl;
   if(Visitor::visitUnaryOperatorNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de unary " << std::endl;
     return -1;
@@ -136,7 +136,7 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
 }
 
 int CheckTypeVisitor::visitWhileNode(WhileNode *node){
-//cout"visitWhileNode" << endl;
+//cout<<"visitWhileNode" << endl;
   if(Visitor::visitWhileNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de while " << std::endl;
     return -1;
@@ -166,7 +166,7 @@ int CheckTypeVisitor::visitFieldNode(FieldNode *node){
 
 
 int CheckTypeVisitor::visitMethodNode(MethodNode *node){
-  //cout"visitMethodNode" << endl;
+  //cout<<"visitMethodNode" << endl;
   current_scope = (VSOPNode*) node;
   if(Visitor::visitMethodNode(node) < 0){
     std::cerr << "Erreur dans le type des fils de method " << std::endl;
