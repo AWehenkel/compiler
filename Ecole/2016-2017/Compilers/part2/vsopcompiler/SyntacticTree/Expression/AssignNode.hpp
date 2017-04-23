@@ -2,6 +2,7 @@
 #define AssignNode_hpp
 
 #include <string>
+#include <vector>
 #include "ExpressionNode.hpp"
 /*
 *	Class used to represent a syntaxic node containing an assignment.
@@ -34,7 +35,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitAssignNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //AssignNode_hpp

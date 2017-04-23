@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 /*
 	Abstract parent class of any node of the syntaxic tree
@@ -46,7 +47,10 @@ public :
 	IN : -
 	OUT : int, a return code
 	*/
-	virtual int updateType(Visitor* visitor){return 0;};
+	virtual std::vector<SemanticError> updateType(Visitor* visitor){
+		std::vector<SemanticError> err;
+		return err;
+	};
 
 	/*
 	getDeclarationType

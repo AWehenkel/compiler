@@ -2,6 +2,7 @@
 #define NewNode_hpp
 
 #include <string>
+#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a new statement
@@ -30,7 +31,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitNewNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //NewNode_hpp

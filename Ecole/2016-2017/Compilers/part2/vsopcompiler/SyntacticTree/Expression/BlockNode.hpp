@@ -47,7 +47,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitBlockNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //block_node_hpp

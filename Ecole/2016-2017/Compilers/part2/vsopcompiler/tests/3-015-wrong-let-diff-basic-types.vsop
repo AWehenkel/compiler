@@ -1,0 +1,11 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  f() : int32 {
+    let a : int32 <- "wrong type" in {
+      0
+    }
+  }
+}

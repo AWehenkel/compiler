@@ -1,0 +1,12 @@
+class Main {
+  main() : int32 {0}
+}
+
+class B{}
+class C{}
+
+class A {
+  f() : B {
+    new C
+  }
+}

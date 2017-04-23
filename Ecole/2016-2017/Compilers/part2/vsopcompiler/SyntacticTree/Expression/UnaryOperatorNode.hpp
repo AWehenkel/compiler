@@ -1,8 +1,9 @@
 #ifndef UnaryOperatorNode_hpp
 #define UnaryOperatorNode_hpp
 
-#include <string>
 #include <map>
+#include <string>
+#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Enumeration listing the unary operator
@@ -43,7 +44,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitUnaryOperatorNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //UnaryOperatorNode_hpp

@@ -1,0 +1,15 @@
+class Main {
+  main() : int32 {0}
+}
+
+class C {}
+class B extends C {}
+
+class A {
+  b : B;
+
+  f() : B {
+    // Not right because cannot assign a parent to a children
+    b <- new C
+  }
+}

@@ -14,14 +14,22 @@ string AssignNode::getLiteral(bool with_type) const{
   return "Assign(" + e_name->getLiteral(false) + ", " + e_expr->getLiteral(with_type) + ")" + type;
 }
 
-int AssignNode::updateType(Visitor* visitor){
+vector<SemanticError> AssignNode::updateType(Visitor* visitor){
+
+  vector<SemanticError> errors;
 
   // Get types
   TypeIdentifierNode *name_type = e_name->getType();
   TypeIdentifierNode *expr_type = e_expr->getType();
-  if(!name_type || !expr_type){
-    cerr << "Error in the compiler in AssignNode : name_type or expr_type is null" << endl;
-    return -1;
+  if(!name_type){
+    SemanticError error("Error in the compiler in AssignNode : name_type is null", this);
+    errors.push_back(error);
+    return errors;
+  }
+  if(!expr_type){
+    SemanticError error("Error in the compiler in AssignNode : expr_type is null", this);
+    errors.push_back(error);
+    return errors;
   }
 
   /* It there was a type error in the son e_expr or if the two types are the
@@ -29,11 +37,12 @@ int AssignNode::updateType(Visitor* visitor){
   * errors */
   if (expr_type->getLiteral() == "error" || *name_type == *expr_type || (expr_type->getClassType() && expr_type->getClassType()->hasParent(name_type->getClassType()))){
     node_type = name_type;
-    return 0;
+    return errors;
   }
 
-  // If the two types were different, assign "error" to e_name and return -1
+  // If the two types were different, assign "error" to e_name and create an error
   node_type = new TypeIdentifierNode("error");
-  cerr << "Les deux types(" << name_type->getLiteral() <<" et " <<  expr_type->getLiteral() <<") sont differents dans assign" << endl;
-  return -1;
+  SemanticError error("Assignement of different types : '" + e_name->getLiteral() + "' of type '" + name_type->getLiteral() + "' has not the same type as assigned expression of type '" + expr_type->getLiteral() + "'", this);
+  errors.push_back(error);
+  return errors;
 }

@@ -1,8 +1,9 @@
 #ifndef BinaryOperatorNode_hpp
 #define BinaryOperatorNode_hpp
 
-#include <string>
 #include <map>
+#include <string>
+#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Enumeration listing the possible binary operator.
@@ -54,7 +55,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitBinaryOperatorNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //BinaryOperatorNode_hpp

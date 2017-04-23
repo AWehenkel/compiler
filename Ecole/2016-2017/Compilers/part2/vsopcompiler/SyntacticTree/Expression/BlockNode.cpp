@@ -36,7 +36,9 @@ string BlockNode::getLiteral(bool with_type) const {
 	return  literal;
 }
 
-int BlockNode::updateType(Visitor* visitor){
+vector<SemanticError> BlockNode::updateType(Visitor* visitor){
+
+	 vector<SemanticError> errors;
 
 	string type;
 	for (vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
@@ -45,8 +47,9 @@ int BlockNode::updateType(Visitor* visitor){
 	ExpressionNode *last_expr = *(expressions.end()-1);
 	TypeIdentifierNode *expr_type = last_expr->getType();
 	if (!expr_type){
-		cerr << "Error in the compiler in BlockNode : expr_type is null" << endl;
-		return -1;
+		SemanticError error("Error in the compiler in BlockNode : expr_type is null", this);
+		errors.push_back(error);
+		return errors;
 	}
 	// Put the type of the last instruction, even if it was an error.
 	node_type = expr_type;
@@ -54,7 +57,7 @@ int BlockNode::updateType(Visitor* visitor){
 	/* Even if there is an error in the last instruction, it wasn't in the block
 	* directly, so we don't return an error code
 	*/
-	return 0;
+	return errors;
 }
 
 BlockNode::~BlockNode(){

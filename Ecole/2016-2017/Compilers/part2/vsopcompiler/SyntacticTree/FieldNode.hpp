@@ -2,6 +2,7 @@
 #define field_node_hpp
 
 #include <string>
+#include <vector>
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a field
@@ -48,7 +49,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //field_node_hpp

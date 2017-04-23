@@ -18,7 +18,9 @@ string BraceNode::getLiteral(bool with_type) const{
   return literal + s_expr + ")" + type;
 }
 
-int BraceNode::updateType(Visitor* visitor){
+vector<SemanticError> BraceNode::updateType(Visitor* visitor){
+
+    vector<SemanticError> errors;
   /*
   ATTENTION j'ai mis unit quand il y a pas d'expression dans le brace mais je suis pas sur que c'est juste!
   */
@@ -26,5 +28,5 @@ int BraceNode::updateType(Visitor* visitor){
   node_type = expr_type;
   if(!e_expr)
     self_type = true;
-  return 0;
+  return errors;
 }

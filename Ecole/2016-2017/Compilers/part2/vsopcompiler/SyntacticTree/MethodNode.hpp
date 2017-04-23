@@ -2,6 +2,7 @@
 #define method_node_hpp
 
 #include <string>
+#include <vector>
 #include "VSOPNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a method
@@ -48,7 +49,7 @@ public :
 	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //method_node_hpp

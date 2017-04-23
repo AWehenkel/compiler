@@ -21,22 +21,31 @@ string FieldNode::getLiteral(bool with_type) const {
 	return literal;
 }
 
-int FieldNode::updateType(Visitor* visitor){
+vector<SemanticError> FieldNode::updateType(Visitor* visitor){
+
+	  vector<SemanticError> errors;
 
 	// Check if the type of the initialization expression if any
 	if (e_init_expr){
 		TypeIdentifierNode *init_expr_type = e_init_expr->getType();
 		if (!init_expr_type){
-			cerr << "Error in the compiler" << endl;
-			return -1;
+			SemanticError error("Error in the compiler in ExpressionNode : init_expr_type is null", this);
+	    errors.push_back(error);
+			return errors;
 		}
 
 		if (init_expr_type->getLiteral() != "error" && init_expr_type->getLiteral() != e_type->getLiteral() &&
 		 (!init_expr_type->getClassType() || !init_expr_type->getClassType()->hasParent(e_type->getClassType()))){
-			cerr << "Pas le même type dans field" << endl;
-			return -1;
+			 if (!e_type->getClassType()){
+         SemanticError error("The initialization expression of a field must have the same type as the object: got '" + init_expr_type->getLiteral() + "' and need '" + e_type->getLiteral() + "'", this);
+         errors.push_back(error);
+       }else{
+         SemanticError error("The initialization expression of a field must have a type that inherits from the object type : got '" + init_expr_type->getLiteral() + "' and need a children of '" + e_type->getLiteral() + "'", this);
+         errors.push_back(error);
+       }
+			return errors;
 		}
 	}
 
-	return 0;
+	return errors;
 }

@@ -2,6 +2,7 @@
 #define CallNode_hpp
 
 #include <string>
+#include <vector>
 #include "../ArgsNode.hpp"
 #include "ExpressionNode.hpp"
 #include "ObjectIdentifierNode.hpp"
@@ -44,7 +45,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitCallNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	int updateType(Visitor* visitor);
+	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //CallNode_hpp

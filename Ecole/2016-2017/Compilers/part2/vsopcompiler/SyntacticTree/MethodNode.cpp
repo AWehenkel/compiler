@@ -33,21 +33,30 @@ string MethodNode::getLiteral(bool with_type) const {
 									 + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
 }
 
-int MethodNode::updateType(Visitor* visitor){
+vector<SemanticError> MethodNode::updateType(Visitor* visitor){
+
+  vector<SemanticError> errors;
 
 	// Get block type
 	TypeIdentifierNode *block_type = e_block->getType();
 	if (!block_type){
-		cerr << "Error in the compiler" << endl;
-		return -1;
+		SemanticError error("Error in the compiler in MethodNode : block_type is null", this);
+		errors.push_back(error);
+		return errors;
 	}
 
 	// Check if the types are the same or the block type class inherits from the return type class.
 	if (e_ret_type->getLiteral() != "error" && block_type->getLiteral() != "error" && *block_type != *e_ret_type &&
 			(!block_type->getClassType() || !block_type->getClassType()->hasParent(e_ret_type->getClassType()))){
-		cerr << "Pas le même type dans methode" << endl;
-		return -1;
+		if (!e_ret_type->getClassType()){
+			SemanticError error("The type of the block of a method must be the same as the return type of that method: got '" + block_type->getLiteral() + "' and need '" + e_ret_type->getLiteral() + "'", this);
+			errors.push_back(error);
+		}else{
+			SemanticError error("The type of the block of a method must have a type that inherits from the return type of that method : got '" + block_type->getLiteral() + "' and need a children of '" + e_ret_type->getLiteral() + "'", this);
+			errors.push_back(error);
+		}
+		return errors;
 	}
 
-	return 0;
+	return errors;
 }

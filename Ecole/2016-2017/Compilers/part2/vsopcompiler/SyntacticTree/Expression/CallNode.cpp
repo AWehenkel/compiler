@@ -24,7 +24,9 @@ string CallNode::getLiteral(bool with_type) const{
   return "Call(" + obj_name + ", "  + e_method_name->getLiteral(with_type) + ", " + e_args->getLiteral(with_type) + ")" + type;
 }
 
-int CallNode::updateType(Visitor* visitor){
+vector<SemanticError> CallNode::updateType(Visitor* visitor){
+
+  vector<SemanticError> errors;
 
   // Get the type of the object
   TypeIdentifierNode* object_type;
@@ -36,26 +38,29 @@ int CallNode::updateType(Visitor* visitor){
     object_type = e_object->getType();
 
   if (!object_type){
-    cerr << "Error in the compiler in CallNode : object_type is null" << endl;
-    return -1;
+    SemanticError error("Error in the compiler in CallNode : object_type is null", this);
+		errors.push_back(error);
+    return errors;
   }
 
   // Check if the call is indeed made on an object
   ClassNode* object_class = object_type->getClassType();
   if (!object_class){
-    cerr << "L'objet (" << object_type->getLiteral(true) << ") du call (" << e_method_name->getLiteral() << ") n'est pas une classe" << endl;
+    SemanticError error("Calls must be done on object : '" + object_type->getLiteral() + "' is not a class.", this);
+		errors.push_back(error);
     node_type = new TypeIdentifierNode("error");
     self_type = true;
-    return -1;
+    return errors;
   }
 
   // Check if the method called exists for the given object
   MethodNode *method = object_class->getMethod(e_method_name->getLiteral());
   if (!method){
-    cerr << "La methode du call n'est pas definie pour cet objet" << endl;
+    SemanticError error("Undefined method '" + e_method_name->getLiteral() + " for object of type '" + object_type->getLiteral() + "'", this);
+		errors.push_back(error);
     node_type = new TypeIdentifierNode("error");
     self_type = true;
-    return -1;
+    return errors;
   }
 
   // Check if the arguments correspond to the formals of the method
@@ -63,33 +68,44 @@ int CallNode::updateType(Visitor* visitor){
   vector<FormalNode*> ls_formals = formals->getFormals();
   vector<ExpressionNode*> ls_args = e_args->getExpressions();
   if (ls_formals.size() != ls_args.size()){
-    cerr << "La methode du call ne contient pas le bon nombre d'argument" << endl;
+    SemanticError error("Wrong number of argument in call : need " + to_string(ls_formals.size()) + " and got "  +  to_string(ls_args.size()), this);
+		errors.push_back(error);
     node_type = new TypeIdentifierNode("error");
     self_type = true;
-    return -1;
+    return errors;
   }
 
   vector<ExpressionNode*>::const_iterator it = ls_args.begin();
+  int i = 1;
   for(vector<FormalNode*>::const_iterator it2 = ls_formals.begin(); it2 != ls_formals.end(); ++it2){
     FormalNode* formal = *it2;
     ExpressionNode* arg = *it;
     TypeIdentifierNode* formal_type = formal->getType();
     TypeIdentifierNode* arg_type = arg->getType();
-    if (!formal_type || !arg_type){
-      cerr << "Error in the compiler in CallNode : formal_type or arg_type is null(l: " << e_method_name->getLine() << ", c: " << e_method_name->getCol() << ")" << endl;
-      return -1;
+    if (!formal_type){
+      SemanticError error("Error in the compiler in CallNode : formal_type is null", this);
+  		errors.push_back(error);
+      return errors;
+    }
+    if (!arg_type){
+      SemanticError error("Error in the compiler in CallNode : arg_type is null", this);
+  		errors.push_back(error);
+      return errors;
     }
 
     if(arg_type->getLiteral() != "error" && *arg_type != *formal_type && (!arg_type->getClassType() || !arg_type->getClassType()->hasParent(formal_type->getClassType()))){
+      SemanticError error("Type of argument " + to_string(i) + " in call does not correspond to type in method :  got '" + arg_type->getLiteral() + "' and needed '" + formal_type->getLiteral() + "'" , this);
+  		errors.push_back(error);
       cerr << "La methode du call contient des arguments qui ne sont pas du même type" << endl;
       node_type = new TypeIdentifierNode("error");
       self_type = true;
-      return -1;
+      return errors;
     }
     ++it;
+    ++i;
   }
   node_type = method->getRetType();
 
-  return 0;
+  return errors;
 
 }

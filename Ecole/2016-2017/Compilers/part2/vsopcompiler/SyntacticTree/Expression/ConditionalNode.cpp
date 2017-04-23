@@ -21,21 +21,26 @@ string ConditionalNode::getLiteral(bool with_type) const{
   return literal + end + ")" + type;
 }
 
-int ConditionalNode::updateType(Visitor* visitor){
+vector<SemanticError> ConditionalNode::updateType(Visitor* visitor){
+
+  vector<SemanticError> errors;
 
   TypeIdentifierNode *condition_type = e_condition->getType();
   if (!condition_type){
-    cerr << "Error in the compiler in ConditionalNode : condition_type is null" << endl;
-    return -1;
+    SemanticError error("Error in the compiler in ConditionalNode : conditon_type is null", this);
+		errors.push_back(error);
+    return errors;
   }
   string s_condition_type = condition_type->getLiteral();
 
     // Check if the condition is of type bool
   if (s_condition_type != "error" && s_condition_type != "bool"){
+    SemanticError error("Condition of if-expression must be bool in conditional : got '" + s_condition_type + "'", this);
+		errors.push_back(error);
     cerr << "Condition is not bool in conditional" << endl;
     node_type = new TypeIdentifierNode("error");
     self_type = true;
-    return -1;
+    return errors;
   }
 
   // Check the types of the two branches
@@ -50,9 +55,15 @@ int ConditionalNode::updateType(Visitor* visitor){
     is_else_new_type = true;
   }
 
-  if(!then_type || !else_type){
-    cerr << "Error in the compiler in ConditionalNode : then_type or else_type null" << endl;
-    return -1;
+  if(!then_type){
+    SemanticError error("Error in the compiler in ConditionalNode : then_type is null", this);
+		errors.push_back(error);
+    return errors;
+  }
+  if(!else_type){
+    SemanticError error("Error in the compiler in ConditionalNode : else_type is null", this);
+		errors.push_back(error);
+    return errors;
   }
   string s_then_type = then_type->getLiteral();
   string s_else_type = else_type->getLiteral();
@@ -62,43 +73,46 @@ int ConditionalNode::updateType(Visitor* visitor){
     node_type = then_type;
     if(is_else_new_type)
       delete else_type;
-    return 0;
+    return errors;
   }
   if(s_else_type == "unit" ){
     node_type = else_type;
     self_type = is_else_new_type;
-    return 0;
+    return errors;
   }
   // If one branch is in error, return the type of the other branch
   if(s_then_type == "error"){
     node_type = else_type;
-    return 0;
+    return errors;
   }else if (s_else_type == "error"){
     node_type = then_type;
-    return 0;
+    return errors;
   }
 
   // If one of the branch is a basic type, check if the other one is the same
   if (!then_type->getClassType() || !else_type->getClassType()){
     if(*then_type == *else_type){
       node_type = then_type;
-      return 0;
+      return errors;
     }else{
-      cerr << "Types differents dans conditional" << endl;
+      SemanticError error("If they are basic types, the types of then and else branch must be the same : got '" + then_type->getLiteral() + "' and '" + else_type->getLiteral() + "'", this);
+  		errors.push_back(error);
       node_type = new TypeIdentifierNode("error");
       self_type = true;
-      return -1;
+      return errors;
     }
   }
 
   // If both types are clases, need to check the inheritance
   node_type = then_type->getClassType()->getCommonParent(else_type->getClassType());
+  // TODO : reflexion, en fait il peut jamais y avoir d'erreur ici, il y a au moins object comme parent...
   if(!node_type){
-    cerr << "Pas d'ancêtres en commun dans conditional" << endl;
+    SemanticError error("If they are class types, the types of then and else branch must be the same or be linked by inheritance : got '" + then_type->getLiteral() + "' and '" + else_type->getLiteral() + "'", this);
+    errors.push_back(error);
     node_type = new TypeIdentifierNode("error");
     self_type = true;
-    return -1;
+    return errors;
   }
 
-  return 0;
+  return errors;
 }

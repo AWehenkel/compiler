@@ -1,0 +1,15 @@
+class Main {
+  main() : int32 {0}
+}
+
+class B{}
+class C{}
+
+class A {
+  c : C;
+  f() : int32 {
+    let b : B <- c in {
+      0
+    }
+  }
+}

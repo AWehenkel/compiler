@@ -18,6 +18,7 @@ soit on rend le code un peu plus robuste pour faire en sorte que même si le fil
 etre faite correctement.
 */
 int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
+
   vector<SemanticError> errors;
   unordered_map<string, ClassNode*> class_table;
   // Adding Object class to the class table
@@ -56,6 +57,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
       delete it->second->getExtends();
       it->second->setExtends(new TypeIdentifierNode("Object"));
     }
+
   // Check if any unkown class is used
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
   int result = program->accept(visitor);
@@ -72,6 +74,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     }
   }
   delete visitor;
+
   // Record all the methods, fields and local variables
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
   int current_result = program->accept(visitor1);
@@ -90,20 +93,26 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     }
   }
   delete visitor1;
+
+
+  // TODO : check le truc avec current_result
   // Check all the types
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   if (program->accept(visitor2) < 0){
+    vector<SemanticError> errors_generated = visitor2->getErrors();
+    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     delete visitor2;
     cerr << errors;
-    cerr << "problem in CheckTypeVisitor" << endl;
     program->removeClass(io_class);
     program->addClassToDelete(class_table["Object"]);
     return -6;
   }
   delete visitor2;
+
   // Remove IO class for the class table
   program->removeClass(io_class);
   program->addClassToDelete(class_table["Object"]);
+
   cerr << errors;
   return errors.size();
 }

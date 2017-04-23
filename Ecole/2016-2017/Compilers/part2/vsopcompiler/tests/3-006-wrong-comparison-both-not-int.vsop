@@ -1,0 +1,10 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  a : bool;
+  f() : bool {
+    a <- "1" < ()
+  }
+}
