@@ -195,8 +195,8 @@ field :
 																							 else
 																								$$ = new FieldNode($1, $3, $1->getCol(), $1->getLine());
 																							}
-| t_obj_id T_COLON error T_SEMI_COLON					{delete $1;$$ = NULL;cout << "recovery" << endl;syntax_error++;}
-| error T_COLON type assign T_SEMI_COLON			{delete $3; delete $4;$$ = NULL;cout << "recovery" << endl;syntax_error++;}
+  | t_obj_id T_COLON error T_SEMI_COLON					{delete $1;$$ = NULL;cout << "recovery" << endl;syntax_error++;}
+  | error T_COLON type assign T_SEMI_COLON			{delete $3; delete $4;$$ = NULL;cout << "recovery" << endl;syntax_error++;}
 ;
 
 assign :
@@ -235,7 +235,7 @@ block :
 ;
 
 sc-expr :
-																				{$$ = new BlockNode();}
+																				{$$ = new BlockNode(yylloc.first_column, yylloc.first_line);}
 	| T_SEMI_COLON expr sc-expr						{$3->insertExpr($2); $$ = $3;}
 ;
 
@@ -336,8 +336,8 @@ int main (int argc, char *argv[]){
 	if(syntax_error)
 		return -1;
 
-	if(semantic_error)
-		cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
+	//if(semantic_error)
+	//	cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
 	//fclose(myfile);
 	//free(myfile);
 	return semantic_error;

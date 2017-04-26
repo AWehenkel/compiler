@@ -5,6 +5,6 @@ class Main {
 class A {
   a : bool;
   f() : bool {
-    a <- false / "0"
+    a <- false + "0"
   }
 }

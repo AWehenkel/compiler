@@ -22,8 +22,11 @@ public :
   int visitNewNode(NewNode *node);
   int visitUnaryOperatorNode(UnaryOperatorNode *node);
   int visitWhileNode(WhileNode *node);
+  int visitArgsNode(ArgsNode *node);
+  int visitClassBodyNode(ClassBodyNode *node);
   int visitFieldNode(FieldNode *node);
   int visitMethodNode(MethodNode *node);
+  int visitProgramNode(ProgramNode *node);
 };
 
 #endif //check_type_visitor

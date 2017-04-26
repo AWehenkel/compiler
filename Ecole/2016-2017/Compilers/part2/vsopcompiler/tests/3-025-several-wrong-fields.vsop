@@ -1,0 +1,9 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  a : int32 <- "wrong type";
+  b : string <- 0;
+
+}

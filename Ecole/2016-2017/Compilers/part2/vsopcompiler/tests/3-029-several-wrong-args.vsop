@@ -1,0 +1,16 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  f(c : int32, d : int32) : int32 {
+    0
+  }
+}
+
+class B {
+  a : A;
+  f2() : int32 {
+    a.f("1" + 0, true - 0)
+  }
+}

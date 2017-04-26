@@ -38,11 +38,7 @@ string BlockNode::getLiteral(bool with_type) const {
 
 vector<SemanticError> BlockNode::updateType(Visitor* visitor){
 
-	 vector<SemanticError> errors;
-
-	string type;
-	for (vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
-		ExpressionNode *expr = *it;
+	vector<SemanticError> errors;
 
 	ExpressionNode *last_expr = *(expressions.end()-1);
 	TypeIdentifierNode *expr_type = last_expr->getType();

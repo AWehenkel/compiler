@@ -40,6 +40,8 @@ vector<SemanticError> CallNode::updateType(Visitor* visitor){
   if (!object_type){
     SemanticError error("Error in the compiler in CallNode : object_type is null", this);
 		errors.push_back(error);
+    node_type = new TypeIdentifierNode("error");
+    self_type = true;
     return errors;
   }
 

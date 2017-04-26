@@ -1,0 +1,12 @@
+class Main {
+  main() : int32 {0}
+}
+
+class A {
+  a : int32;
+  b : int32;
+  f() : int32 {
+    a <- "wrong type";
+    b <- "second wrong type"
+  }
+}
