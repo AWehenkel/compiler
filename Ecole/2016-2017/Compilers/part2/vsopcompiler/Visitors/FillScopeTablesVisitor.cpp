@@ -65,7 +65,7 @@ int FillScopeTablesVisitor::visitLetNode(LetNode *node){
     errors.push_back(error);
     //TODO reflechir si c'est bien de retourner -1(erreur non recoverable), -1 pour le moment car c'est difficile d'analyser correctement le let si self est utilisé et donc
     //Beaucoup d'erreurs(et même des seg fautl pour le moment) en découlent.
-    return -1;
+    return 1;
   }
 
   int result = Visitor::visitLetNode(node);
@@ -125,23 +125,16 @@ int FillScopeTablesVisitor::visitClassNode(ClassNode *node){
 
 int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
 
-  if(!current_class){
-    SemanticError error("Field declared outside of a class.", node);
-    errors.push_back(error);
-    //TODO voir si on peut pas continuer à analyser.
-    return -1;
-  }
   SemanticError error = current_class->addField(node);
   if(error.isValid()){
     errors.push_back(error);
-    //TODO voir si on peut pas continuer à analyser.
     return -1;
   }
   if(node->getName()->getLiteral() == "self"){
     error = SemanticError("Self assignment is forbiden.", node);
     errors.push_back(error);
     //TODO voir si on peut pas continuer à analyser.
-    return -1;
+    return 1;
   }
   node->setClassScope(current_class);
   ExpressionNode* init_expr = node->getInitExpr();
@@ -166,7 +159,7 @@ int FillScopeTablesVisitor::visitFormalsNode(FormalsNode *node){
         SemanticError error("Arguments of the function must have unique names.", *formal_it);
         errors.push_back(error);
         //TODO reflechir si c'est bien d'arreter la compilation ou si on peut pas essayer de retirer la fonction des pass suivantes.
-        return -1;
+        return 1;
       }
     }
   }
@@ -177,14 +170,16 @@ int FillScopeTablesVisitor::visitFormalsNode(FormalsNode *node){
 int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
 
   current_scope = (VSOPNode*) node;
-
-  if(node->getFormals()->accept(this) < 0 || !current_class )
+  int result_formals_pass = node->getFormals()->accept(this);
+  if(result_formals_pass < 0 || !current_class )
     return -1;
+  if(result_formals_pass)
+    return result_formals_pass;
   SemanticError error = current_class->addMethod(node);
   if(error.isValid()){
     errors.push_back(error);
     //TODO voir si on peut pas continuer à analyser.
-    return -1;
+    return 1;
   }
   node->setClassScope(current_class);
   current_method = node;

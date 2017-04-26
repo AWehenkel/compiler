@@ -105,14 +105,6 @@ vector<SemanticError> ConditionalNode::updateType(Visitor* visitor){
 
   // If both types are clases, need to check the inheritance
   node_type = then_type->getClassType()->getCommonParent(else_type->getClassType());
-  // TODO : reflexion, en fait il peut jamais y avoir d'erreur ici, il y a au moins object comme parent...
-  if(!node_type){
-    SemanticError error("If they are class types, the types of then and else branch must be the same or be linked by inheritance : got '" + then_type->getLiteral() + "' and '" + else_type->getLiteral() + "'", this);
-    errors.push_back(error);
-    node_type = new TypeIdentifierNode("error");
-    self_type = true;
-    return errors;
-  }
 
   return errors;
 }

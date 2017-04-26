@@ -41,8 +41,7 @@ int CheckUndefinedClassVisitor::visitTypeIdentifierNode(TypeIdentifierNode *node
   if (table_class.find(type_id) == table_class.end()){
     SemanticError error("Unknown type: " + type_id, node);
     errors.push_back(error);
-    //The recovery consist in replacing the unknown class by Object type. TODO Reflechir à si c'est mieux de mettre error ou Object.
-    //node->setClassType(table_class.find("Object")->second);
+
     node->setContent("error");
     return 1;
   }
