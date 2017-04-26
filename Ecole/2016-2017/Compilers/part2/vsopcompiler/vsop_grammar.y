@@ -4,10 +4,12 @@
 #include <iostream>
 #include <cstring>
 #include <stdlib.h>
+#include <utility>
 #include "all_headers.hpp"
 #include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
 #include "SemanticAnalysis/SemanticError.hpp"
+#include "PairColLine.hpp"
 
 using namespace std;
 
@@ -47,6 +49,7 @@ void yyerror(const char *s);
 	class ExpressionNode* expression_node;
 	class ArgsNode* args_node;
 	class LiteralNode* literal_node;
+	class PairColLine* col_lin;
 };
 
 %token T_AND T_BOOL T_CLASS T_DO T_ELSE T_EXTENDS T_FALSE T_IF T_IN T_INT32
@@ -83,6 +86,21 @@ void yyerror(const char *s);
 %type <sval>                    T_OBJ_ID T_TYPE_ID T_STRING_LIT
 %type <ival>                    T_INT_LIT
 %type <sval>										error
+%type <col_lin>									t_if
+%type <col_lin>									t_while
+%type <col_lin>									t_let
+%type <col_lin>									t_not
+%type <col_lin>									t_isnull
+%type <col_lin>									t_plus
+%type <col_lin>									t_and
+%type <col_lin>									t_equal
+%type <col_lin>									t_leq
+%type <col_lin>									t_lower
+%type <col_lin>									t_minus
+%type <col_lin>									t_times
+%type <col_lin>									t_div
+%type <col_lin>									t_pow
+%type <col_lin>									t_new
 
 %right T_ASSIGN
 %left T_AND
@@ -167,8 +185,70 @@ program :
 t_type_id :
   T_TYPE_ID               {string tmp = $1; free($1); $$ = new TypeIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
 ;
+
 t_obj_id :
   T_OBJ_ID                {string tmp = $1; free($1); $$ = new ObjectIdentifierNode(tmp, yylloc.first_column, yylloc.first_line);}
+;
+
+t_if :
+	T_IF 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_while :
+	T_WHILE 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_let :
+	T_LET 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_not :
+	T_NOT 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_isnull :
+	T_ISNULL 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_plus :
+	T_PLUS 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_and :
+	T_AND 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_equal :
+	T_EQUAL 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_leq :
+	T_LEQ									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_lower :
+	T_LOWER 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_minus :
+	T_MINUS 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_times :
+	T_TIMES 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_div :
+	T_DIV 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_pow :
+	T_POW 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
+
+t_new :
+	T_NEW 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
+;
 
 class :
 	T_CLASS t_type_id extend T_L_BRACE class-body T_R_BRACE	{if($3){
@@ -235,31 +315,31 @@ block :
 ;
 
 sc-expr :
-																				{$$ = new BlockNode(yylloc.first_column, yylloc.first_line);}
+																				{$$ = new BlockNode();}
 	| T_SEMI_COLON expr sc-expr						{$3->insertExpr($2); $$ = $3;}
 ;
 
 expr :
-	T_IF expr T_THEN expr															{$$ = new ConditionalNode($2, $4);}
-	| T_IF expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6);}
-	| T_WHILE expr T_DO expr													{$$ = new WhileNode($2, $4);}
-	| T_LET t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5);}
+	t_if expr T_THEN expr															{$$ = new ConditionalNode($2, $4, NULL, $1->getCol(), $1->getLine());}
+	| t_if expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6, $1->getCol(), $1->getLine());}
+	| t_while expr T_DO expr													{$$ = new WhileNode($2, $4, $1->getCol(), $1->getLine());}
+	| t_let t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5, $1->getCol(), $1->getLine());}
 	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3, $1->getCol(), $1->getLine());}
-	| T_NOT expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2);}
-	| T_MINUS expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2);}
-	| T_ISNULL expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2);}
-	| expr T_PLUS expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3);}
-	| expr T_AND expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3);}
-	| expr T_EQUAL expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3);}
-	| expr T_LEQ expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3);}
-	| expr T_LOWER expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3);}
-	| expr T_MINUS expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_minus, $1, $3);}
-	| expr T_TIMES expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3);}
-	| expr T_DIV expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3);}
-	| expr T_POW expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3);}
+	| t_not expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2, $1->getCol(), $1->getLine());}
+	| t_minus expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2, $1->getCol(), $1->getLine());}
+	| t_isnull expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2, $1->getCol(), $1->getLine());}
+	| expr t_plus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_and expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_equal expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_leq expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_lower expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_minus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_minus, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_times expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_div expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3, $2->getCol(), $2->getLine());}
+	| expr t_pow expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3, $2->getCol(), $2->getLine());}
 	| t_obj_id T_L_PAR args T_R_PAR										{$$ = new CallNode($1, $3, NULL, $1->getCol(), $1->getLine());}
-	| expr T_DOT t_obj_id T_L_PAR args T_R_PAR				{$$ = new CallNode($3, $5, $1);}
-	| T_NEW t_type_id																	{$$ = new NewNode($2);}
+	| expr T_DOT t_obj_id T_L_PAR args T_R_PAR				{$$ = new CallNode($3, $5, $1, $3->getCol(), $3->getLine());}
+	| t_new t_type_id																	{$$ = new NewNode($2, $1->getCol(), $1->getLine());}
 	| t_obj_id																				{$$ = $1;}
 	| literal																					{$$ = $1;}
 	| T_L_PAR T_R_PAR																	{$$ = new BraceNode(NULL, yylloc.first_column, yylloc.first_line);}
