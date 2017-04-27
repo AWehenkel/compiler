@@ -10,6 +10,7 @@
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
 #include "SemanticAnalysis/SemanticError.hpp"
 #include "PairColLine.hpp"
+#include "Visitors/CodeGenVisitor.hpp"
 
 using namespace std;
 
@@ -62,7 +63,7 @@ void yyerror(const char *s);
 %token T_PLUS T_MINUS T_TIMES T_DIV T_POW T_DOT T_EQUAL T_LOWER T_LEQ
 %token T_ASSIGN
 %token T_COMMENTS
-%token START_SYNTAX START_LEXICAL START_SEMANTIC;
+%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN;
 %token T_ERROR
 
 %type <program_node>            program
@@ -127,6 +128,17 @@ start :
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
 																											if(!semantic_error)
 																												cout << $2->getLiteral(true);
+																										}
+																										delete $2;
+																									}
+	| START_CODE_GEN program												{
+																										if(!syntax_error){
+																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
+																											if(!semantic_error){
+																												CodeGenVisitor* generator = new CodeGenVisitor();
+																												$2->accept(generator);
+																												delete generator;
+																											}
 																										}
 																										delete $2;
 																									}
@@ -387,6 +399,8 @@ int main (int argc, char *argv[]){
     start_token = START_SEMANTIC;
   else if(!strcmp(argv[1], "-parse"))
 		start_token = START_SYNTAX;
+	else if(!strcmp(argv[1], "-llvm"))
+		start_token = START_CODE_GEN;
 	else{
 		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
 		cerr << "Usage for both lexer and parse: ./main -parse <Source_File>" << endl;

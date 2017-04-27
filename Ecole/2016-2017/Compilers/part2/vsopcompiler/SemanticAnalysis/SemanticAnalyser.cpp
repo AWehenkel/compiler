@@ -78,19 +78,16 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     vector<SemanticError> errors_generated = visitor1->getErrors();
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     //If negative then it is an unrecoverable error.
-    if(current_result < 0){
-      delete visitor1;
-      cerr << errors;
-      program->removeClass(io_class);
-      program->addClassToDelete(class_table["Object"]);
-      return current_result;
-    }
+    delete visitor1;
+    cerr << errors;
+    program->removeClass(io_class);
+    program->addClassToDelete(class_table["Object"]);
+    return current_result;
   }
   delete visitor1;
 
 
-  // TODO : check le truc avec current_result
-  // Check all the types
+// Check all the types
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   if (program->accept(visitor2) < 0){
     vector<SemanticError> errors_generated = visitor2->getErrors();
