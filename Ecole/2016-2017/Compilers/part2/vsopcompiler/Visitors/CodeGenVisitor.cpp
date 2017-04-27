@@ -15,13 +15,17 @@ string CodeGenVisitor::getLLVMLoadCode(string load_in, string load_from, string 
   return load_in + " = load " + type + ", " + type + "* " + load_from + "\n";
 }
 
+string CodeGenVisitor::getLLVMStoreCode(string name, string store_address, string type){
+  return "store " + type + " " + name + ", " +  type + "* " + store_address + "\n";
+}
+
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
   string code;
   switch (node->getOperand()) {
     case BinaryOperator::b_op_plus :
       // TODO : checker nsw ou nuw
-      code = node->getLLVMAddress() + " = and " + node->getType()->getLiteral() + " " + op1 + ", "  + op2;
+      code = node->getLLVMAddress() + " = add " + node->getType()->getLiteral() + " " + op1 + ", "  + op2 + "\n";
   }
   return code;
 }
@@ -52,8 +56,8 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
 
   counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
-  string llvm_address_3 = "%" + counteur++;
-  string llvm_address_4 = "%" + counteur++;
+  string llvm_address_3 = "%" + to_string(counteur++);
+  string llvm_address_4 = "%" + to_string(counteur++);
   ir += getLLVMLoadCode(llvm_address_3, left->getLLVMAddress(), left->getType()->getLiteral());
   ir += getLLVMLoadCode(llvm_address_4, right->getLLVMAddress(), right->getType()->getLiteral());
   ir += getLLVMBinaryCode(node, llvm_address_3, llvm_address_4);
@@ -71,6 +75,11 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   first->setLLVMAddress(counteur++);
   llvm_address_counteurs.push(counteur);
   Visitor::visitBlockNode(node);
+  return 0;
+}
+
+int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
+  ir += getLLVMStoreCode(node->getLiteral(), node->getLLVMAddress(), node->getType()->getLiteral());
   return 0;
 }
 
