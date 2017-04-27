@@ -43,17 +43,6 @@ public :
 	virtual int accept(Visitor* visitor) = 0;
 
 	/*
-	updateType
-	ROLE : update the type of the node according to the type of its children
-	IN : -
-	OUT : int, a return code
-	*/
-	virtual std::vector<SemanticError> updateType(Visitor* visitor){
-		std::vector<SemanticError> err;
-		return err;
-	};
-
-	/*
 	getDeclarationType
 	ROLE: This function returns a pointer to the TypeIdentifierNode corresponding to the id in the scope.
 	IN:		id: std::string, the name of the variable.

@@ -49,7 +49,6 @@ public :
 	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	std::string getLiteral(bool with_type = false) const;
-	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //method_node_hpp

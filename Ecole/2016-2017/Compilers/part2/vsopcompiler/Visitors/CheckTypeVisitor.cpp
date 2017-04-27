@@ -81,7 +81,6 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
       if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
         SemanticError error("The two members of an equal-expression must have the same type, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
-        errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
         return ++nb_errors;
       }
@@ -438,29 +437,42 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
 
 int CheckTypeVisitor::visitWhileNode(WhileNode *node){
 
-  int error = 0;
-  if(Visitor::visitWhileNode(node) < 0)
-    error = -1;
+  int nb_errors = Visitor::visitWhileNode(node);
+  if(nb_errors < 0)
+     return -1;
 
-  vector<SemanticError> errors_generated = node->updateType(this);
-  if (errors_generated.size() > 0){
-    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
-    error = -1;
-  }
+   // Check if the condition is a bool
+   TypeIdentifierNode *condition_type = node->getCondition()->getType();
+   if (!condition_type){
+     SemanticError error("Error in the compiler in WhileNode : condition_type is null", node);
+     errors.push_back(error);
+     return -1;
+   }
+   string s_condition_type = condition_type->getLiteral();
 
-  return error;
+   if (s_condition_type != "error" && s_condition_type != "bool"){
+     SemanticError error("Condition of while must be bool : got '" + s_condition_type + "'", node);
+     errors.push_back(error);
+     node->setType(new TypeIdentifierNode("error"), true);
+     return ++nb_errors;
+   }
+   node->setType(new TypeIdentifierNode("unit"), true);
+   return nb_errors;
 }
 
 int CheckTypeVisitor::visitArgsNode(ArgsNode *node){
 
-  int error = 0;
+  int nb_errors = 0;
+  int error ;
   std::vector<ExpressionNode*> exprs = node->getExpressions();
   for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
-    if((*it)->accept(this) < 0)
-      error = -1;
+    error = (*it)->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
   }
 
-  return error;
+  return nb_errors;
 }
 
 int CheckTypeVisitor::visitClassBodyNode(ClassBodyNode *node){
@@ -488,19 +500,36 @@ int CheckTypeVisitor::visitClassBodyNode(ClassBodyNode *node){
 
 int CheckTypeVisitor::visitFieldNode(FieldNode *node){
 
-  int error = 0;
-  if(Visitor::visitFieldNode(node) < 0)
-    error = -1;
+  int nb_errors = Visitor::visitFieldNode(node);
+  if(nb_errors < 0)
+     return -1;
 
-  vector<SemanticError> errors_generated = node->updateType(this);
-  if (errors_generated.size() > 0){
-    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
-    error = -1;
-  }
+   // Check if the type of the initialization expression if any
+   ExpressionNode* init_expr = node->getInitExpr();
+ 	if (init_expr){
+ 		TypeIdentifierNode *init_expr_type = init_expr->getType();
+ 		if (!init_expr_type){
+ 			SemanticError error("Error in the compiler in ExpressionNode : init_expr_type is null", node);
+ 	    errors.push_back(error);
+ 			return -1;
+ 		}
 
-  return error;
+    TypeIdentifierNode* type = node->getType();
+ 		if (init_expr_type->getLiteral() != "error" && init_expr_type->getLiteral() != type->getLiteral() &&
+ 		 (!init_expr_type->getClassType() || !init_expr_type->getClassType()->hasParent(type->getClassType()))){
+ 			 if (!type->getClassType()){
+          SemanticError error("The initialization expression of a field must have the same type as the object: got '" + init_expr_type->getLiteral() + "' and need '" + type->getLiteral() + "'", node);
+          errors.push_back(error);
+        }else{
+          SemanticError error("The initialization expression of a field must have a type that inherits from the object type : got '" + init_expr_type->getLiteral() + "' and need a children of '" + type->getLiteral() + "'", node);
+          errors.push_back(error);
+        }
+ 			return ++nb_errors;
+ 		}
+ 	}
+
+  return nb_errors;
 }
-
 
 int CheckTypeVisitor::visitMethodNode(MethodNode *node){
 
@@ -508,18 +537,32 @@ int CheckTypeVisitor::visitMethodNode(MethodNode *node){
 
   int nb_errors = Visitor::visitMethodNode(node);
   if(nb_errors < 0)
-    return -1;
+     return -1;
 
-  vector<SemanticError> errors_generated = node->updateType(this);
-  if (errors_generated.size() > 0){
-    errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
-    nb_errors += errors_generated.size();
-  }
+   // Get block type
+ 	TypeIdentifierNode *block_type = node->getBlock()->getType();
+ 	if (!block_type){
+ 		SemanticError error("Error in the compiler in MethodNode : block_type is null", node);
+ 		errors.push_back(error);
+ 		return -1;
+ 	}
+
+ 	// Check if the types are the same or the block type class inherits from the return type class.
+  TypeIdentifierNode* ret_type = node->getRetType();
+ 	if (ret_type->getLiteral() != "error" && block_type->getLiteral() != "error" && *block_type != *ret_type &&
+ 			(!block_type->getClassType() || !block_type->getClassType()->hasParent(ret_type->getClassType()))){
+ 		if (!ret_type->getClassType()){
+ 			SemanticError error("The type of the block of a method must be the same as the return type of that method: got '" + block_type->getLiteral() + "' and need '" + ret_type->getLiteral() + "'", node);
+ 			errors.push_back(error);
+ 		}else{
+ 			SemanticError error("The type of the block of a method must have a type that inherits from the return type of that method : got '" + block_type->getLiteral() + "' and need a children of '" + ret_type->getLiteral() + "'", node);
+ 			errors.push_back(error);
+ 		}
+ 		return ++nb_errors;
+ 	}
 
   return nb_errors;
 }
-
-
 
 int CheckTypeVisitor::visitProgramNode(ProgramNode *node){
 

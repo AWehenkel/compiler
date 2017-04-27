@@ -77,13 +77,31 @@ int Visitor::visitBraceNode(BraceNode *node){
 
 int Visitor::visitCallNode(CallNode *node){
 
+  int nb_errors = 0;
+  int error;
   ObjectIdentifierNode* method_name = node->getMethodName();
   ArgsNode* args = node->getArgs();
   ExpressionNode* object = node->getObject();
-  if((method_name && method_name->accept(this) < 0) || (args && args->accept(this) < 0) || (object && object->accept(this) < 0))
-    return -1;
+  if(method_name){
+    error = method_name->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (args){
+    error = args->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if(object){
+    error = object->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
 
-  return 0;
+  return nb_errors;
 }
 
 int Visitor::visitConditionalNode(ConditionalNode *node){
@@ -128,22 +146,39 @@ int Visitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
 
 int Visitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
 
-  //UnaryOperator op = node->getOperator();
+  int nb_errors = 0;
+  int error;
   ExpressionNode* operand = node->getOperand();
-  if(operand && operand->accept(this) < 0)
-    return -1;
+  if(operand){
+    error = operand->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
 
-  return 0;
+  return nb_errors;
 }
 
 int Visitor::visitWhileNode(WhileNode *node){
 
+  int nb_errors = 0;
+  int error;
   ExpressionNode* condition = node->getCondition();
   ExpressionNode* action = node->getAction();
-  if((condition && condition->accept(this) < 0) || (action && action->accept(this) < 0))
-    return -1;
+  if(condition){
+    error = condition->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (action){
+    error = action->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
 
-  return 0;
+  return nb_errors;
 }
 
 int Visitor::visitArgsNode(ArgsNode *node){
