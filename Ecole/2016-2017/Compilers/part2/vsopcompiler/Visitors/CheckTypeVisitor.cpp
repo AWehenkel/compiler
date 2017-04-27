@@ -11,6 +11,34 @@ int CheckTypeVisitor::visitAssignNode(AssignNode *node){
   if(Visitor::visitAssignNode(node) < 0)
     error = -1;
 
+  vector<SemanticError> errors;
+
+  // Get types
+  TypeIdentifierNode *name_type = node->getName()->getType();
+  TypeIdentifierNode *expr_type = node->getExpression()->getType();
+  if(!name_type){
+    cerr << "Error in the compiler in AssignNode : name_type is null" << endl;
+    return -1;
+  }
+  if(!expr_type){
+    cerr << "Error in the compiler in AssignNode : expr_type is null" << endl;
+    return -1;
+  }
+
+  /* It there was a type error in the son e_expr or if the two types are the
+  * same, assign the type of e_name to node_type and stop the propagation of
+  * errors */
+  if (expr_type->getLiteral() == "error" || *name_type == *expr_type || (expr_type->getClassType() && expr_type->getClassType()->hasParent(name_type->getClassType()))){
+    node_type = name_type;
+    return 0;
+  }
+
+  // If the two types were different, assign "error" to e_name and create an error
+  node_type = new TypeIdentifierNode("error");
+  SemanticError error("Assignement of different types : '" + e_name->getLiteral() + "' of type '" + name_type->getLiteral() + "' has not the same type as assigned expression of type '" + expr_type->getLiteral() + "'", this);
+  errors.push_back(error);
+  return 1;
+
   vector<SemanticError> errors_generated = node->updateType(this);
   if (errors_generated.size() > 0){
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
