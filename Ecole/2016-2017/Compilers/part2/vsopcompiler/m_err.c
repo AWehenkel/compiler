@@ -1,4 +1,9 @@
-class MyClass {
-    myField : bool <- x <- true;
+#define int32 int
+
+int main(){
+  int b = 1;
+  int c = 2;
+  int a = b + c;
+  return 0;
+
 }
-class Main { main() : int32 { 0 } }

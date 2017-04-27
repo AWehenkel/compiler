@@ -48,6 +48,7 @@ public :
 
 	//Public Methods:
 	//getters
+	BinaryOperator getOperand() const {return e_op};
 	ExpressionNode* getLeft() const{return e_left_operand;};
 	ExpressionNode* getRight() const{return e_right_operand;};
 	TypeIdentifierNode* getType() const{return node_type;};
