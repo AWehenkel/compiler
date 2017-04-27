@@ -39,7 +39,6 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitConditionalNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //ConditionalNode_hpp

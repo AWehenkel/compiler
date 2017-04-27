@@ -43,7 +43,6 @@ public :
 	int accept(Visitor* visitor){return visitor->visitLetNode(this);};
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	std::string getLiteral(bool with_type = false) const;
-	std::vector<SemanticError> updateType(Visitor* visitor);
 
 	//Setters
 	void setCurrentScope(VSOPNode* node){e_current_scope = node;};
