@@ -28,7 +28,11 @@ public :
 	//Inherited
 	virtual int accept(Visitor* visitor) = 0;
 	virtual std::string getLiteral(bool with_type = false) const = 0;
-	virtual TypeIdentifierNode* getType(){return node_type;}
+	virtual TypeIdentifierNode* getType(){return node_type;};
+	virtual void setType(TypeIdentifierNode* new_type, bool new_self_type = false){
+		node_type = new_type;
+		self_type = new_self_type;
+	};
 };
 
 #endif //expression_node_hpp

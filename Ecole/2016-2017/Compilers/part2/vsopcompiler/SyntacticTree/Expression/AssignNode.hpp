@@ -35,7 +35,6 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitAssignNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //AssignNode_hpp

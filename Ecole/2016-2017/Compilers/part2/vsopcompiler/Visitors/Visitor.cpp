@@ -13,28 +13,46 @@ void Visitor::addError(SemanticError& error){
 
 int Visitor::visitAssignNode(AssignNode *node){
 
+  int nb_errors = 0;
+  int error;
   ExpressionNode* expr = node->getExpression();
-  if(expr && expr->accept(this) < 0)
-    return -1;
-
   ObjectIdentifierNode* id = node->getName();
-  if(id && id->accept(this) < 0)
-    return -1;
+  if(expr){
+    error = expr->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if(id){
+    error = id->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
 
-  return 0;
+  return nb_errors;
 }
 
 int Visitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
 
+  int nb_errors = 0;
+  int error = 0;
   ExpressionNode* left = node->getLeft();
-  if(left && left->accept(this) < 0)
-    return -1;
-
   ExpressionNode* right = node->getRight();
-  if(right && right->accept(this) < 0)
-    return -1;
+  if(left){
+    error = left->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (right){
+    error = right->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
 
-  return 0;
+  return nb_errors;
 }
 
 int Visitor::visitBlockNode(BlockNode *node){
@@ -158,13 +176,32 @@ int Visitor::visitClassBodyNode(ClassBodyNode *node){
 
 int Visitor::visitClassNode(ClassNode *node){
 
+  int nb_errors = 0;
+  int error;
   TypeIdentifierNode* name = node->getName();
   TypeIdentifierNode* extends = node->getExtends();
   ClassBodyNode *body = node->getBody();
-  if((name && name->accept(this)  < 0) || (extends && extends->accept(this) < 0) || (body && body->accept(this) < 0))
-    return -1;
 
-  return 0;
+  if (name){
+    error = name->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (extends){
+    error = extends->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (body){
+    error = body->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+
+  return nb_errors;
 }
 
 int Visitor::visitFieldNode(FieldNode *node){
@@ -201,14 +238,38 @@ int Visitor::visitFormalsNode(FormalsNode *node){
 
 int Visitor::visitMethodNode(MethodNode *node){
 
+  int nb_errors = 0;
+  int error = 0;
   ObjectIdentifierNode* name = node->getName();
   FormalsNode* formals = node->getFormals();
   TypeIdentifierNode* ret_type = node->getRetType();
   BlockNode* block = node->getBlock();
-  if((name && name->accept(this) < 0) || (formals && formals->accept(this) < 0) || (ret_type && ret_type->accept(this) < 0) || (block && block->accept(this) < 0))
-    return -1;
+  if (name){
+    error = name->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (formals){
+    error = formals->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (ret_type){
+    error = ret_type->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
+  if (block){
+    error = block->accept(this);
+    if(error < 0)
+      return -1;
+    nb_errors += error;
+  }
 
-  return 0;
+  return nb_errors;
 }
 
 int Visitor::visitProgramNode(ProgramNode *node){

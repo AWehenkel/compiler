@@ -89,7 +89,8 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
 
 // Check all the types
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
-  if (program->accept(visitor2) < 0){
+  result = program->accept(visitor2);
+  if (result != 0){
     vector<SemanticError> errors_generated = visitor2->getErrors();
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     delete visitor2;
