@@ -135,7 +135,7 @@ start :
 																										if(!syntax_error){
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
 																											if(!semantic_error){
-																												CodeGenVisitor* generator = new CodeGenVisitor();
+																												CodeGenVisitor* generator = new CodeGenVisitor;
 																												$2->accept(generator);
 																												delete generator;
 																											}
