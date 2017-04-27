@@ -9,6 +9,7 @@
 class TypeIdentifierNode : public VSOPNode {
 private :
 	std::string t_content;
+	std::string llvm_type;
 	ClassNode* t_class_type;
 	//Overloaded operator
 	friend inline bool operator==(TypeIdentifierNode &id1, TypeIdentifierNode &id2){
@@ -18,11 +19,22 @@ private :
 		return !(id1 == id2);
 	};
 
+	void setLLVMType(std::string content){
+		if(content == "int32")
+			llvm_type = "i32";
+		else if(content == "bool")
+			llvm_type = "i1";
+		else if(content == "string")
+			llvm_type = "c";
+		else
+			llvm_type = content;
+	};
+
 public :
 
 	//Constructors:
-	TypeIdentifierNode(std::string content, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(NULL){};
-	TypeIdentifierNode(std::string content, ClassNode* class_type, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(class_type){};
+	TypeIdentifierNode(std::string content, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(NULL){setLLVMType(content);};
+	TypeIdentifierNode(std::string content, ClassNode* class_type, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(class_type){setLLVMType(content);};
 
 	//Public Methods:
 	//Setter
@@ -36,6 +48,7 @@ public :
 
 	// getters
 	ClassNode* getClassType(){return t_class_type;};
+	std::string getLLVMType(){return llvm_type;};
 
 	/*
 	equals

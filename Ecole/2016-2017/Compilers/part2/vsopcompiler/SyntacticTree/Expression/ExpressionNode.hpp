@@ -29,6 +29,7 @@ public :
 	virtual int accept(Visitor* visitor) = 0;
 	virtual std::string getLiteral(bool with_type = false) const = 0;
 	virtual TypeIdentifierNode* getType(){return node_type;};
+	virtual std::string getLLVMType();
 	virtual void setType(TypeIdentifierNode* new_type, bool new_self_type = false){
 		node_type = new_type;
 		self_type = new_self_type;

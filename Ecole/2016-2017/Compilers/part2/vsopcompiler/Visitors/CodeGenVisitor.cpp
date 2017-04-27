@@ -15,14 +15,53 @@ string CodeGenVisitor::getLLVMLoadCode(string load_in, string load_from, string 
   return load_in + " = load " + type + ", " + type + "* " + load_from + "\n";
 }
 
+string CodeGenVisitor::getLLVMStoreCode(string name, string store_address, string type){
+  return "store " + type + " " + name + ", " +  type + "* " + store_address + "\n";
+}
+
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
-  string code;
-  switch (node->getOperand()) {
+  int counter = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  string code, to_ret = "%" + to_string(counter++);
+
+  switch (node->getOperator()) {
+    case b_op_and :
+      code = to_ret + " = and i1 " + op1 + ", "  + op2;
+      break;
+    case b_op_minus :
+      code = to_ret + " = sub i32 " + op1 + ", "  + op2;
+      break;
+    case b_op_less :
+      code = to_ret + " = slt i32 " + op1 + ", "  + op2;
+      break;
+    case b_op_leq :
+      code = to_ret + " = sle i32 " + op1 + ", "  + op2;
+      break;
     case BinaryOperator::b_op_plus :
-      // TODO : checker nsw ou nuw
-      code = node->getLLVMAddress() + " = and " + node->getType()->getLiteral() + " " + op1 + ", "  + op2;
+      code = to_ret + " = add nuw i32 " + op1 + ", "  + op2;
+      break;
+    case b_op_equal :
+      //TODO Change to handle other type than int32.
+      code = to_ret + " = eq i32 " + op1 + ", "  + op2;
+      break;
+    case b_op_times :
+      code = to_ret + " = mul i32 " + op1 + ", "  + op2;
+      break;
+    case b_op_div :
+      code = to_ret + " = sdiv i32 " + op1 + ", "  + op2;
+      break;
+    case b_op_pow :
+      string tmp1 = "%" + to_string(counter++), tmp2 = "%" + to_string(counter++), tmp3 = "%" + to_string(counter++);
+
+      code = tmp1 + " = sitofp i32 " + op1 + " to float\n";
+      code += tmp2 + " = sitofp i32 " + op2 + " to float\n";
+      code += tmp3 + " = call float @llvm.pow.f32(float  " + tmp1 + ", float " + tmp2 + ")\n";
+      code += to_ret + " = fptosi float " + tmp3 + " to i32";
+      break;
   }
+  llvm_address_counteurs.push(counter);
+  code += "\n" + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32");
   return code;
 }
 
@@ -37,7 +76,7 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   int counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   left->setLLVMAddress(counteur++);
-  ir += getLLVMAllocationCode(left->getLLVMAddress(), left->getType()->getLiteral());
+  ir += getLLVMAllocationCode(left->getLLVMAddress(), left->getLLVMType());
   llvm_address_counteurs.push(counteur);
   if (left->accept(this) < 0)
     return -1;
@@ -45,19 +84,19 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   right->setLLVMAddress(counteur++);
-  ir += getLLVMAllocationCode(right->getLLVMAddress(), right->getType()->getLiteral());
+  ir += getLLVMAllocationCode(right->getLLVMAddress(), right->getLLVMType());
   llvm_address_counteurs.push(counteur);
   if (right->accept(this) < 0)
     return -1;
 
   counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
-  string llvm_address_3 = "%" + counteur++;
-  string llvm_address_4 = "%" + counteur++;
-  ir += getLLVMLoadCode(llvm_address_3, left->getLLVMAddress(), left->getType()->getLiteral());
-  ir += getLLVMLoadCode(llvm_address_4, right->getLLVMAddress(), right->getType()->getLiteral());
-  ir += getLLVMBinaryCode(node, llvm_address_3, llvm_address_4);
+  string llvm_address_3 = "%" + to_string(counteur++);
+  string llvm_address_4 = "%" + to_string(counteur++);
   llvm_address_counteurs.push(counteur);
+  ir += getLLVMLoadCode(llvm_address_3, left->getLLVMAddress(), left->getLLVMType());
+  ir += getLLVMLoadCode(llvm_address_4, right->getLLVMAddress(), right->getLLVMType());
+  ir += getLLVMBinaryCode(node, llvm_address_3, llvm_address_4);
 
   return 0;
 }
@@ -71,6 +110,12 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   first->setLLVMAddress(counteur++);
   llvm_address_counteurs.push(counteur);
   Visitor::visitBlockNode(node);
+  return 0;
+}
+
+//TODO Changer les constructeur de LiteralNode et faire en sorte de prendre en charge correctement les literaux.
+int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
+  ir += getLLVMStoreCode(node->getLiteral(), node->getLLVMAddress(), node->getLLVMType());
   return 0;
 }
 
