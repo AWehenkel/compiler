@@ -15,7 +15,7 @@ protected :
 	//Fields
 	const int n_col;
 	const int n_line;
-	int llvm_address;
+	std::string llvm_address;
 	//Overloaded operator
 	friend std::ostream &operator<<(std::ostream &out, VSOPNode const &node);
 
@@ -70,11 +70,11 @@ public :
 	const int getCol() const{
 		return n_col;
 	};
-	const int getLLVMAddress(){
+	const std::string getLLVMAddress(){
 		return llvm_address;
 	};
 	void setLLVMAddress(int i_llvm_address){
-		 llvm_address = "%" + i_llvm_address;
+		 llvm_address = "%" + std::to_string(i_llvm_address);
 	};
 
 };

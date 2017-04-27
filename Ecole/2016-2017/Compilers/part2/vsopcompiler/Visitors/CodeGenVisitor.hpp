@@ -1,18 +1,19 @@
 #ifndef code_gen_visitor
 #define code_gen_visitor
 
+#include <stack>
 #include "Visitor.hpp"
 
 /*
 * This class is used to visit the nodes in order to generate LLVM code.
 */
-class CodeGenVisitor {
+class CodeGenVisitor : public Visitor{
   private :
-    std::stack<std::string> llvm_addresses;
+    std::stack<std::string> llvm_addresses; // TODO : possibly to remove
     std::stack<int> llvm_address_counteurs;
     std::string ir;
   public :
-    std::string getLLVMAllocationCode(std::string type);
+    std::string getLLVMAllocationCode(std::string type, std::string name);
     std::string getLLVMLoadCode(std::string load_in, std::string load_from, std::string type);
     std::string getLLVMBinaryCode(BinaryOperatorNode* node, std::string op1, std::string op2);
     int visitAssignNode(AssignNode *node);

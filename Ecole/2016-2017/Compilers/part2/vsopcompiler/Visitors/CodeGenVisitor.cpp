@@ -18,10 +18,10 @@ string CodeGenVisitor::getLLVMLoadCode(string load_in, string load_from, string 
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
   string code;
-  switch (node) {
-    case BinaryOperatorNode::b_op_plus :
+  switch (node->getOperand()) {
+    case BinaryOperator::b_op_plus :
       // TODO : checker nsw ou nuw
-      code = node->getLLVMAddress() + " = and " + node->getType() + " " + op1 + ", " op2;
+      code = node->getLLVMAddress() + " = and " + node->getType()->getLiteral() + " " + op1 + ", "  + op2;
   }
   return code;
 }
@@ -34,23 +34,29 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   ExpressionNode* right = node->getRight();
 
   // VIsit the children nodes
-  int counteur = llvm_address_counteurs.pop();
+  int counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
   left->setLLVMAddress(counteur++);
-  ir += getLLVMAllocationCode(left->getLLVMAddress(), left->getType()->getLiteral())
+  ir += getLLVMAllocationCode(left->getLLVMAddress(), left->getType()->getLiteral());
+  llvm_address_counteurs.push(counteur);
   if (left->accept(this) < 0)
     return -1;
 
+  counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
   right->setLLVMAddress(counteur++);
-  ir += getLLVMAllocationCode(right->getLLVMAddress(), right->getType()->getLiteral())
+  ir += getLLVMAllocationCode(right->getLLVMAddress(), right->getType()->getLiteral());
+  llvm_address_counteurs.push(counteur);
   if (right->accept(this) < 0)
     return -1;
 
+  counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
   string llvm_address_3 = "%" + counteur++;
   string llvm_address_4 = "%" + counteur++;
   ir += getLLVMLoadCode(llvm_address_3, left->getLLVMAddress(), left->getType()->getLiteral());
   ir += getLLVMLoadCode(llvm_address_4, right->getLLVMAddress(), right->getType()->getLiteral());
   ir += getLLVMBinaryCode(node, llvm_address_3, llvm_address_4);
-
   llvm_address_counteurs.push(counteur);
 
   return 0;
@@ -59,5 +65,18 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
 int CodeGenVisitor::visitBlockNode(BlockNode* node){
 
   vector<ExpressionNode*> expresions = node->getExpressions();
+  ExpressionNode* first = *(expresions.begin());
+  int counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  first->setLLVMAddress(counteur++);
+  llvm_address_counteurs.push(counteur);
+  Visitor::visitBlockNode(node);
+  return 0;
+}
 
+int CodeGenVisitor::visitProgramNode(ProgramNode* node){
+  llvm_address_counteurs.push(0);
+  Visitor::visitProgramNode(node);
+  cout << "IR: " << ir << endl;
+  return 0;
 }
