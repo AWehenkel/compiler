@@ -52,12 +52,11 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       code = to_ret + " = sdiv i32 " + op1 + ", "  + op2;
       break;
     case b_op_pow :
-      string tmp1 = "%" + to_string(counter++), tmp2 = "%" + to_string(counter++), tmp3 = "%" + to_string(counter++);
+      string tmp1 = "%" + to_string(counter++), tmp2 = "%" + to_string(counter++);
 
       code = tmp1 + " = sitofp i32 " + op1 + " to float\n";
-      code += tmp2 + " = sitofp i32 " + op2 + " to float\n";
-      code += tmp3 + " = call float @llvm.pow.f32(float  " + tmp1 + ", float " + tmp2 + ")\n";
-      code += to_ret + " = fptosi float " + tmp3 + " to i32";
+      code += tmp2 + " = call float @llvm.powi.f32(float " + tmp1 + ", i32 " + op2 + ")\n";
+      code += to_ret + " = fptosi float " + tmp2 + " to i32";
       break;
   }
   llvm_address_counteurs.push(counter);
