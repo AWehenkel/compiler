@@ -3,6 +3,11 @@
 
 using namespace std;
 
+BlockNode::~BlockNode(){
+	for(vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
+		delete *it;
+}
+
 void BlockNode::addExpression(ExpressionNode *expression){
 	expressions.push_back(expression);
 }
@@ -34,29 +39,4 @@ string BlockNode::getLiteral(bool with_type) const {
 		literal += "]" + type;
 	}
 	return  literal;
-}
-
-vector<SemanticError> BlockNode::updateType(Visitor* visitor){
-
-	vector<SemanticError> errors;
-
-	ExpressionNode *last_expr = *(expressions.end()-1);
-	TypeIdentifierNode *expr_type = last_expr->getType();
-	if (!expr_type){
-		SemanticError error("Error in the compiler in BlockNode : expr_type is null", this);
-		errors.push_back(error);
-		return errors;
-	}
-	// Put the type of the last instruction, even if it was an error.
-	node_type = expr_type;
-
-	/* Even if there is an error in the last instruction, it wasn't in the block
-	* directly, so we don't return an error code
-	*/
-	return errors;
-}
-
-BlockNode::~BlockNode(){
-	for(vector<ExpressionNode*>::iterator it = expressions.begin(); it != expressions.end(); ++it)
-		delete *it;
 }

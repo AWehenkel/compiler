@@ -41,11 +41,11 @@ public :
 	ObjectIdentifierNode* getMethodName() const{return e_method_name;};
 	ArgsNode* getArgs() const{return e_args;};
 	ExpressionNode* getObject() const{return e_object;};
+	ClassNode* getCurrentClass() const{return current_class;};
 
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitCallNode(this);};
 	std::string getLiteral(bool with_type = false) const;
-	std::vector<SemanticError> updateType(Visitor* visitor);
 };
 
 #endif //CallNode_hpp
