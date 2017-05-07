@@ -158,6 +158,15 @@ TypeIdentifierNode* ClassNode::getDeclarationType(string id){
 	return NULL;
 }
 
+const string ClassNode::getDeclarationLLVM(string id){
+	if(fields.find(id) != fields.end())
+		return fields.find(id)->second->getName()->getLLVMAddress();//TODO est ce que c'est vraiment mieux de stocker l'adresse de declaration du field dans son nom et non pas direct dans le fiedl.
+	else if(parent)
+		return parent->getDeclarationLLVM(id);
+
+	return "";
+}
+
 string ClassNode::getLiteral(bool with_type) const{
 
 	string literal = "Class(" + e_name->getLiteral(with_type) + ", ";

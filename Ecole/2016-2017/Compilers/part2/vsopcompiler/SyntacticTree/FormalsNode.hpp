@@ -53,6 +53,7 @@ public :
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
 	TypeIdentifierNode* getDeclarationType(std::string id);
+	const std::string getDeclarationLLVM(std::string id);
 	std::string getLiteral(bool with_type = false) const;
 };
 

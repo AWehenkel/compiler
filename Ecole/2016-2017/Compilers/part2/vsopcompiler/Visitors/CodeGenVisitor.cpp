@@ -20,6 +20,7 @@ string CodeGenVisitor::getLLVMStoreCode(string name, string store_address, strin
 }
 
 int CodeGenVisitor::visitAssignNode(AssignNode *node){
+  ir += "AssignNode: \n";
 
   ExpressionNode* expr = node->getExpression();
   ObjectIdentifierNode* name = node->getName();
@@ -30,12 +31,12 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   expr->setLLVMAddress(counteur++);
   ir += getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
   llvm_address_counteurs.push(counteur);
+
   // Visit the init expression
   if (expr->accept(this) < 0)
     return -1;
-
   // Store the value of the expression in the left term
-  ir += getLLVMStoreCode(expr->getLLVMAddress(), name->getLLVMAddress(), name->getLLVMType()); // TODO : problème avec name, pas de llvm address
+  ir += getLLVMStoreCode(expr->getLLVMAddress(), current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType()); // TODO : problème avec name, pas de llvm address
 
   return 0;
 
@@ -110,6 +111,7 @@ string CodeGenVisitor::getLLVMUnaryCode(UnaryOperatorNode* node, string op){
 }
 
 int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
+  ir += "BinaryOperatorNode: \n";
 
   ExpressionNode* left = node->getLeft();
   ExpressionNode* right = node->getRight();
@@ -155,13 +157,14 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   int counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   first->setLLVMAddress(counteur++);
-  ir += getLLVMAllocationCode(first->getLLVMAddress(), first->getLLVMType());
+  //ir += getLLVMAllocationCode(first->getLLVMAddress(), first->getLLVMType()); //TODO Probleme il faut stocker quelque chose dedans pour que ça ait du sens d'allouer
   llvm_address_counteurs.push(counteur);
   Visitor::visitBlockNode(node);
   return 0;
 }
 
 int CodeGenVisitor::visitUnaryOperatorNode(UnaryOperatorNode* node){
+  ir += "UnaryOperatorNode: \n";
 
   ExpressionNode* operand = node->getOperand();
 
@@ -188,6 +191,7 @@ int CodeGenVisitor::visitUnaryOperatorNode(UnaryOperatorNode* node){
 }
 
 int CodeGenVisitor::visitFieldNode(FieldNode *node){
+  ir += "FieldNode: \n";
 
   ObjectIdentifierNode* name = node->getName();
   ExpressionNode* init_expr = node->getInitExpr();
@@ -197,10 +201,9 @@ int CodeGenVisitor::visitFieldNode(FieldNode *node){
   int counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   name->setLLVMAddress(counteur++);
-  // TODO : comment se fait-il que le nom du field n'aie pas de type ? cout << "Type is : " << name->getLiteral(true) << endl;
+  // TODO : comment se fait-il que le nom du field n'aie pas de type ?
   ir += getLLVMAllocationCode(name->getLLVMAddress(), type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
   llvm_address_counteurs.push(counteur);
-
   // If there is an init expression, store its value in the field
   if (init_expr != NULL){
     // Allocate memory for the init expression
@@ -215,7 +218,7 @@ int CodeGenVisitor::visitFieldNode(FieldNode *node){
     // Store the value of the init expression in the field
     ir += getLLVMStoreCode(init_expr->getLLVMAddress(), name->getLLVMAddress(), type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
   }
-
+  ir += "end FieldNode: \n";
   return 0;
 }
 
@@ -229,5 +232,63 @@ int CodeGenVisitor::visitProgramNode(ProgramNode* node){
   llvm_address_counteurs.push(0);
   Visitor::visitProgramNode(node);
   cout << "IR: " << ir << endl;
+  return 0;
+}
+
+
+//TODO
+int CodeGenVisitor::visitMethodNode(MethodNode *node){
+  VSOPNode* prev_scope = current_scope;
+  current_scope = node;
+  Visitor::visitMethodNode(node);
+  current_scope = prev_scope;
+  return 0;
+}
+
+int CodeGenVisitor::visitLetNode(LetNode *node){
+  ir += "LetNode: \n";
+
+  ObjectIdentifierNode* object_id = node->getObjectId();
+	TypeIdentifierNode* object_type = node->getObjectType();
+	ExpressionNode* init_expr = node->getInitExp();
+	ExpressionNode* scope_exp = node->getScopeExp();
+
+  VSOPNode* prev_scope = current_scope;
+  current_scope = node;
+
+  // Allocate space for the field // TODO : je suis pas sur que c'est le mieux de le faire là ou dans le classbody (différence entre le name et le filednode en lui-même)
+  int counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  node->setLLVMAddress(counteur++);
+  ir += getLLVMAllocationCode(node->getLLVMAddress(), object_type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
+  llvm_address_counteurs.push(counteur);
+
+  // If there is an init expression, store its value in the field
+  if (init_expr != NULL){
+    // Allocate memory for the init expression
+    counteur = llvm_address_counteurs.top();
+    llvm_address_counteurs.pop();
+    init_expr->setLLVMAddress(counteur++);
+    ir += getLLVMAllocationCode(init_expr->getLLVMAddress(), init_expr->getLLVMType());
+    llvm_address_counteurs.push(counteur);
+    // Visit the init expression
+    if (init_expr->accept(this) < 0)
+      return -1;
+    // Store the value of the init expression in the field
+    ir += getLLVMStoreCode(init_expr->getLLVMAddress(), node->getLLVMAddress(), object_type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
+  }
+
+  if(scope_exp->accept(this))
+    return 1;
+
+  current_scope = prev_scope;
+
+  return 0;
+}
+
+int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
+  ir += "ObjectIdentifierNode\n";
+  if(current_scope && node->getLLVMAddress().size())
+    ir += getLLVMStoreCode(current_scope->getDeclarationLLVM(node->getLiteral()), node->getLLVMAddress(), node->getLLVMType());
   return 0;
 }

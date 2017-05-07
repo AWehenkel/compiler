@@ -141,6 +141,7 @@ public :
 	int accept(Visitor* visitor);
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
 	TypeIdentifierNode* getDeclarationType(std::string id);
+	const std::string getDeclarationLLVM(std::string id);
 	std::string getLiteral(bool with_type = false) const;
 };
 

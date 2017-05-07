@@ -52,6 +52,16 @@ public :
 		return NULL;
 	};
 
+	/*
+	getDeclarationLLVM
+	ROLE: This function returns a string corresponding to the llvm id in the scope of the id.
+	IN:		id: std::string, the name of the variable.
+	OUT: bool, true if the variable is declared in the VSOPNode or in one of its children.
+	*/
+	virtual const std::string getDeclarationLLVM(std::string id){
+		return "";
+	};
+
 	//Accessors
 	const int getLine() const{
 		return n_line;

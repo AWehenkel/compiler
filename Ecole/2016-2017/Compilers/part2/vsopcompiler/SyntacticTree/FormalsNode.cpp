@@ -40,6 +40,15 @@ TypeIdentifierNode* FormalsNode::getDeclarationType(string id){
 	return NULL;
 }
 
+const string FormalsNode::getDeclarationLLVM(string id){
+
+	for(vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
+		if((*formal_it)->getName()->getLiteral() == id)
+			return (*formal_it)->getLLVMAddress();
+
+	return "";
+}
+
 string FormalsNode::getLiteral(bool with_type) const {
 
 	string literal = "[";

@@ -137,6 +137,7 @@ int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
     return 1;
   }
   node->setClassScope(current_class);
+  node->getName()->setType(node->getType());
   ExpressionNode* init_expr = node->getInitExpr();
   if(init_expr)
     return init_expr->accept(this);

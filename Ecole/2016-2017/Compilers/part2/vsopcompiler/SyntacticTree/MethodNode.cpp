@@ -28,6 +28,14 @@ TypeIdentifierNode* MethodNode::getDeclarationType(string id){
 	return to_ret;
 }
 
+const string MethodNode::getDeclarationLLVM(string id){
+	string to_ret = e_formals->getDeclarationLLVM(id);
+	if(!to_ret.size())
+		to_ret = e_class_scope->getDeclarationLLVM(id);
+
+	return to_ret;
+}
+
 string MethodNode::getLiteral(bool with_type) const {
 	return "Method(" + e_name->getLiteral(with_type) + ", " + e_formals->getLiteral(with_type) + ", "
 									 + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
