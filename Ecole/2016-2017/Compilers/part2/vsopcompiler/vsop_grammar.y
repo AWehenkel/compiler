@@ -386,10 +386,12 @@ boolean-literal :
 
 int main (int argc, char *argv[]){
 
+	// TODO : on peut aussi ne pouvoir mettre aucun - speciaux (voir énoncé partie 4)
 	if(argc != 3){
 		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
 		cerr << "Usage for both lexer and parse: ./main <Source_File>" << endl;
 		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
+		cerr << "Usage for code generation: ./main -llvm <Source_File" << endl;
 		return -1;
 	}
 
@@ -405,6 +407,7 @@ int main (int argc, char *argv[]){
 		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
 		cerr << "Usage for both lexer and parse: ./main -parse <Source_File>" << endl;
 		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
+		cerr << "Usage for code generation: ./main -llvm <Source_File" << endl;
 		return -1;
 	}
 

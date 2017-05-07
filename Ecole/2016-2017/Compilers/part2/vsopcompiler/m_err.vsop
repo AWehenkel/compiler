@@ -1,5 +1,6 @@
 class Main {
+  a : int32;
   main () : int32 {
-    1^2
+    a <- 0
   }
 }
