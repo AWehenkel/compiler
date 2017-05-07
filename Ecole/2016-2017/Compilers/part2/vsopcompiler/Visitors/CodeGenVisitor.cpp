@@ -19,6 +19,28 @@ string CodeGenVisitor::getLLVMStoreCode(string name, string store_address, strin
   return "store " + type + " " + name + ", " +  type + "* " + store_address + "\n";
 }
 
+int CodeGenVisitor::visitAssignNode(AssignNode *node){
+
+  ExpressionNode* expr = node->getExpression();
+  ObjectIdentifierNode* name = node->getName();
+
+  // Visit the expression at the right of the assignment
+  int counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  expr->setLLVMAddress(counteur++);
+  ir += getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
+  llvm_address_counteurs.push(counteur);
+  // Visit the init expression
+  if (expr->accept(this) < 0)
+    return -1;
+
+  // Store the value of the expression in the left term
+  ir += getLLVMStoreCode(expr->getLLVMAddress(), name->getLLVMAddress(), name->getLLVMType()); // TODO : problème avec name, pas de llvm address
+
+  return 0;
+
+}
+
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
   int counter = llvm_address_counteurs.top();
@@ -27,7 +49,7 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
 
   switch (node->getOperator()) {
     case b_op_and :
-      code = to_ret + " = and i1 " + op1 + ", "  + op2;
+      code = to_ret + " = and i1 " + op1 + ", "  + op2; // TODO : il faut convertir les false/true en 0/1
       break;
     case b_op_minus :
       code = to_ret + " = sub i32 " + op1 + ", "  + op2;
@@ -60,18 +82,41 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       break;
   }
   llvm_address_counteurs.push(counter);
-  code += "\n" + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32");
+  code += "\n" + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32"); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
   return code;
 }
 
+string CodeGenVisitor::getLLVMUnaryCode(UnaryOperatorNode* node, string op){
+  int counter = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  string code, to_ret = "%" + to_string(counter++);
 
+  switch (node->getOperator()) {
+    case u_op_not :
+    // ! pour le not, il y a le intrisics bitreverse ou on peut faire un xor avec un 1
+      code = to_ret + " = xor i1 " + op + ", 1";
+      break;
+    case u_op_minus :
+    // ! pour le -, <result> = sub i32 0, %val          ; yields i32:result = -%var
+      code = to_ret + " = sub i32 0, "  + op;
+      break;
+    case u_op_isnull :
+    // ! pour le isnull..., faut checker d'une manière ou d'une autre que de la mémoire a déjà été allouée à l'objet (qu'il a été instantié -> new)
+      break;
+  }
+  llvm_address_counteurs.push(counter);
+  code += "\n" + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32"); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
+  return code;
+}
 
 int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
 
   ExpressionNode* left = node->getLeft();
   ExpressionNode* right = node->getRight();
 
-  // VIsit the children nodes
+  // Visit the children nodes
+  // TODO : est-ce qu'il faut pas d'abord checker, s'il n'y a pas déjà une address dans les fils ? genre si c'est un objet, la mếmoire est
+  // sensé être déjà allouée non ?
   int counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   left->setLLVMAddress(counteur++);
@@ -88,13 +133,16 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   if (right->accept(this) < 0)
     return -1;
 
+  // Make the operation
   counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   string llvm_address_3 = "%" + to_string(counteur++);
   string llvm_address_4 = "%" + to_string(counteur++);
   llvm_address_counteurs.push(counteur);
+  // Load the values of the two child
   ir += getLLVMLoadCode(llvm_address_3, left->getLLVMAddress(), left->getLLVMType());
   ir += getLLVMLoadCode(llvm_address_4, right->getLLVMAddress(), right->getLLVMType());
+  // Store the result
   ir += getLLVMBinaryCode(node, llvm_address_3, llvm_address_4);
 
   return 0;
@@ -107,8 +155,67 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   int counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
   first->setLLVMAddress(counteur++);
+  ir += getLLVMAllocationCode(first->getLLVMAddress(), first->getLLVMType());
   llvm_address_counteurs.push(counteur);
   Visitor::visitBlockNode(node);
+  return 0;
+}
+
+int CodeGenVisitor::visitUnaryOperatorNode(UnaryOperatorNode* node){
+
+  ExpressionNode* operand = node->getOperand();
+
+  // Visit the child
+  // TODO : est-ce qu'il faut pas d'abord checker, s'il n'y a pas déjà une address dans les fils ? genre si c'est un objet, la mếmoire est
+  // sensé être déjà allouée non ?
+  int counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  operand->setLLVMAddress(counteur++);
+  ir += getLLVMAllocationCode(operand->getLLVMAddress(), operand->getLLVMType());
+  llvm_address_counteurs.push(counteur);
+  if (operand->accept(this) < 0)
+    return -1;
+
+  // Make the operation
+  counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  string llvm_address = "%" + to_string(counteur++);
+  llvm_address_counteurs.push(counteur);
+  ir += getLLVMLoadCode(llvm_address, operand->getLLVMAddress(), operand->getLLVMType());
+  ir += getLLVMUnaryCode(node, llvm_address);
+
+  return 0;
+}
+
+int CodeGenVisitor::visitFieldNode(FieldNode *node){
+
+  ObjectIdentifierNode* name = node->getName();
+  ExpressionNode* init_expr = node->getInitExpr();
+  TypeIdentifierNode* type = node->getType();
+
+  // Allocate space for the field // TODO : je suis pas sur que c'est le mieux de le faire là ou dans le classbody (différence entre le name et le filednode en lui-même)
+  int counteur = llvm_address_counteurs.top();
+  llvm_address_counteurs.pop();
+  name->setLLVMAddress(counteur++);
+  // TODO : comment se fait-il que le nom du field n'aie pas de type ? cout << "Type is : " << name->getLiteral(true) << endl;
+  ir += getLLVMAllocationCode(name->getLLVMAddress(), type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
+  llvm_address_counteurs.push(counteur);
+
+  // If there is an init expression, store its value in the field
+  if (init_expr != NULL){
+    // Allocate memory for the init expression
+    counteur = llvm_address_counteurs.top();
+    llvm_address_counteurs.pop();
+    init_expr->setLLVMAddress(counteur++);
+    ir += getLLVMAllocationCode(init_expr->getLLVMAddress(), init_expr->getLLVMType());
+    llvm_address_counteurs.push(counteur);
+    // Visit the init expression
+    if (init_expr->accept(this) < 0)
+      return -1;
+    // Store the value of the init expression in the field
+    ir += getLLVMStoreCode(init_expr->getLLVMAddress(), name->getLLVMAddress(), type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
+  }
+
   return 0;
 }
 

@@ -17,22 +17,24 @@ class CodeGenVisitor : public Visitor{
     std::string getLLVMLoadCode(std::string load_in, std::string load_from, std::string type);
     std::string getLLVMStoreCode(std::string name, std::string store_address, std::string type);
     std::string getLLVMBinaryCode(BinaryOperatorNode* node, std::string op1, std::string op2);
-    //int visitAssignNode(AssignNode *node);
+    std::string getLLVMUnaryCode(UnaryOperatorNode* node, std::string op);
+    int visitAssignNode(AssignNode *node);
     int visitBinaryOperatorNode(BinaryOperatorNode *node);
     int visitBlockNode(BlockNode *node);
-    //int visitBraceNode(BraceNode *node);
+    // TODO : Brace Node à enlever, pas besoin à priori
+    // int visitBraceNode(BraceNode *node);
     //int visitCallNode(CallNode *node);
     //int visitConditionalNode(ConditionalNode *node);
     //int visitLetNode(LetNode *node);
     int visitLiteralNode(LiteralNode *node);
     //int visitNewNode(NewNode *node);
     //int visitObjectIdentifierNode(ObjectIdentifierNode *node);
-    //int visitUnaryOperatorNode(UnaryOperatorNode *node);
+    int visitUnaryOperatorNode(UnaryOperatorNode *node);
     // int visitWhileNode(WhileNode *node);
     // int visitArgsNode(ArgsNode *node);
     // int visitClassBodyNode(ClassBodyNode *node);
     // int visitClassNode(ClassNode *node);
-    // int visitFieldNode(FieldNode *node);
+    int visitFieldNode(FieldNode *node);
     // int visitFormalNode(FormalNode *node);
     // int visitFormalsNode(FormalsNode *node);
     // int visitMethodNode(MethodNode *node);
