@@ -131,9 +131,32 @@ public :
 	*/
 	bool hasParent(ClassNode* candidate);
 
+	/*
+	getInheritedMethods()
+	ROLE: Return the methods inherited by the class.
+	OUT: std::vector<MethodNode*>, the inherited methods.
+	*/
 	std::vector<MethodNode*> getInheritedMethods();
+
+	/*
+	getOverridendMethods()
+	ROLE: Return the methods overriden by the class.
+	OUT: std::vector<MethodNode*>, the overriden methods.
+	*/
 	std::vector<MethodNode*> getOverridendMethods();
+
+	/*
+	getNewMethods()
+	ROLE: Return the methods newly declared by the class.
+	OUT: std::vector<MethodNode*>, the new methods.
+	*/
 	std::vector<MethodNode*> getNewMethods();
+
+	/*
+	getAllMethods()
+	ROLE: Return all the methods of the class.
+	OUT: std::vector<MethodNode*>, the methods.
+	*/
 	std::vector<MethodNode*> getAllMethods();
 
 	//setters
