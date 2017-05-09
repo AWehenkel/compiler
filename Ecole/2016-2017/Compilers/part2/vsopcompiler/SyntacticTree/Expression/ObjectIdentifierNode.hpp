@@ -28,6 +28,7 @@ public :
 	//Inherited
 	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
+	virtual bool alreadyInstanciated(){return true;};
 
 	//Setters
 	void setType(TypeIdentifierNode* node, bool newly_created = false){node_type = node;self_type = newly_created; setLLVMType(node_type->getLiteral());}; //TODO : check qu'il faut bien mettre le setLLVMType là

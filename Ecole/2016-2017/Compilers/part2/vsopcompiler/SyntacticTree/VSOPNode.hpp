@@ -75,6 +75,9 @@ public :
 	void setLLVMAddress(int i_llvm_address){
 		 llvm_address = "%" + std::to_string(i_llvm_address);
 	};
+	void setLLVMAddress(std::string s_llvm_address){
+		 llvm_address = s_llvm_address;
+	};
 
 };
 

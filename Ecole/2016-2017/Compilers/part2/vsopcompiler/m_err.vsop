@@ -1,7 +1,6 @@
 class Main {
   a : int32;
   main () : int32 {
-    a <- 0;
-    let n : int32 <- 10 in a <- n
+    2 * (3 + 6)
   }
 }

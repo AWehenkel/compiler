@@ -4,6 +4,7 @@
 #include "all_headers.hpp"
 
 using namespace std;
+//TODO Storer dans toutes les expressions leur valeur de retour
 
 // TODO : attention ça peut changer
 string CodeGenVisitor::getLLVMAllocationCode(string name, string type){
@@ -25,16 +26,21 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   ExpressionNode* expr = node->getExpression();
   ObjectIdentifierNode* name = node->getName();
 
-  // Visit the expression at the right of the assignment
-  int counteur = llvm_address_counteurs.top();
-  llvm_address_counteurs.pop();
-  expr->setLLVMAddress(counteur++);
-  ir += getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
-  llvm_address_counteurs.push(counteur);
+  // Visit the expression at the right of the assignment TODO pour les literal il faudrait ne pas stocker dans une nouvelle addresse mais utiliser le literal en lui meme.
+  if(!expr->alreadyInstanciated()){
+    ir += "!expr->alreadyInstanciated() " + expr->getLiteral() + "\n";
+    int counteur = llvm_address_counteurs.top();
+    llvm_address_counteurs.pop();
+    expr->setLLVMAddress(counteur++);
+    ir += getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
+    llvm_address_counteurs.push(counteur);
 
-  // Visit the init expression
-  if (expr->accept(this) < 0)
-    return -1;
+    // Visit the init expression
+    if (expr->accept(this) < 0)
+      return -1;
+  }
+  else
+    expr->setLLVMAddress(current_scope->getDeclarationLLVM(expr->getLiteral()));
   // Store the value of the expression in the left term
   ir += getLLVMStoreCode(expr->getLLVMAddress(), current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType()); // TODO : problème avec name, pas de llvm address
 
@@ -156,7 +162,7 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   ExpressionNode* first = *(expresions.begin());
   int counteur = llvm_address_counteurs.top();
   llvm_address_counteurs.pop();
-  first->setLLVMAddress(counteur++);
+  //first->setLLVMAddress(counteur++);
   //ir += getLLVMAllocationCode(first->getLLVMAddress(), first->getLLVMType()); //TODO Probleme il faut stocker quelque chose dedans pour que ça ait du sens d'allouer
   llvm_address_counteurs.push(counteur);
   Visitor::visitBlockNode(node);
@@ -291,4 +297,23 @@ int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
   if(current_scope && node->getLLVMAddress().size())
     ir += getLLVMStoreCode(current_scope->getDeclarationLLVM(node->getLiteral()), node->getLLVMAddress(), node->getLLVMType());
   return 0;
+}
+
+int CodeGenVisitor::visitClassNode(ClassNode *node){
+  Visitor::visitClassNode(node);
+
+  vector<MethodNode*> new_methods = node->getNewMethods();
+  cout << "new methods: " << endl;
+  for(auto method : new_methods)
+    cout << method->getName()->getLiteral() << endl;
+
+	vector<MethodNode*> overriden_methods = node->getOverridendMethods();
+  cout << "overriden methods: " << endl;
+  for(auto method : overriden_methods)
+    cout << method->getName()->getLiteral() << endl;
+
+	vector<MethodNode*> inherited_methods = node->getInheritedMethods();
+  cout << "inherited methods: " << endl;
+  for(auto method : inherited_methods)
+    cout << method->getName()->getLiteral() << endl;
 }

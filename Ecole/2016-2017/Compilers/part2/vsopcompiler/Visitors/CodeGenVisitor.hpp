@@ -34,7 +34,7 @@ class CodeGenVisitor : public Visitor{
     // int visitWhileNode(WhileNode *node);
     // int visitArgsNode(ArgsNode *node);
     // int visitClassBodyNode(ClassBodyNode *node);
-    // int visitClassNode(ClassNode *node);
+    int visitClassNode(ClassNode *node);
     int visitFieldNode(FieldNode *node);
     // int visitFormalNode(FormalNode *node);
     // int visitFormalsNode(FormalsNode *node);

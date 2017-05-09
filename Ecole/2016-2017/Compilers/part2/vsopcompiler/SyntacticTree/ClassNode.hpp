@@ -131,6 +131,11 @@ public :
 	*/
 	bool hasParent(ClassNode* candidate);
 
+	std::vector<MethodNode*> getInheritedMethods();
+	std::vector<MethodNode*> getOverridendMethods();
+	std::vector<MethodNode*> getNewMethods();
+	std::vector<MethodNode*> getAllMethods();
+
 	//setters
 	void setExtends(TypeIdentifierNode* node){
 		e_extends = node;

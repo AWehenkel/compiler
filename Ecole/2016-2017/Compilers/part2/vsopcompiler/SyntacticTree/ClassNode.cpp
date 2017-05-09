@@ -178,3 +178,53 @@ string ClassNode::getLiteral(bool with_type) const{
 
 	return literal;
 }
+
+vector<MethodNode*> ClassNode::getInheritedMethods(){
+	vector<MethodNode*> inherited_methods;
+	if(parent){
+		vector<MethodNode*> parents_methods = parent->getAllMethods();
+		for(vector<MethodNode*>::iterator it = parents_methods.begin(); it != parents_methods.end(); ++it)
+			if(methods.find((*it)->getName()->getLiteral()) == methods.end())
+				inherited_methods.push_back(*it);
+	}
+	return inherited_methods;
+}
+
+vector<MethodNode*> ClassNode::getOverridendMethods(){
+	vector<MethodNode*> overriden_methods;
+	if(parent){
+		vector<MethodNode*> parents_methods = parent->getAllMethods();
+		for(vector<MethodNode*>::iterator it = parents_methods.begin(); it != parents_methods.end(); ++it)
+			if(methods.find((*it)->getName()->getLiteral()) != methods.end())
+				overriden_methods.push_back(*it);
+	}
+	return overriden_methods;
+}
+
+vector<MethodNode*> ClassNode::getNewMethods(){
+	unordered_map<string, MethodNode*> all_methods(methods);
+	vector<MethodNode*> overriden_methods = getOverridendMethods();
+	vector<MethodNode*> new_methods;
+
+	for(vector<MethodNode*>::iterator it = overriden_methods.begin(); it != overriden_methods.end(); ++it)
+		all_methods.erase((*it)->getName()->getLiteral());
+
+	for(auto method : all_methods)
+		new_methods.push_back(method.second);
+
+	return new_methods;
+}
+
+vector<MethodNode*> ClassNode::getAllMethods(){
+	vector<MethodNode*> all_methods;
+	vector<MethodNode*> new_methods = getNewMethods();
+	vector<MethodNode*> overriden_methods = getOverridendMethods();
+	vector<MethodNode*> inherited_methods = getInheritedMethods();
+
+	all_methods.reserve(new_methods.size() + overriden_methods.size() + inherited_methods.size());
+	all_methods.insert(all_methods.end(), new_methods.begin(), new_methods.end());
+	all_methods.insert(all_methods.end(), overriden_methods.begin(), overriden_methods.end());
+	all_methods.insert(all_methods.end(), inherited_methods.begin(), inherited_methods.end());
+
+	return all_methods;
+}
