@@ -237,6 +237,7 @@ int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
 int CodeGenVisitor::visitProgramNode(ProgramNode* node){
   llvm_address_counteurs.push(0);
   Visitor::visitProgramNode(node);
+  cout << *node << endl;
   cout << "IR: " << ir << endl;
   return 0;
 }
