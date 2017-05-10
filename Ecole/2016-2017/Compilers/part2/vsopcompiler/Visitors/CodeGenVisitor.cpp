@@ -345,4 +345,6 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
 
   ir.pop_back();
   ir += "\n}\n";
+
+  return 0;
 }
