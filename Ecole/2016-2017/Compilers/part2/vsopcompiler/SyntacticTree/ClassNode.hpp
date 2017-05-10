@@ -66,6 +66,7 @@ public :
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
 	ClassBodyNode* getBody() const {return e_body;};
+	ClassNode* getParent() const {return parent;};
 
 	/*
 	getMethod
@@ -158,6 +159,21 @@ public :
 	OUT: std::vector<MethodNode*>, the methods.
 	*/
 	std::vector<MethodNode*> getAllMethods();
+
+	/*
+	getInheritedFields()
+	ROLE: Return all the field inherited from parents class.
+	OUT: std::vector<FieldNode*>, the inherited fields.
+	*/
+	std::vector<FieldNode*> getInheritedFields();
+
+	/*
+	getNewFields()
+	ROLE: Return all the fields newly declared in the class.
+	OUT: std::vector<FieldNode*>, the new declared fields.
+	*/
+	std::vector<FieldNode*> getNewFields();
+
 
 	//setters
 	void setExtends(TypeIdentifierNode* node){

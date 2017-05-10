@@ -302,18 +302,47 @@ int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
 int CodeGenVisitor::visitClassNode(ClassNode *node){
   Visitor::visitClassNode(node);
 
-  vector<MethodNode*> new_methods = node->getNewMethods();
-  cout << "new methods: " << endl;
-  for(auto method : new_methods)
-    cout << method->getName()->getLiteral() << endl;
+  string struct_name = "%struct." + node->getName()->getLiteral();
+  string struct_vtable = "%struct." + node->getName()->getLiteral() + "VTable";
+  string struct_instance = "@" + node->getName()->getLiteral() + "VTable_inst";
 
-	vector<MethodNode*> overriden_methods = node->getOverridendMethods();
-  cout << "overriden methods: " << endl;
-  for(auto method : overriden_methods)
-    cout << method->getName()->getLiteral() << endl;
+  vector<FieldNode*> inherited_fields = node->getInheritedFields();
+  ir += struct_name + " = type {\n\t" + struct_vtable + "*,";
+  for(auto field : inherited_fields)
+    ir += "\n\t" + field->getType()->getLLVMType() + ",";
 
-	vector<MethodNode*> inherited_methods = node->getInheritedMethods();
-  cout << "inherited methods: " << endl;
+  vector<FieldNode*> new_fields = node->getNewFields();
+  for(auto field : new_fields)
+    ir += "\n\t" + field->getType()->getLLVMType() + ",";
+
+  ir.pop_back();
+  ir += "\n}\n";
+
+  ir += struct_vtable + " = type {";
+  vector<MethodNode*> inherited_methods = node->getInheritedMethods();
   for(auto method : inherited_methods)
-    cout << method->getName()->getLiteral() << endl;
+    ir += "\n\t" + method->getLLVMStructure(struct_name) + ",";
+
+  vector<MethodNode*> overriden_methods = node->getOverridendMethods();
+  for(auto method : overriden_methods)
+    ir += "\n\t" + method->getLLVMStructure(struct_name) + ",";
+
+  vector<MethodNode*> new_methods = node->getNewMethods();
+  for(auto method : new_methods)
+    ir += "\n\t" + method->getLLVMStructure(struct_name) + ",";
+
+  ir.pop_back();
+  ir += "\n}\n";
+
+  //TODO peut être que le struct_vtable devrait être le code de la vtable explicitement.
+  ir += struct_instance + " = global " + struct_vtable + "{";
+  for(auto method : inherited_methods)
+    ir += "\n\t" + method->getLLVMInstance(node->getName()->getLiteral(), node->getParent()->getName()->getLiteral())+ ",";
+  for(auto method : overriden_methods)
+    ir += "\n\t" + method->getLLVMInstance(node->getName()->getLiteral()) + ",";
+  for(auto method : new_methods)
+    ir += "\n\t" + method->getLLVMInstance(node->getName()->getLiteral()) + ",";
+
+  ir.pop_back();
+  ir += "\n}\n";
 }

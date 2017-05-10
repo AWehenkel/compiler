@@ -228,3 +228,25 @@ vector<MethodNode*> ClassNode::getAllMethods(){
 
 	return all_methods;
 }
+
+vector<FieldNode*> ClassNode::getInheritedFields(){
+	vector<FieldNode*> all_fields;
+	vector<FieldNode*> parent_inh_fields;
+	vector<FieldNode*> parent_new_fields;
+	if(parent){
+		parent_inh_fields = parent->getInheritedFields();
+		parent_new_fields = parent->getNewFields();
+	}
+	all_fields.reserve(parent_inh_fields.size() + parent_new_fields.size());
+
+	all_fields.insert(all_fields.end(), parent_inh_fields.begin(), parent_inh_fields.end());
+	all_fields.insert(all_fields.end(), parent_new_fields.begin(), parent_new_fields.end());
+
+	return all_fields;
+}
+vector<FieldNode*> ClassNode::getNewFields(){
+	vector<FieldNode*> new_fields;
+	for(auto field : fields)
+		new_fields.push_back(field.second);
+	return new_fields;
+}

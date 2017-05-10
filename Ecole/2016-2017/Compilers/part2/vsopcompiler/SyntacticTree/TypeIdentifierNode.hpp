@@ -27,7 +27,7 @@ private :
 		else if(content == "string")
 			llvm_type = "c";
 		else
-			llvm_type = content;
+			llvm_type = "%struct."+ content;
 	};
 
 public :

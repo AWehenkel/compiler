@@ -45,6 +45,20 @@ public :
 	*/
 	bool equals(MethodNode &method);
 
+	/*
+	getLLVMStructure()
+	ROLE: Return the code to insert into a structure to declare the function.
+	Return: std::string, the code.
+	*/
+	std::string getLLVMStructure(std::string struct_class) const;
+
+	/*
+	getLLVMInstance()
+	ROLE: Return the code to instanciate the VTable with the function.
+	Return: std::string, the code
+	*/
+	std::string getLLVMInstance(std::string class_name, std::string parent_name = "") const;
+
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
 	TypeIdentifierNode* getDeclarationType(std::string id);
