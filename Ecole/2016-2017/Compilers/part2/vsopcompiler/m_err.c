@@ -1,9 +1,19 @@
-#define int32 int
+int speak_impl(int a){
+  return 0;
+}
+
+struct test {
+  int (*speak) (int a);
+    int (*speak2) (int a);
+};
+
+struct test test_impl = {
+  .speak = speak_impl,
+  .speak2 = speak_impl
+};
 
 int main(){
-  int b = 1;
-  int c = 2;
-  int a = b + c;
+  struct test t;
   return 0;
 
 }
