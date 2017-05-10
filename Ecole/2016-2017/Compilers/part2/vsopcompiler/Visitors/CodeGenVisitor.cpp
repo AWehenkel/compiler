@@ -306,6 +306,7 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   string struct_vtable = "%struct." + node->getName()->getLiteral() + "VTable";
   string struct_instance = "@" + node->getName()->getLiteral() + "VTable_inst";
 
+  //Class structure
   vector<FieldNode*> inherited_fields = node->getInheritedFields();
   ir += struct_name + " = type {\n\t" + struct_vtable + "*,";
   for(auto field : inherited_fields)
@@ -317,7 +318,7 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
 
   ir.pop_back();
   ir += "\n}\n";
-
+  //Class structure VTable
   ir += struct_vtable + " = type {";
   vector<MethodNode*> inherited_methods = node->getInheritedMethods();
   for(auto method : inherited_methods)
