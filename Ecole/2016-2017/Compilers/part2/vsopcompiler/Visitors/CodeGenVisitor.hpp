@@ -17,8 +17,11 @@ class CodeGenVisitor : public Visitor{
     std::string getLLVMAllocationCode(std::string type, std::string name);
     std::string getLLVMLoadCode(std::string load_in, std::string load_from, std::string type);
     std::string getLLVMStoreCode(std::string name, std::string store_address, std::string type);
+    std::string getLLVMBitCastCode(std::string store_address, std::string first_type, std::string init_address, std::string second_type);
+    std::string getLLVMCallCode(std::string function_name, std::string return_type, std::vector<std::string> args_value, std::vector<std::string> args_type);
     std::string getLLVMBinaryCode(BinaryOperatorNode* node, std::string op1, std::string op2);
     std::string getLLVMUnaryCode(UnaryOperatorNode* node, std::string op);
+
     int visitAssignNode(AssignNode *node);
     int visitBinaryOperatorNode(BinaryOperatorNode *node);
     int visitBlockNode(BlockNode *node);
