@@ -248,6 +248,8 @@ int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
 
 int CodeGenVisitor::visitProgramNode(ProgramNode* node){
   llvm_address_counteurs.push(0);
+  // Add the malloc function
+  ir += "declare noalias i8* @malloc(i32)\n\n";
   Visitor::visitProgramNode(node);
   cout << "IR: " << ir << endl;
   return 0;
@@ -317,6 +319,8 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   string struct_name = "%struct." + node->getName()->getLiteral();
   string struct_vtable = "%struct." + node->getName()->getLiteral() + "VTable";
   string struct_instance = "@" + node->getName()->getLiteral() + "VTable_inst";
+  string struct_init = "@" + node->getName()->getLiteral() + "_init";
+  string struct_new = "@" + node->getName()->getLiteral() + "_new";
 
   //Class structure
   vector<FieldNode*> inherited_fields = node->getInheritedFields();
@@ -329,7 +333,7 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
     ir += "\n\t" + field->getType()->getLLVMType() + ",";
 
   ir.pop_back();
-  ir += "\n}\n";
+  ir += "\n}\n\n";
   //Class structure VTable
   ir += struct_vtable + " = type {";
   vector<MethodNode*> inherited_methods = node->getInheritedMethods();
@@ -345,7 +349,7 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
     ir += "\n\t" + method->getLLVMStructure(struct_name) + ",";
 
   ir.pop_back();
-  ir += "\n}\n";
+  ir += "\n}\n\n";
 
   //Class structure instanciation
   //TODO peut être que le struct_vtable devrait être le code de la vtable explicitement.
@@ -358,15 +362,15 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
     ir += "\n\t" + method->getLLVMInstance(node->getName()->getLiteral()) + ",";
 
   ir.pop_back();
-  ir += "\n}\n";
+  ir += "\n}\n\n";
 
   //Init function
   int var_counter = 1;
-  ir += "define void @" + node->getName()->getLiteral() + "_init(" + struct_name + "* %self){\n";
+  ir += "define void " + struct_init + "(" + struct_name + "* %self){\n";
   if(node->getParent()){
     ir += "\t" + getLLVMBitCastCode("%" + to_string(var_counter), struct_name + "*", "%self", "%struct." + node->getParent()->getName()->getLiteral() + "*");
     vector<string> args_value;
-    args_value.push_back("%" + to_string(var_counter++));
+    args_value.push_back("%" + to_string(var_counter));
     vector<string> args_type;
     args_type.push_back("%struct." + node->getParent()->getName()->getLiteral() + "*");
     ir += "\t" + getLLVMCallCode(node->getParent()->getName()->getLiteral() + "_init", "void", args_value, args_type);
@@ -374,12 +378,38 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   int i = 0;
   for(auto field : new_fields){
     i++;//TODO pas très claire si le field->getType()->getLLVMType() en dessous doit toujours être i32 ou bien dépend du type.
-    ir += "\t%" + to_string(var_counter++) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, " + field->getType()->getLLVMType() + " " + to_string(i) + "\n";
+    ir += "\t%" + to_string(++var_counter) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, " + field->getType()->getLLVMType() + " " + to_string(i) + "\n";
     ir += "\t" + getLLVMStoreCode("0", "%" + to_string(var_counter), field->getType()->getLLVMType()); //TODO Peut être changer le zero par une valeur qui dépend du type.
   }
-  ir += "\t%" + to_string(var_counter) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, i32 0\n";
+  ir += "\t%" + to_string(++var_counter) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, i32 0\n";
   ir += "\t" + getLLVMStoreCode(struct_instance, "%" + to_string(var_counter), struct_vtable + "*");//TODO j'ai pas cast comme dans le code car je comprends pas à quoi aç sert.
-  ir += "\tret void\n}\n";
+  ir += "\tret void\n}\n\n";
+
+  // New function
+  var_counter = 1;
+  ir += "define " + struct_name + "* " + struct_new + "(){\n";
+  ir += "\t%self = alloca " + struct_name + "*\n";
+
+  // Code to compute the code of a structure and store it in memory
+  ir += "\t%" + to_string(var_counter) + " = getelementptr " + struct_name + "* null, i32 1\n";
+  ir += "\t%size = ptrtoint " + struct_name + "* %" + to_string(var_counter) + " to i32\n";
+
+  // Malloc
+  ir += "\t%" + to_string(++var_counter) + " = call noalias i8* @malloc(i32 %size)\n";
+  ir += "\t%" + to_string(++var_counter) + " = bitcast i8* %" + to_string(var_counter) + " to " + struct_name + "*\n";
+  ir += "\tstore " + struct_name + "* %" + to_string(var_counter) + ", " + struct_name + "** %self\n";
+
+  // Assert
+  string llvm_load = "%" + to_string(++var_counter);
+  ir += "\t" + getLLVMLoadCode(llvm_load, "%self", struct_name + "*");
+  int llvm_assert = ++var_counter;
+  ir += "\t%" + to_string(llvm_assert) + " = icmp ne " + struct_name + "* %" + to_string(var_counter - 1) + ", null\n";
+  ir += "\tbr i1 %" + to_string(llvm_assert) + ", label %notnull, label %null\n";
+  ir += "\nnotnull:\n";
+  ir += "\tcall void " + struct_init + "(" + struct_name + "* " + llvm_load + ")\n";
+
+  ir += "\nnull:\n";
+  ir += "\tret " + struct_name + "* " + llvm_load + "\n}\n\n";
 
   return 0;
 }
