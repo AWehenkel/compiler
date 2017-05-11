@@ -1,6 +1,11 @@
 class Main {
-  a : int32;
+  a : int32 <- 0;
+  test () : bool {
+    false
+  }
   main () : int32 {
-    2 * (3 + 6)
+    while a < 5
+    do a <- a + 1;
+    0
   }
 }

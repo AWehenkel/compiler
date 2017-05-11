@@ -10,8 +10,9 @@
 class CodeGenVisitor : public Visitor{
   private :
     std::stack<std::string> llvm_addresses; // TODO : possibly to remove
-    std::stack<int> llvm_address_counteurs;
+    std::stack<int> llvm_address_counters;
     std::string ir;
+    std::string tab;
     VSOPNode* current_scope = NULL;
   public :
     std::string getLLVMAllocationCode(std::string type, std::string name);
@@ -27,18 +28,18 @@ class CodeGenVisitor : public Visitor{
     int visitBlockNode(BlockNode *node);
     // TODO : Brace Node à enlever, pas besoin à priori
     // int visitBraceNode(BraceNode *node);
-    //int visitCallNode(CallNode *node);
-    //int visitConditionalNode(ConditionalNode *node);
+    int visitCallNode(CallNode *node);
+    int visitConditionalNode(ConditionalNode *node);
     int visitLetNode(LetNode *node);
     int visitLiteralNode(LiteralNode *node);
     int visitNewNode(NewNode *node);
     int visitObjectIdentifierNode(ObjectIdentifierNode *node);
     int visitUnaryOperatorNode(UnaryOperatorNode *node);
-    // int visitWhileNode(WhileNode *node);
+    int visitWhileNode(WhileNode *node);
     // int visitArgsNode(ArgsNode *node);
     // int visitClassBodyNode(ClassBodyNode *node);
     int visitClassNode(ClassNode *node);
-    int visitFieldNode(FieldNode *node);
+    //int visitFieldNode(FieldNode *node);
     // int visitFormalNode(FormalNode *node);
     // int visitFormalsNode(FormalsNode *node);
     int visitMethodNode(MethodNode *node);

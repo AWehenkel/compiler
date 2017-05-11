@@ -1,19 +1,10 @@
-int speak_impl(int a){
-  return 0;
+int lol(int a){
+  return 1;
 }
 
-struct test {
-  int (*speak) (int a);
-    int (*speak2) (int a);
-};
-
-struct test test_impl = {
-  .speak = speak_impl,
-  .speak2 = speak_impl
-};
-
 int main(){
-  struct test t;
+  int a = lol(1);
+  while(a > 0)
+    a--;
   return 0;
-
 }
