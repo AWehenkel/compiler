@@ -41,6 +41,8 @@ void Child_init(struct Child *self) {
   Parent_init((struct Parent *) self); // Call parent's initializer
   self->newField = 0;
   self->_vtable = &ChildVTable_inst; // Override vtable
+  char test[18];
+  test[3] = 'c';
 }
 
 struct Child *Child_new() {

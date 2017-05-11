@@ -374,12 +374,17 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   int i = 0;
   for(auto field : new_fields){
     i++;//TODO pas très claire si le field->getType()->getLLVMType() en dessous doit toujours être i32 ou bien dépend du type.
-    ir += "\t%" + to_string(var_counter++) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, " + field->getType()->getLLVMType() + " " + to_string(i) + "\n";
-    ir += "\t" + getLLVMStoreCode("0", "%" + to_string(var_counter), field->getType()->getLLVMType()); //TODO Peut être changer le zero par une valeur qui dépend du type.
+    ir += "\t%" + to_string(var_counter) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, i32 " + to_string(i) + "\n";
+    ir += "\t" + getLLVMStoreCode("0", "%" + to_string(var_counter++), field->getType()->getLLVMType()); //TODO Peut être changer le zero par une valeur qui dépend du type.
   }
   ir += "\t%" + to_string(var_counter) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, i32 0\n";
   ir += "\t" + getLLVMStoreCode(struct_instance, "%" + to_string(var_counter), struct_vtable + "*");//TODO j'ai pas cast comme dans le code car je comprends pas à quoi aç sert.
   ir += "\tret void\n}\n";
 
   return 0;
+}
+
+int CodeGenVisitor::visitNewNode(NewNode *node){
+  string new_function = "@"+ node->getTypeId()->getLiteral() + "_new";
+  ir += getLLVMCallCode(new_function, node->getTypeId()->getLLVMType() + "*", vector<string>(), vector<string>());
 }

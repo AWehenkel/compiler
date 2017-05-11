@@ -31,7 +31,7 @@ class CodeGenVisitor : public Visitor{
     //int visitConditionalNode(ConditionalNode *node);
     int visitLetNode(LetNode *node);
     int visitLiteralNode(LiteralNode *node);
-    //int visitNewNode(NewNode *node);
+    int visitNewNode(NewNode *node);
     int visitObjectIdentifierNode(ObjectIdentifierNode *node);
     int visitUnaryOperatorNode(UnaryOperatorNode *node);
     // int visitWhileNode(WhileNode *node);
