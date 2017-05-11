@@ -26,9 +26,13 @@ string CodeGenVisitor::getLLVMBitCastCode(string store_address, string first_typ
 
 string CodeGenVisitor::getLLVMCallCode(string function_name, string return_type, vector<string> args_value, vector<string> args_type){
   string to_ret = "call " + return_type + " " + function_name + "(";
-  for(size_t i = 0; i < args_value.size(); i++)
-    to_ret += args_type.at(i) + " " + args_value.at(i) + ", ";
-  to_ret.replace(to_ret.size() - 2, 3, ")\n");
+  if(args_value.size()){
+    for(size_t i = 0; i < args_value.size(); i++)
+      to_ret += args_type.at(i) + " " + args_value.at(i) + ", ";
+    to_ret.replace(to_ret.size() - 2, 3, ")\n");
+  }
+  else
+    to_ret += ")\n";
   return to_ret;
 }
 
@@ -416,5 +420,7 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
 
 int CodeGenVisitor::visitNewNode(NewNode *node){
   string new_function = "@"+ node->getTypeId()->getLiteral() + "_new";
-  ir += getLLVMCallCode(new_function, node->getTypeId()->getLLVMType() + "*", vector<string>(), vector<string>());
+  ir += "visitNewNode\n";
+  ir += getLLVMCallCode(new_function, node->getTypeId()->getLLVMType(), vector<string>(), vector<string>());
+  return 0;
 }
