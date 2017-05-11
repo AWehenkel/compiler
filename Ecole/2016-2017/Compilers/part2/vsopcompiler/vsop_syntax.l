@@ -121,6 +121,7 @@ comments  	\/\/.*
 
 
 {ws}     {}
+
 {obj-id} {
             //Check for keyword.
             unordered_map<std::string,int>::iterator it = keywords_map.find(yytext);

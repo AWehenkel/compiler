@@ -1,5 +1,4 @@
 class Main {
-  a : int32;
   main () : int32 {
     2 * (3 + 6)
   }

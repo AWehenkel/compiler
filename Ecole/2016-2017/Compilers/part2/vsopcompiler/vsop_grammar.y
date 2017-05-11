@@ -278,6 +278,7 @@ class :
 																														$$ = new ClassNode($2, $5, $3, $2->getCol(), $2->getLine());
 																													 }else
 																														$$ = new ClassNode($2, $5, NULL, $2->getCol(), $2->getLine());
+																													delete $2;
 																													}
 ;
 
@@ -343,26 +344,26 @@ sc-expr :
 ;
 
 expr :
-	t_if expr T_THEN expr															{$$ = new ConditionalNode($2, $4, NULL, $1->getCol(), $1->getLine());}
-	| t_if expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6, $1->getCol(), $1->getLine());}
-	| t_while expr T_DO expr													{$$ = new WhileNode($2, $4, $1->getCol(), $1->getLine());}
-	| t_let t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5, $1->getCol(), $1->getLine());}
+	t_if expr T_THEN expr															{$$ = new ConditionalNode($2, $4, NULL, $1->getCol(), $1->getLine()); delete $1;}
+	| t_if expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6, $1->getCol(), $1->getLine()); delete $1;}
+	| t_while expr T_DO expr													{$$ = new WhileNode($2, $4, $1->getCol(), $1->getLine()); delete $1;}
+	| t_let t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5, $1->getCol(), $1->getLine()); delete $1;}
 	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3, $1->getCol(), $1->getLine());}
-	| t_not expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2, $1->getCol(), $1->getLine());}
-	| t_minus expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2, $1->getCol(), $1->getLine());}
-	| t_isnull expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2, $1->getCol(), $1->getLine());}
-	| expr t_plus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_and expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_equal expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_leq expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_lower expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_minus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_minus, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_times expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_div expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3, $2->getCol(), $2->getLine());}
-	| expr t_pow expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3, $2->getCol(), $2->getLine());}
+	| t_not expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2, $1->getCol(), $1->getLine()); delete $1;}
+	| t_minus expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2, $1->getCol(), $1->getLine()); delete $1;}
+	| t_isnull expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2, $1->getCol(), $1->getLine()); delete $1;}
+	| expr t_plus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_and expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_equal expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_leq expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_lower expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_minus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_minus, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_times expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_div expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| expr t_pow expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
 	| t_obj_id T_L_PAR args T_R_PAR										{$$ = new CallNode($1, $3, NULL, $1->getCol(), $1->getLine());}
 	| expr T_DOT t_obj_id T_L_PAR args T_R_PAR				{$$ = new CallNode($3, $5, $1, $3->getCol(), $3->getLine());}
-	| t_new t_type_id																	{$$ = new NewNode($2, $1->getCol(), $1->getLine());}
+	| t_new t_type_id																	{$$ = new NewNode($2, $1->getCol(), $1->getLine()); delete $1;}
 	| t_obj_id																				{$$ = $1;}
 	| literal																					{$$ = $1;}
 	| T_L_PAR T_R_PAR																	{$$ = new BraceNode(NULL, yylloc.first_column, yylloc.first_line);}
