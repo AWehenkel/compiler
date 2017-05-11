@@ -986,7 +986,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 124 "vsop_syntax.l"
+#line 125 "vsop_syntax.l"
 {
             //Check for keyword.
             unordered_map<std::string,int>::iterator it = keywords_map.find(yytext);
@@ -1000,7 +1000,7 @@ YY_RULE_SETUP
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 134 "vsop_syntax.l"
+#line 135 "vsop_syntax.l"
 {
 
             //Check for invalid characters
@@ -1057,7 +1057,7 @@ YY_RULE_SETUP
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 187 "vsop_syntax.l"
+#line 188 "vsop_syntax.l"
 {
                   size_t pos = 0;
                   while(yytext[pos] != '\0'){
@@ -1075,14 +1075,14 @@ YY_RULE_SETUP
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 201 "vsop_syntax.l"
+#line 202 "vsop_syntax.l"
 {
                     lexicalError();
                   }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 205 "vsop_syntax.l"
+#line 206 "vsop_syntax.l"
 {
             int base = 10;
             if(yytext[1] != '\0' && yytext[0] == '0'){
@@ -1099,12 +1099,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 220 "vsop_syntax.l"
+#line 221 "vsop_syntax.l"
 lexicalError();
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 223 "vsop_syntax.l"
+#line 224 "vsop_syntax.l"
 {
             yylval.sval = strdup(yytext);
             return T_TYPE_ID;
@@ -1112,102 +1112,102 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 228 "vsop_syntax.l"
+#line 229 "vsop_syntax.l"
 {  }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 230 "vsop_syntax.l"
+#line 231 "vsop_syntax.l"
 return T_L_BRACE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 231 "vsop_syntax.l"
+#line 232 "vsop_syntax.l"
 return T_R_BRACE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 232 "vsop_syntax.l"
+#line 233 "vsop_syntax.l"
 return T_R_PAR;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 233 "vsop_syntax.l"
+#line 234 "vsop_syntax.l"
 return T_L_PAR;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 234 "vsop_syntax.l"
+#line 235 "vsop_syntax.l"
 return T_COLON;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 235 "vsop_syntax.l"
+#line 236 "vsop_syntax.l"
 return T_SEMI_COLON;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 236 "vsop_syntax.l"
+#line 237 "vsop_syntax.l"
 return T_COMMA;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 237 "vsop_syntax.l"
+#line 238 "vsop_syntax.l"
 return T_PLUS;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 238 "vsop_syntax.l"
+#line 239 "vsop_syntax.l"
 return T_MINUS;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 239 "vsop_syntax.l"
+#line 240 "vsop_syntax.l"
 return T_TIMES;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 240 "vsop_syntax.l"
+#line 241 "vsop_syntax.l"
 return T_DIV;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 241 "vsop_syntax.l"
+#line 242 "vsop_syntax.l"
 return T_POW;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 242 "vsop_syntax.l"
+#line 243 "vsop_syntax.l"
 return T_DOT;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 243 "vsop_syntax.l"
+#line 244 "vsop_syntax.l"
 return T_EQUAL;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 244 "vsop_syntax.l"
+#line 245 "vsop_syntax.l"
 return T_LOWER;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 245 "vsop_syntax.l"
+#line 246 "vsop_syntax.l"
 return T_LEQ;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 246 "vsop_syntax.l"
+#line 247 "vsop_syntax.l"
 return T_ASSIGN;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 247 "vsop_syntax.l"
+#line 248 "vsop_syntax.l"
 {lexicalError();};
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 248 "vsop_syntax.l"
+#line 249 "vsop_syntax.l"
 ECHO;
 	YY_BREAK
 #line 1214 "lex.yy.c"
@@ -2211,7 +2211,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 248 "vsop_syntax.l"
+#line 249 "vsop_syntax.l"
 
 
 
