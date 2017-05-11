@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <stdlib.h>
 #include <utility>
@@ -26,6 +27,7 @@ int semantic_error = 0;
 int errors;
 int start_token;
 int syntax_error;
+ClassNode* io_node;
 
 void yyerror(const char *s);
 
@@ -63,7 +65,7 @@ void yyerror(const char *s);
 %token T_PLUS T_MINUS T_TIMES T_DIV T_POW T_DOT T_EQUAL T_LOWER T_LEQ
 %token T_ASSIGN
 %token T_COMMENTS
-%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN;
+%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN START_IO;
 %token T_ERROR
 
 %type <program_node>            program
@@ -116,16 +118,22 @@ void yyerror(const char *s);
 %start start;
 
 %%
-
 start :
 	START_LEXICAL Input
-	| START_SYNTAX program													{	if(!syntax_error)
+	| START_SYNTAX program													{	if(!syntax_error){
+																											$2->addClass(io_node);
 																											cout << *$2;
-																										delete $2;
+																											delete $2;
+																										}
 																									 }
   | START_SEMANTIC program                        {
 																										if(!syntax_error){
+																											$2->addClass(io_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
+																											// Remove IO class for the class table
+																											std::unordered_map<std::string, ClassNode*> c_table = $2->getTableClasses();
+																										  $2->removeClass(c_table["IO"]);
+																										  $2->addClassToDelete("Object");
 																											if(!semantic_error)
 																												cout << $2->getLiteral(true);
 																										}
@@ -141,6 +149,9 @@ start :
 																											}
 																										}
 																										delete $2;
+																									}
+	| START_IO class 																{
+																										io_node = $2;
 																									}
 ;
 
@@ -411,6 +422,27 @@ int main (int argc, char *argv[]){
 		return -1;
 	}
 
+	//Insert IO class if needed.
+	if(start_token == START_CODE_GEN || start_token == START_SEMANTIC || 1){
+		FILE *io_class = fopen("IO.vsop", "r");
+		int t = start_token;
+		start_token = START_IO;
+		if (!io_class) {
+		 	cerr << "Could not open IO class" << endl;
+			return -1;
+		}
+		yyin = io_class;
+		// parse through the input until there is no more:
+		syntax_error = 0;
+		do {
+			if(yyparse() == 1){
+				syntax_error++;
+			}
+		} while (!feof(yyin));
+
+		start_token = t;
+		fclose(yyin);
+	}
 
 	FILE *myfile = fopen(argv[argc-1], "r");
 	file_name = argv[argc-1];
@@ -430,6 +462,7 @@ int main (int argc, char *argv[]){
 		}
 	} while (!feof(yyin));
 
+	fclose(yyin);
 	if(syntax_error)
 		return -1;
 

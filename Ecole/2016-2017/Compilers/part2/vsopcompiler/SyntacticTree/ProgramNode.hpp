@@ -15,14 +15,18 @@ private :
 	std::vector<ClassNode*> classes;
 	std::unordered_map<std::string, ClassNode*> table_classes;
 	std::vector<ClassNode*> to_delete;
+
 public :
+	//Overloaded operator
+	ProgramNode& operator+=(const ProgramNode &p1);
+
 	//Constructors
 	/*
 	new_class : ClassNode *, The last class of the program.
 	col: 				int, the column where the node is present.
 	line:				int, the line where the node is present.
 	*/
-	ProgramNode(ClassNode *new_class, int col = 0, int line = 0) : VSOPNode(col, line){addClass(new_class);};
+	ProgramNode(ClassNode *new_class = NULL, int col = 0, int line = 0) : VSOPNode(col, line){if(new_class)addClass(new_class);};
 
 	//Destructors
 	virtual ~ProgramNode();
@@ -36,7 +40,7 @@ public :
 	*/
 	void addClass(ClassNode *new_class);
 
-	void addClassToDelete(ClassNode *new_class);
+	void addClassToDelete(std::string new_class);
 
 	/*
 	fillClassTable

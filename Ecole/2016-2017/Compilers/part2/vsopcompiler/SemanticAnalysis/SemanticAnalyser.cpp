@@ -2,7 +2,7 @@
 #include "../Visitors/CheckUndefinedClassVisitor.hpp"
 #include "../Visitors/FillScopeTablesVisitor.hpp"
 #include "../Visitors/CheckTypeVisitor.hpp"
-#include "SemanticError.hpp"
+#include "../SyntacticTree/Expression/CallNode.hpp"
 
 using namespace std;
 
@@ -19,16 +19,16 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   // Adding Object class to the class table
   class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
   // Adding IO class to the class table (maybe good to replace with include system)
-  ClassNode* io_class = createIOClass();
-  program->addClass(io_class);
+  //ClassNode* io_class = createIOClass();
+  //program->addClass(io_class);
 
   // Fill the class table with the other class in the program
   if(program->fillClassTable(class_table)){
     SemanticError error("Internal failure of the compiler during the first pass.");
     errors.push_back(error);
     cerr << errors;
-    program->removeClass(io_class);
-    program->addClassToDelete(class_table["Object"]);
+    //program->removeClass(io_class);
+    //program->addClassToDelete("Object");
     return 1;
   }
 
@@ -63,8 +63,8 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     if(result < 0){
       delete visitor;
       cerr << errors;
-      program->removeClass(io_class);
-      program->addClassToDelete(class_table["Object"]);
+      //program->removeClass(io_class);
+      //program->addClassToDelete("Object");
       return result;
     }
   }
@@ -80,8 +80,8 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     //If negative then it is an unrecoverable error.
     delete visitor1;
     cerr << errors;
-    program->removeClass(io_class);
-    program->addClassToDelete(class_table["Object"]);
+    //program->removeClass(io_class);
+    //program->addClassToDelete("Object");
     return current_result;
   }
   delete visitor1;
@@ -95,15 +95,11 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     delete visitor2;
     cerr << errors;
-    program->removeClass(io_class);
-    program->addClassToDelete(class_table["Object"]);
+    //program->removeClass(io_class);
+    //program->addClassToDelete("Object");
     return -6;
   }
   delete visitor2;
-
-  // Remove IO class for the class table
-  program->removeClass(io_class);
-  program->addClassToDelete(class_table["Object"]);
 
   cerr << errors;
   return errors.size();
@@ -128,6 +124,9 @@ ClassNode* SemanticAnalyser::createIOClass(){
 
   formals = new FormalsNode();
   content = new BlockNode();
+  //ArgsNode args = new ArgsNode();
+  //args->
+  //content->addExpression(new CallNode(new ObjectIdentifierNode("printInt32"), ));
   content->addExpression(new NewNode(new TypeIdentifierNode("IO")));
   formals->addFormal(new FormalNode(new ObjectIdentifierNode("i"), new TypeIdentifierNode("int32")));
   body->addMethod(new MethodNode(new ObjectIdentifierNode("printInt32"), formals, new TypeIdentifierNode("IO"), content));

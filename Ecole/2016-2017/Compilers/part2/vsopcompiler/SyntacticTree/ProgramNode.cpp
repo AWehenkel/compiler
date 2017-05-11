@@ -1,11 +1,18 @@
 #include <algorithm>
 
 #include "ProgramNode.hpp"
+#include "ClassNode.hpp"
 
 //To remove:
 #include "TypeIdentifierNode.hpp"
 
 using namespace std;
+
+ProgramNode& ProgramNode::operator+=(const ProgramNode &p1) {
+	for(std::vector<ClassNode*>::const_iterator class_it = p1.classes.begin(); class_it != p1.classes.end(); ++class_it)
+		addClass(*class_it);
+	return *this;
+}
 
 ProgramNode::~ProgramNode(){
 	for (std::vector<ClassNode*>::const_iterator it = classes.begin(); it < classes.end(); ++it)
@@ -18,8 +25,8 @@ void ProgramNode::addClass(ClassNode *new_class) {
 	classes.push_back(new_class);
 }
 
-void ProgramNode::addClassToDelete(ClassNode *new_class) {
-	to_delete.push_back(new_class);
+void ProgramNode::addClassToDelete(string new_class) {
+	to_delete.push_back(table_classes[new_class]);
 }
 
 int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
