@@ -4,7 +4,7 @@
 struct ChildVTable;
 struct Child;
 
-struct Parent {};
+struct Parent {char i;};
 void Parent_init(struct Parent *self) {}
 
 void Parent_inheritedMethod (struct Parent* p){}
@@ -23,6 +23,7 @@ struct Child {
   struct ChildVTable *_vtable; // Virtual function table always comes first
   int inheritedField; // Parent fields, in the same order as parent!
   int newField; // And, finally, child's new fields
+  int newField2;
 };
 
 void Child_overriddenMethod(struct Child *c){}
@@ -46,6 +47,7 @@ void Child_init(struct Child *self) {
 }
 
 struct Child *Child_new() {
+  int i = sizeof(struct Parent);
   struct Child *self = malloc(sizeof (struct Child));
   assert(self);
   Child_init(self);
