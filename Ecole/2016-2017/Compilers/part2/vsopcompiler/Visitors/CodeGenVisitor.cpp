@@ -40,6 +40,7 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
 
   ExpressionNode* expr = node->getExpression();
   ObjectIdentifierNode* name = node->getName();
+  string expr_addr = node->getLLVMAddress();
 
   // Visit the expression at the right of the assignment TODO pour les literal il faudrait ne pas stocker dans une nouvelle addresse mais utiliser le literal en lui meme.
   if(!expr->alreadyInstanciated()){
@@ -57,6 +58,10 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
     expr->setLLVMAddress(current_scope->getDeclarationLLVM(expr->getLiteral()));
   // Store the value of the expression in the left term
   ir += tab + getLLVMStoreCode(expr->getLLVMAddress(), current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType()); // TODO : problème avec name, pas de llvm address
+
+  // Store the value if needed by the parent node
+  if(expr_addr != "")
+    ir += tab + getLLVMStoreCode(expr->getLLVMAddress(), expr->getLLVMType(), expr_addr);
 
   return 0;
 
@@ -308,6 +313,7 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
 	TypeIdentifierNode* object_type = node->getObjectType();
 	ExpressionNode* init_expr = node->getInitExp();
 	ExpressionNode* scope_exp = node->getScopeExp();
+  string expr_addr = node->getLLVMAddress();
 
   VSOPNode* prev_scope = current_scope;
   current_scope = node;
@@ -334,8 +340,16 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
     ir += tab + getLLVMStoreCode(init_expr->getLLVMAddress(), node->getLLVMAddress(), object_type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
   }
 
+  counter = llvm_address_counters.top();
+  llvm_address_counters.pop();
+  scope_exp->setLLVMAddress(counter++);
+  ir += tab + getLLVMAllocationCode(scope_exp->getLLVMAddress(), scope_exp->getLLVMType());
+  llvm_address_counters.push(counter);
   if(scope_exp->accept(this))
     return 1;
+  // Store the value if needed by the parent node
+  if (expr_addr != "")
+    ir += tab + getLLVMStoreCode(scope_exp->getLLVMAddress(), scope_exp->getLLVMType(), expr_addr);
 
   current_scope = prev_scope;
 
@@ -477,9 +491,14 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
 }
 
 int CodeGenVisitor::visitNewNode(NewNode *node){
+  string expr_addr = node->getLLVMAddress();
+
   string new_function = "@"+ node->getTypeId()->getLiteral() + "_new";
-  ir += tab + "visitNewNode\n";
-  ir += tab + getLLVMCallCode(new_function, node->getTypeId()->getLLVMType(), vector<string>(), vector<string>());
+  if (expr_addr != "")
+    ir += tab + expr_addr + " = " + getLLVMCallCode(new_function, node->getTypeId()->getLLVMType(), vector<string>(), vector<string>());
+  else
+    ir += tab + getLLVMCallCode(new_function, node->getTypeId()->getLLVMType(), vector<string>(), vector<string>());
+
   return 0;
 }
 
@@ -488,6 +507,7 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   ExpressionNode* condition = node->getCondition();
   ExpressionNode* action = node->getAction();
   ExpressionNode* else_action = node->getElseAction();
+  string expr_addr = node->getLLVMAddress();
 
   // Generate code for the condition
   int counter = llvm_address_counters.top();
@@ -507,16 +527,32 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   // First branch1
   ir += tab + "then_" + condition->getLLVMAddress() + ":\n";
   tab += "\t";
+  counter = llvm_address_counters.top();
+  llvm_address_counters.pop();
+  action->setLLVMAddress(counter++);
+  ir += tab + getLLVMAllocationCode(action->getLLVMAddress(), action->getLLVMType());
+  llvm_address_counters.push(counter);
   if(action->accept(this) < 0)
     return -1;
+  // Store the value if needed by the parent node
+  if(expr_addr != "")
+      ir += tab + getLLVMStoreCode(action->getLLVMAddress(), action->getLLVMType(), expr_addr);
   tab.pop_back();
 
   if(else_action){
     ir += tab + "\tbr label end_" + condition->getLLVMAddress() + "\n";
     ir += tab + "else_" + condition->getLLVMAddress() + ":\n";
     tab += "\t";
-    if(action->accept(this) < 0)
+    counter = llvm_address_counters.top();
+    llvm_address_counters.pop();
+    else_action->setLLVMAddress(counter++);
+    ir += tab + getLLVMAllocationCode(else_action->getLLVMAddress(), else_action->getLLVMType());
+    llvm_address_counters.push(counter);
+    if(else_action->accept(this) < 0)
       return -1;
+    // Store the value if needed by the parent node
+    if(expr_addr != "")
+      ir += tab + getLLVMStoreCode(else_action->getLLVMAddress(), else_action->getLLVMType(), expr_addr);
     tab.pop_back();
   }
   ir += tab + "end_" + condition->getLLVMAddress() + ":\n";
@@ -556,7 +592,9 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
 
 int CodeGenVisitor::visitCallNode(CallNode* node){
 
-  
+
 
   return 0;
 }
+
+//int CodeGenVisitor::visitBraceNode()
