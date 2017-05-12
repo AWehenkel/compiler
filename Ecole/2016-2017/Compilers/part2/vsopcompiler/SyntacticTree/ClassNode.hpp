@@ -18,6 +18,7 @@ private :
 	ClassNode *parent = NULL;
 	std::unordered_map<std::string, FieldNode*> fields;
 	std::unordered_map<std::string, MethodNode*> methods;
+	unsigned int nb_method;
 	bool in_cycle;
 
 	/*
@@ -67,6 +68,8 @@ public :
 	TypeIdentifierNode* getExtends() const {return e_extends;};
 	ClassBodyNode* getBody() const {return e_body;};
 	ClassNode* getParent() const {return parent;};
+
+	void assignPositionToMethod();
 
 	/*
 	getMethod

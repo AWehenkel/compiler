@@ -13,7 +13,7 @@ string CodeGenVisitor::getLLVMAllocationCode(string name, string type){
 
 // TODO : attention au types
 string CodeGenVisitor::getLLVMLoadCode(string load_in, string load_from, string type){
-  return load_in + " = load " + type + ", " + type + "* " + load_from + "\n";
+  return load_in + " = load " + type + "* " + load_from + "\n";
 }
 
 string CodeGenVisitor::getLLVMStoreCode(string name, string store_address, string type){
@@ -34,6 +34,10 @@ string CodeGenVisitor::getLLVMCallCode(string function_name, string return_type,
   else
     to_ret += ")\n";
   return to_ret;
+}
+
+string CodeGenVisitor::getLLVMGetElementPtr(string load_in, string type_struct, string load_from, size_t offset1, size_t offset2){
+  return load_in + " = getelementptr inbounds " + type_struct + "* " + load_from + ", i32 " + to_string(offset1) + ", i32 " + to_string(offset2) + "\n";
 }
 
 int CodeGenVisitor::visitAssignNode(AssignNode *node){
@@ -349,7 +353,10 @@ int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
 }
 
 int CodeGenVisitor::visitClassNode(ClassNode *node){
-
+  if(node->getName()->getLiteral() == "IO")
+    external_call = true;
+  else
+    external_call = false;
   current_scope = (VSOPNode *) node;
 
   // Reinitialize the stack
@@ -555,8 +562,37 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
 }
 
 int CodeGenVisitor::visitCallNode(CallNode* node){
-
-  
-
+  if(external_call)
+    return -1;//A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
+  string method_name = node->getMethodName()->getLiteral();
+  ExpressionNode* object = node->getObject();
+  string obj_addr = object->getLLVMAddress();
+  ClassNode* obj_class = object->getType()->getClassType();
+  MethodNode* method = obj_class->getMethod(method_name);
+  obj_class->assignPositionToMethod();
+  size_t position_method = method->getPosition();
+  //Load of the vtable
+  int counter = llvm_address_counters.top();
+  string ll_vtable_pointer = "%" + to_string(counter++),
+  ll_vtable = "%" + to_string(counter++), ll_method_pointer = "%" + to_string(counter++), obj_struct = object->getType()->getLLVMType(), ll_method = "%" + to_string(counter++),
+  struct_vtable = "%struct." + obj_class->getName()->getLiteral() + "VTable*";
+  ir += "call\n";
+  string llvm_obj_type = object->getType()->getLLVMType();
+  llvm_obj_type.pop_back();
+  //ir += getLLVMLoadCode(ll_object, obj_addr, llvm_obj_type);
+  ir += tab + getLLVMGetElementPtr(ll_vtable_pointer, llvm_obj_type, obj_addr, 0, 0);
+  ir += tab + getLLVMLoadCode(ll_vtable, ll_vtable_pointer, struct_vtable);
+  ir += tab + getLLVMGetElementPtr(ll_method_pointer, struct_vtable, ll_vtable, 0, position_method);
+  ir += tab + getLLVMLoadCode(ll_method, ll_method_pointer, method->getLLVMStructure(object->getType()->getLiteral()));
+  vector<string> args_value, args_type;
+  args_type.push_back(llvm_obj_type + "*");
+  args_value.push_back(obj_addr);
+  for(auto arg : method->getFormals()->getFormals())//TODO faire plus propre(implementer dans une class methode ou call et utiliser .reserve)
+    args_type.push_back(arg->getType()->getLLVMType());
+  for(auto arg : node->getArgs()->getExpressions())//TODO la copie des arg doit etre faite ici ou dans l'implementation de la méthode.
+    args_value.push_back(arg->getLLVMAddress());
+  ir += tab + getLLVMCallCode(ll_method, method->getRetType()->getLLVMType(), args_value, args_type);
+  llvm_address_counters.pop();
+  llvm_address_counters.push(counter);
   return 0;
 }

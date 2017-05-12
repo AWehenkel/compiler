@@ -14,6 +14,7 @@ private :
 	TypeIdentifierNode* e_ret_type;
 	BlockNode* e_block;
 	ClassNode* e_class_scope;
+	unsigned int position;//Position in the vtable structure.
 	//Overloaded operator
 	friend inline bool operator==(MethodNode &method1, MethodNode &method2){
 		return method1.equals(method2);
@@ -33,9 +34,11 @@ public :
 	FormalsNode* getFormals() const {return e_formals;};
 	TypeIdentifierNode* getRetType() const {return e_ret_type;};
 	BlockNode* getBlock() const {return e_block;};
+	unsigned int getPosition(){return position;};
 
 	//Setter
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
+	void setPosition(unsigned int pos){position = pos;};
 
 	/*
 	equals

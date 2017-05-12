@@ -19,14 +19,26 @@ int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
 	// Can have no parents
 	if (!e_extends){
 		parent = table.find("Object")->second;
-		return 0;
+	}
+	else if(table.find(e_extends->getLiteral()) != table.end()){
+		parent = table.find(e_extends->getLiteral())->second;
+	}
+	else
+		return -1;
+	assignPositionToMethod();
+	return 0;
+}
+
+void ClassNode::assignPositionToMethod(){
+	if(!e_extends)
+		nb_method = 0;
+	else{
+		parent->assignPositionToMethod();
+		nb_method = parent->nb_method;
 	}
 
-	if(table.find(e_extends->getLiteral()) != table.end()){
-		parent = table.find(e_extends->getLiteral())->second;
-		return 0;
-	}
-	return -1;
+	for(auto method : methods)
+		method.second->setPosition(nb_method++);
 }
 
 bool ClassNode::hasField(FieldNode* field) const{

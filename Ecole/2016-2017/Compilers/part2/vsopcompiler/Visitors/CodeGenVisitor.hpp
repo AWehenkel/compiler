@@ -14,6 +14,7 @@ class CodeGenVisitor : public Visitor{
     std::string ir;
     std::string tab;
     VSOPNode* current_scope = NULL;
+    bool external_call = false;
   public :
     std::string getLLVMAllocationCode(std::string type, std::string name);
     std::string getLLVMLoadCode(std::string load_in, std::string load_from, std::string type);
@@ -22,6 +23,7 @@ class CodeGenVisitor : public Visitor{
     std::string getLLVMCallCode(std::string function_name, std::string return_type, std::vector<std::string> args_value, std::vector<std::string> args_type);
     std::string getLLVMBinaryCode(BinaryOperatorNode* node, std::string op1, std::string op2);
     std::string getLLVMUnaryCode(UnaryOperatorNode* node, std::string op);
+    std::string getLLVMGetElementPtr(std::string load_in, std::string type_struct, std::string load_from, size_t offset1, size_t offset2);
 
     int visitAssignNode(AssignNode *node);
     int visitBinaryOperatorNode(BinaryOperatorNode *node);
