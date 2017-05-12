@@ -141,6 +141,7 @@ start :
 																									}
 	| START_CODE_GEN program												{
 																										if(!syntax_error){
+																											$2->addClass(io_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
 																											if(!semantic_error){
 																												CodeGenVisitor* generator = new CodeGenVisitor();
@@ -278,7 +279,6 @@ class :
 																														$$ = new ClassNode($2, $5, $3, $2->getCol(), $2->getLine());
 																													 }else
 																														$$ = new ClassNode($2, $5, NULL, $2->getCol(), $2->getLine());
-																													delete $2;
 																													}
 ;
 
