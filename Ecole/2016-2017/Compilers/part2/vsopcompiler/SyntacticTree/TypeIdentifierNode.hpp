@@ -19,15 +19,15 @@ private :
 		return !(id1 == id2);
 	};
 
-	void setLLVMType(std::string content){
-		if(content == "int32")
+	void setLLVMType(std::string vsop_type){
+		if(vsop_type == "int32")
 			llvm_type = "i32";
-		else if(content == "bool")
+		else if(vsop_type == "bool")
 			llvm_type = "i1";
-		else if(content == "string")
-			llvm_type = "c";
+		else if(vsop_type == "string")
+			llvm_type = "i8";
 		else
-			llvm_type = "%struct."+ content + "*";
+			llvm_type = "%struct."+ vsop_type + "*";
 	};
 
 public :

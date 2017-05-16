@@ -172,7 +172,9 @@ TypeIdentifierNode* ClassNode::getDeclarationType(string id){
 
 const string ClassNode::getDeclarationLLVM(string id){
 	if(fields.find(id) != fields.end())
-		return fields.find(id)->second->getLLVMAddress();//TODO est ce que c'est vraiment mieux de stocker l'adresse de declaration du field dans son nom et non pas direct dans le fiedl.
+		return fields.find(id)->second->getLLVMAddress();
+	else if (id == "self")
+		return "%self";
 	else if(parent)
 		return parent->getDeclarationLLVM(id);
 

@@ -13,6 +13,7 @@ private :
 	TypeIdentifierNode* e_type;
 	ExpressionNode* e_init_expr = NULL;
 	ClassNode* e_class_scope;
+	unsigned int position; //Position in the class structure.
 
 public :
 	//Constructors
@@ -40,11 +41,12 @@ public :
 	//Public methods
 	//Setter
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
-
+	void setPosition(int pos) {position = pos;};
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};
 	ExpressionNode* getInitExpr() const {return e_init_expr;};
+	int getPosition(){return position;};
 
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};
