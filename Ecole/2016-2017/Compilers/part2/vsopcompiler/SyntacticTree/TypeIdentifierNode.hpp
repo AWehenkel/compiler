@@ -25,7 +25,7 @@ private :
 		else if(vsop_type == "bool")
 			llvm_type = "i1";
 		else if(vsop_type == "string")
-			llvm_type = "i8";
+			llvm_type = "i8*";
 		else
 			llvm_type = "%struct."+ vsop_type + "*";
 	};
@@ -47,8 +47,22 @@ public :
 	};
 
 	// getters
-	ClassNode* getClassType(){return t_class_type;};
-	std::string getLLVMType(){return llvm_type;};
+	ClassNode* getClassType() const{return t_class_type;};
+	std::string getLLVMType() const{return llvm_type;};
+
+	//TODO changer peut etre
+	std::string getInitLLVMValue() const{
+		std::string init_val;
+		if(llvm_type == "i32")
+			init_val = "0";
+		else if(llvm_type == "i1")
+			init_val = "0";
+		else if(llvm_type == "i8*")
+			init_val = "null";
+		else
+			init_val = "null";
+		return init_val;
+	};
 
 	/*
 	equals

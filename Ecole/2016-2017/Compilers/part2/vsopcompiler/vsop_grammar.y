@@ -121,7 +121,6 @@ void yyerror(const char *s);
 start :
 	START_LEXICAL Input
 	| START_SYNTAX program													{	if(!syntax_error){
-																											$2->addClass(io_node);
 																											cout << *$2;
 																											delete $2;
 																										}
@@ -435,7 +434,7 @@ int main (int argc, char *argv[]){
 	}
 
 	//Insert IO class if needed.
-	if(start_token == START_CODE_GEN || start_token == START_SEMANTIC || 1){
+	if(start_token == START_CODE_GEN || start_token == START_SEMANTIC){
 		FILE *io_class = fopen("IO.vsop", "r");
 		int t = start_token;
 		start_token = START_IO;
@@ -478,10 +477,6 @@ int main (int argc, char *argv[]){
 	if(syntax_error)
 		return -1;
 
-	//if(semantic_error)
-	//	cerr << file_name<< ":0:0: semantic error(s) in the file: " << endl;
-	//fclose(myfile);
-	//free(myfile);
 	return semantic_error;
 }
 

@@ -54,8 +54,8 @@ string MethodNode::getLLVMStructure(string struct_class) const{
 string MethodNode::getLLVMInstance(string class_name, string parent_name) const{
 	string code_inst = getLLVMStructure("%struct." + class_name);
 	if(!parent_name.empty()){
-		code_inst += " bitcast (" + getLLVMStructure("%struct." + parent_name) + " @" + parent_name + "_" + getName()->getLiteral() + ")";
-		code_inst += " to " + getLLVMStructure("%struct." + class_name);
+		code_inst += " bitcast (" + getLLVMStructure("%struct." + parent_name) + " @" + parent_name + "_" + getName()->getLiteral() + "";
+		code_inst += " to " + getLLVMStructure("%struct." + class_name) + ")";
 	}
 	else
 		code_inst += " @" + class_name + "_" + getName()->getLiteral();
