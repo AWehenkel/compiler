@@ -6,12 +6,12 @@ declare noalias i8* @malloc(i32)
 
 %struct.MainVTable = type {
 	i32 (%struct.Main*)*,
-	i1 (%struct.Main*, i32)*
+	i1 (%struct.Main*)*
 }
 
 @MainVTable_inst = global %struct.MainVTable{
 	i32 (%struct.Main*)* @Main_main,
-	i1 (%struct.Main*, i32)* @Main_test
+	i1 (%struct.Main*)* @Main_test
 }
 
 define void @Main_init(%struct.Main* %self){
@@ -41,43 +41,53 @@ null:   			; preds = %5
 	ret %struct.Main* %4
 }
 
-define i1 @test(%struct.Main* %self, i32 %1) #0 {
-	%2 = alloca %struct.Main*
-	store %struct.Main* %self, %struct.Main** %2
-	%3 = alloca i32
-	store i32 %1, i32* %3
-	%4 = alloca i1
-	store i1 false, i1* %4
-	%5 = load i1* %4
-	ret i1 %5
-}
-
-define i32 @main(%struct.Main* %self) #0 {
+define i1 @Main_test(%struct.Main* %self) #0 {
 	%1 = alloca %struct.Main*
 	store %struct.Main* %self, %struct.Main** %1
-	%2 = alloca %struct.unit*
-	br label %loop_2
-
-loop_2:
+	%2 = alloca i1
 	%3 = alloca i1
-	store i1 true, i1* %3
-	%4 = load i1* %3
-	br i1 %4, label %do_2, label %end_2
+	; let
+	%4 = alloca i32
+	%5 = alloca i1
+	store i1 true, i1* %5
+	store %3 %5, %3* i1
+	%6 = load i1* %4
+	store i1 %6, i1* %2
+	%7 = load i1* %2
+	ret i1 %7
+}
 
-do_2:
-	%5 = alloca i32
-	store i32 1, i32* %5
+define i32 @Main_main(%struct.Main* %self) #0 {
+	%1 = alloca %struct.Main*
+	store %struct.Main* %self, %struct.Main** %1
+	%2 = alloca i32
+	%3 = alloca %struct.unit*
+	; while
+	br label %loop_3
+
+loop_3:
+	%4 = alloca i1
+	store i1 true, i1* %4
+	%5 = load i1* %4
+	br i1 %5, label %do_3, label %end_3
+
+do_3:
+	; binary operation
 	%6 = alloca i32
 	store i32 1, i32* %6
-	%7 = load i32* %5
+	%7 = alloca i32
+	store i32 1, i32* %7
 	%8 = load i32* %6
-	%9 = add nuw i32 %7, %8	br label %loop_2
+	%9 = load i32* %7
+	%10 = add nuw i32 %8, %9	br label %loop_3
 
-end_2:
-	%10 = alloca i32
-	store i32 0, i32* %10
-	%11 = load i32* %10
-	ret i32 %11
+end_3:
+	%11 = alloca i32
+	store i32 0, i32* %11
+	%12 = load i32* %11
+	store i32 %12, i32* %2
+	%13 = load i32* %2
+	ret i32 %13
 }
 
 %struct.IO = type {
@@ -129,64 +139,82 @@ null:   			; preds = %5
 	ret %struct.IO* %4
 }
 
-define %struct.IO* @print(%struct.IO* %self, i8 %1) #0 {
-	%2 = alloca %struct.IO*
-	store %struct.IO* %self, %struct.IO** %2
-	%3 = alloca i8
-	store i8 %1, i8* %3
-	%4 = alloca %struct.IO*
-	store %struct.IO* , %struct.IO** %4
-	%5 = load %struct.IO** %4
-	ret %struct.IO* %5
-}
-
-define %struct.IO* @printBool(%struct.IO* %self, i1 %1) #0 {
-	%2 = alloca %struct.IO*
-	store %struct.IO* %self, %struct.IO** %2
-	%3 = alloca i1
-	store i1 %1, i1* %3
-	%4 = alloca %struct.IO*
-	store %struct.IO* , %struct.IO** %4
-	%5 = load %struct.IO** %4
-	ret %struct.IO* %5
-}
-
-define %struct.IO* @printInt32(%struct.IO* %self, i32 %1) #0 {
-	%2 = alloca %struct.IO*
-	store %struct.IO* %self, %struct.IO** %2
-	%3 = alloca i32
-	store i32 %1, i32* %3
-	%4 = alloca %struct.IO*
-	store %struct.IO* , %struct.IO** %4
-	%5 = load %struct.IO** %4
-	ret %struct.IO* %5
-}
-
-define i8 @inputLine(%struct.IO* %self) #0 {
+define %struct.IO* @IO_print(%struct.IO* %self, i8 %s) #0 {
 	%1 = alloca %struct.IO*
 	store %struct.IO* %self, %struct.IO** %1
 	%2 = alloca i8
-	store i8 "test", i8* %2
-	%3 = load i8* %2
-	ret i8 %3
+	store i8 %s, i8* %2
+	%3 = alloca %struct.IO*
+	%4 = alloca %struct.IO*
+	store %struct.IO* %self, %struct.IO** %4
+	%5 = load %struct.IO** %4
+	store %struct.IO* %5, %struct.IO** %3
+	%6 = load %struct.IO** %3
+	ret %struct.IO* %6
 }
 
-define i1 @inputBool(%struct.IO* %self) #0 {
+define %struct.IO* @IO_printBool(%struct.IO* %self, i1 %b) #0 {
 	%1 = alloca %struct.IO*
 	store %struct.IO* %self, %struct.IO** %1
 	%2 = alloca i1
-	store i1 true, i1* %2
-	%3 = load i1* %2
-	ret i1 %3
+	store i1 %b, i1* %2
+	%3 = alloca %struct.IO*
+	%4 = alloca %struct.IO*
+	store %struct.IO* %self, %struct.IO** %4
+	%5 = load %struct.IO** %4
+	store %struct.IO* %5, %struct.IO** %3
+	%6 = load %struct.IO** %3
+	ret %struct.IO* %6
 }
 
-define i32 @inputInt32(%struct.IO* %self) #0 {
+define %struct.IO* @IO_printInt32(%struct.IO* %self, i32 %i) #0 {
 	%1 = alloca %struct.IO*
 	store %struct.IO* %self, %struct.IO** %1
 	%2 = alloca i32
-	store i32 42, i32* %2
-	%3 = load i32* %2
-	ret i32 %3
+	store i32 %i, i32* %2
+	%3 = alloca %struct.IO*
+	%4 = alloca %struct.IO*
+	store %struct.IO* %self, %struct.IO** %4
+	%5 = load %struct.IO** %4
+	store %struct.IO* %5, %struct.IO** %3
+	%6 = load %struct.IO** %3
+	ret %struct.IO* %6
+}
+
+define i8 @IO_inputLine(%struct.IO* %self) #0 {
+	%1 = alloca %struct.IO*
+	store %struct.IO* %self, %struct.IO** %1
+	%2 = alloca i8
+	%3 = alloca i8
+	store i8 "test", i8* %3
+	%4 = load i8* %3
+	store i8 %4, i8* %2
+	%5 = load i8* %2
+	ret i8 %5
+}
+
+define i1 @IO_inputBool(%struct.IO* %self) #0 {
+	%1 = alloca %struct.IO*
+	store %struct.IO* %self, %struct.IO** %1
+	%2 = alloca i1
+	%3 = alloca i1
+	store i1 true, i1* %3
+	%4 = load i1* %3
+	store i1 %4, i1* %2
+	%5 = load i1* %2
+	ret i1 %5
+}
+
+define i32 @IO_inputInt32(%struct.IO* %self) #0 {
+	%1 = alloca %struct.IO*
+	store %struct.IO* %self, %struct.IO** %1
+	%2 = alloca i32
+	%3 = alloca i32
+	store i32 42, i32* %3
+	%4 = load i32* %3
+	store i32 %4, i32* %2
+	%5 = load i32* %2
+	ret i32 %5
 }
 
 attributes #0 = { nounwind "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="pentium4" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }

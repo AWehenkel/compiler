@@ -6,12 +6,10 @@
 using namespace std;
 //TODO Storer dans toutes les expressions leur valeur de retour
 
-// TODO : attention ça peut changer
 string CodeGenVisitor::getLLVMAllocationCode(string name, string type){
   return name + " = alloca " + type + "\n";
 }
 
-// TODO : attention au types
 string CodeGenVisitor::getLLVMLoadCode(string load_in, string load_from, string type){
   return load_in + " = load " + type + "* " + load_from + "\n";
 }
@@ -25,7 +23,9 @@ string CodeGenVisitor::getLLVMBitCastCode(string store_address, string first_typ
 }
 
 string CodeGenVisitor::getLLVMCallCode(string function_name, string return_type, vector<string> args_value, vector<string> args_type){
+
   string to_ret = "call " + return_type + " @" + function_name + "(";
+  // Adding all the arguments and their types
   if(args_value.size()){
     for(size_t i = 0; i < args_value.size(); i++)
       to_ret += args_type.at(i) + " " + args_value.at(i) + ", ";
@@ -33,6 +33,7 @@ string CodeGenVisitor::getLLVMCallCode(string function_name, string return_type,
   }
   else
     to_ret += ")\n";
+
   return to_ret;
 }
 
@@ -45,6 +46,7 @@ string CodeGenVisitor::getLLVMReturnCode(string to_ret, string type){
 }
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
+
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   string code, to_ret = "%" + to_string(counter++);
@@ -66,7 +68,7 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       code = to_ret + " = add nuw i32 " + op1 + ", "  + op2;
       break;
     case b_op_equal :
-      //TODO Change to handle other type than int32.
+      //TODO : Change to handle other type than int32.
       code = to_ret + " = eq i32 " + op1 + ", "  + op2;
       break;
     case b_op_times :
@@ -84,33 +86,39 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       break;
   }
   llvm_address_counters.push(counter);
+
   // Store the value if needed by the parent node
-  if(node->getLLVMAddress() != "")
+  if(node->getLLVMAddress().size())
     code += "\n" + tab + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32"); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
-  //code += "\n" + tab + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32");
+
   return code;
 }
 
 string CodeGenVisitor::getLLVMUnaryCode(UnaryOperatorNode* node, string op){
+
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   string code, to_ret = "%" + to_string(counter++);
+  string type;
 
   switch (node->getOperator()) {
     case u_op_not :
-    // ! pour le not, il y a le intrisics bitreverse ou on peut faire un xor avec un 1
-      code = to_ret + " = xor i1 " + op + ", 1";
+      code = to_ret + " = add i1 " + op + ", 1";
+      type = "i1";
       break;
     case u_op_minus :
-    // ! pour le -, <result> = sub i32 0, %val          ; yields i32:result = -%var
       code = to_ret + " = sub i32 0, "  + op;
+      type = "i32";
       break;
     case u_op_isnull :
-    // ! pour le isnull..., faut checker d'une manière ou d'une autre que de la mémoire a déjà été allouée à l'objet (qu'il a été instantié -> new)
+      // TODO : ! pour le isnull..., faut checker d'une manière ou d'une autre que de la mémoire a déjà été allouée à l'objet (qu'il a été instantié -> new)
+      type = "i1";
       break;
   }
   llvm_address_counters.push(counter);
-  code += "\n" + tab +  getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32"); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
+
+  code += "\n" + tab +  getLLVMStoreCode(to_ret, node->getLLVMAddress(), type);
+
   return code;
 }
 
@@ -119,10 +127,13 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   ExpressionNode* expr = node->getExpression();
   ObjectIdentifierNode* name = node->getName();
   string expr_addr = node->getLLVMAddress();
+  int counter;
 
-  // Visit the expression at the right of the assignment TODO pour les literal il faudrait ne pas stocker dans une nouvelle addresse mais utiliser le literal en lui meme.
+  ir += tab + "; assignement\n";
+
+  // Visit the expression at the right of the assignment
   if(!expr->alreadyInstanciated()){
-    int counter = llvm_address_counters.top();
+    counter = llvm_address_counters.top();
     llvm_address_counters.pop();
     expr->setLLVMAddress(counter++);
     ir += tab + getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
@@ -131,18 +142,23 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
     // Visit the init expression
     if (expr->accept(this) < 0)
       return -1;
-  }
-  else
-    expr->setLLVMAddress(current_scope->getDeclarationLLVM(expr->getLiteral()));
-  // Store the value of the expression in the left term
-  ir += tab + getLLVMStoreCode(expr->getLLVMAddress(), current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType()); // TODO : problème avec name, pas de llvm address
 
-  // Store the value if needed by the parent node
+  }else{
+    expr->setLLVMAddress(current_scope->getDeclarationLLVM(expr->getLiteral()));
+  }
+
+  // Store the value of the expression in the left term
+  counter = llvm_address_counters.top();
+  llvm_address_counters.pop();
+  string load = "%" + to_string(counter++);
+  llvm_address_counters.push(counter);
+  ir += tab + getLLVMLoadCode(load, expr->getLLVMAddress(), expr->getLLVMType());
+  ir += tab + getLLVMStoreCode(load, current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType());
+
   if(expr_addr != "")
-    ir += tab + getLLVMStoreCode(expr->getLLVMAddress(), expr_addr, expr->getLLVMType());
+    ir += tab + getLLVMStoreCode(load, expr_addr, expr->getLLVMType());
 
   return 0;
-
 }
 
 int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
@@ -150,9 +166,9 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   ExpressionNode* left = node->getLeft();
   ExpressionNode* right = node->getRight();
 
+  ir += tab + "; binary operation\n";
+
   // Visit the children nodes
-  // TODO : est-ce qu'il faut pas d'abord checker, s'il n'y a pas déjà une address dans les fils ? genre si c'est un objet, la mếmoire est
-  // sensé être déjà allouée non ?
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   left->setLLVMAddress(counter++);
@@ -169,17 +185,17 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   if (right->accept(this) < 0)
     return -1;
 
-  // Make the operation
+  // Load the two operands
   counter = llvm_address_counters.top();
   llvm_address_counters.pop();
-  string llvm_address_3 = "%" + to_string(counter++);
-  string llvm_address_4 = "%" + to_string(counter++);
+  string left_op_address = "%" + to_string(counter++);
+  string right_op_address = "%" + to_string(counter++);
   llvm_address_counters.push(counter);
   // Load the values of the two child
-  ir += tab + getLLVMLoadCode(llvm_address_3, left->getLLVMAddress(), left->getLLVMType());
-  ir += tab + getLLVMLoadCode(llvm_address_4, right->getLLVMAddress(), right->getLLVMType());
-  // Store the result
-  ir += tab + getLLVMBinaryCode(node, llvm_address_3, llvm_address_4);
+  ir += tab + getLLVMLoadCode(left_op_address, left->getLLVMAddress(), left->getLLVMType());
+  ir += tab + getLLVMLoadCode(right_op_address, right->getLLVMAddress(), right->getLLVMType());
+  // Make the operation and store the result
+  ir += tab + getLLVMBinaryCode(node, left_op_address, right_op_address);
 
   return 0;
 }
@@ -188,6 +204,8 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
 
   std::vector<ExpressionNode*> exprs = node->getExpressions();
   int counter;
+
+  // Visit all the expresssions contained in the block
   for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
     ExpressionNode* expr = *it;
     counter = llvm_address_counters.top();
@@ -200,22 +218,35 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   }
 
   // Get the address where we stored the last expression and store it as return value
-  ExpressionNode* last = *(exprs.end()-1);
-  node->setLastExprLLVMAddr(last->getLLVMAddress());
+  if (node->getLLVMAddress().size()){
+    ExpressionNode* last = *(exprs.end()-1);
+    counter = llvm_address_counters.top();
+    llvm_address_counters.pop();
+    string load = "%" + to_string(counter++);
+    llvm_address_counters.push(counter);
+    ir += tab + getLLVMLoadCode(load, last->getLLVMAddress(), last->getLLVMType());
+    ir += tab + getLLVMStoreCode(load, node->getLLVMAddress(), node->getLLVMType());
+  }
 
   return 0;
 }
 
 int CodeGenVisitor::visitCallNode(CallNode* node){
+
+  ir += tab + "; call\n";
+
+  // TODO : code à nettoyer
   if(external_call)
-    return -1;//A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
-  string method_name = node->getMethodName()->getLiteral();
+    return -1;// TODO : A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
+
   ExpressionNode* object = node->getObject();
   string obj_addr = object->getLLVMAddress();
   ClassNode* obj_class = object->getType()->getClassType();
+  string method_name = node->getMethodName()->getLiteral();
   MethodNode* method = obj_class->getMethod(method_name);
   obj_class->assignPositionToMethod();
   size_t position_method = method->getPosition();
+
   //Load of the vtable
   int counter = llvm_address_counters.top();
   string ll_vtable_pointer = "%" + to_string(counter++),
@@ -249,6 +280,8 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   ExpressionNode* else_action = node->getElseAction();
   string expr_addr = node->getLLVMAddress();
 
+  ir += tab + "; condition\n";
+
   // Generate code for the condition
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
@@ -265,7 +298,7 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   else
     ir += tab + "br i1 " + condition->getLLVMAddress() + "*, label %then_" + br_id + ", label %end_" + br_id + "\n";
 
-  // First branch1
+  // First branch
   ir += tab + "\nthen_" + br_id + ":\n";
   tab += "\t";
   counter = llvm_address_counters.top();
@@ -280,6 +313,7 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
       ir += tab + getLLVMStoreCode(action->getLLVMAddress(), expr_addr, action->getLLVMType());
   tab.pop_back();
 
+  // Branch 2
   if(else_action){
     ir += tab + "\tbr label %end_" + br_id + "\n";
     ir += tab + "\nelse_" + br_id + ":\n";
@@ -302,7 +336,10 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
 }
 
 int CodeGenVisitor::visitLetNode(LetNode *node){
-  ir += tab + "LetNode: \n";
+
+  // TODO ; code à rechecker
+
+  ir += tab + "; let\n";
 
   ObjectIdentifierNode* object_id = node->getObjectId();
 	TypeIdentifierNode* object_type = node->getObjectType();
@@ -313,14 +350,14 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
   VSOPNode* prev_scope = current_scope;
   current_scope = node;
 
-  // Allocate space for the field // TODO : je suis pas sur que c'est le mieux de le faire là ou dans le classbody (différence entre le name et le filednode en lui-même)
+  // Allocate space for the let
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   node->setLLVMAddress(counter++);
-  ir += tab + getLLVMAllocationCode(node->getLLVMAddress(), object_type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
+  ir += tab + getLLVMAllocationCode(node->getLLVMAddress(), object_type->getLLVMType());
   llvm_address_counters.push(counter);
 
-  // If there is an init expression, store its value in the field
+  // If there is an init expression, store its value in the let
   if (init_expr != NULL){
     // Allocate memory for the init expression
     counter = llvm_address_counters.top();
@@ -332,7 +369,7 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
     if (init_expr->accept(this) < 0)
       return -1;
     // Store the value of the init expression in the field
-    ir += tab + getLLVMStoreCode(init_expr->getLLVMAddress(), node->getLLVMAddress(), object_type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
+    ir += tab + getLLVMStoreCode(init_expr->getLLVMAddress(), node->getLLVMAddress(), object_type->getLLVMType());
   }
 
   counter = llvm_address_counters.top();
@@ -351,14 +388,17 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
   return 0;
 }
 
-//TODO Changer les constructeur de LiteralNode et faire en sorte de prendre en charge correctement les literaux.
+//TODO : Changer les constructeur de LiteralNode et faire en sorte de prendre en charge correctement les literaux.
 int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
   ir += tab + getLLVMStoreCode(node->getLiteral(), node->getLLVMAddress(), node->getLLVMType());
   return 0;
 }
 
 int CodeGenVisitor::visitNewNode(NewNode *node){
+
   string expr_addr = node->getLLVMAddress();
+
+  ir += tab + "; new\n";
 
   string new_function = "@"+ node->getTypeId()->getLiteral() + "_new";
   if (expr_addr != "")
@@ -370,6 +410,7 @@ int CodeGenVisitor::visitNewNode(NewNode *node){
 }
 
 int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
+  // TODO : il faut particulariser le truc au différents cas , genre pour un field il faut faire un getelementptr sur la structure
   if(current_scope && node->getLLVMAddress().size())
     ir += tab + getLLVMStoreCode(current_scope->getDeclarationLLVM(node->getLiteral()), node->getLLVMAddress(), node->getLLVMType());
   return 0;
@@ -379,9 +420,9 @@ int CodeGenVisitor::visitUnaryOperatorNode(UnaryOperatorNode* node){
 
   ExpressionNode* operand = node->getOperand();
 
+  ir += tab + "; unary\n";
+
   // Visit the child
-  // TODO : est-ce qu'il faut pas d'abord checker, s'il n'y a pas déjà une address dans les fils ? genre si c'est un objet, la mếmoire est
-  // sensé être déjà allouée non ?
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   operand->setLLVMAddress(counter++);
@@ -390,12 +431,13 @@ int CodeGenVisitor::visitUnaryOperatorNode(UnaryOperatorNode* node){
   if (operand->accept(this) < 0)
     return -1;
 
-  // Make the operation
+  // Load the value of the operand
   counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   string llvm_address = "%" + to_string(counter++);
   llvm_address_counters.push(counter);
   ir += tab + getLLVMLoadCode(llvm_address, operand->getLLVMAddress(), operand->getLLVMType());
+  // Make the operation and store it
   ir += tab + getLLVMUnaryCode(node, llvm_address);
 
   return 0;
@@ -406,12 +448,14 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
   ExpressionNode* condition = node->getCondition();
   ExpressionNode* action = node->getAction();
 
+  ir += tab + "; while\n";
+
   // Branch to the condition
-  string br_id = node->getLLVMAddress().substr(1,1);
+  string br_id = node->getLLVMAddress().substr(1, 1);
   ir += tab + "br label %loop_" + br_id + "\n";
   ir += "\nloop_" + br_id + ":\n";
 
-  // Visit the condtion
+  // Visit the condition
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   condition->setLLVMAddress(counter++);
@@ -419,6 +463,7 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
   llvm_address_counters.push(counter);
   if (condition->accept(this) < 0)
     return -1;
+
   // Load the value of the condition
   counter = llvm_address_counters.top();
   llvm_address_counters.pop();
@@ -428,7 +473,6 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
 
   // Branch according to the condition
   ir += tab + "br i1 " + conditon_value + ", label %do_" + br_id + ", label %end_" + br_id + "\n";
-
   ir += "\ndo_" + br_id + ":\n";
   if (action->accept(this) < 0)
     return -1;
@@ -451,6 +495,9 @@ int CodeGenVisitor::visitClassBodyNode(ClassBodyNode *node){
 }
 
 int CodeGenVisitor::visitClassNode(ClassNode *node){
+
+  // TODO : nettoyer le code
+
   if(node->getName()->getLiteral() == "IO")
     external_call = true;
   else
@@ -527,12 +574,13 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
     args_type.push_back("%struct." + node->getParent()->getName()->getLiteral() + "*");
     ir += tab + getLLVMCallCode(node->getParent()->getName()->getLiteral() + "_init", "void", args_value, args_type);
   }
+
   int i = 0;
   for(auto field : new_fields){
     i++;//TODO pas très claire si le field->getType()->getLLVMType() en dessous doit toujours être i32 ou bien dépend du type.
-    field->setLLVMAddress(++var_counter);
+    field->setLLVMAddressAsString(field->getName()->getLiteral());
     ir += tab + getLLVMGetElementPtr(field->getLLVMAddress(), struct_name, "%self", 0, i);
-    //ir += tab + field->getLLVMAddress() + " = getelementptr inbounds " + struct_name + "* %self, i32 0, i32 " + to_string(i) + "\n";
+    field->setPosition(i);
     string init_value = "0"; //TODO Peut être changer le zero par une valeur qui dépend du type.
     ExpressionNode *init_expr = field->getInitExpr();
     if (init_expr){
@@ -590,89 +638,61 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   return 0;
 }
 
-// TODO : Checker si ça a vraiment un interet
-/*int CodeGenVisitor::visitFieldNode(FieldNode *node){
-
-  ObjectIdentifierNode* name = node->getName();
-  ExpressionNode* init_expr = node->getInitExpr();
-  TypeIdentifierNode* type = node->getType();
-
-  // Allocate space for the field // TODO : je suis pas sur que c'est le mieux de le faire là ou dans le classbody (différence entre le name et le filednode en lui-même)
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  name->setLLVMAddress(counter++);
-  // TODO : comment se fait-il que le nom du field n'aie pas de type ?
-  ir += tab + getLLVMAllocationCode(name->getLLVMAddress(), type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
-  llvm_address_counters.push(counter);
-  // If there is an init expression, store its value in the field
-  if (init_expr != NULL){
-    // Allocate memory for the init expression
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    init_expr->setLLVMAddress(counter++);
-    ir += tab + getLLVMAllocationCode(init_expr->getLLVMAddress(), init_expr->getLLVMType());
-    llvm_address_counters.push(counter);
-    // Visit the init expression
-    if (init_expr->accept(this) < 0)
-      return -1;
-    // Store the value of the init expression in the field
-    ir += tab + getLLVMStoreCode(init_expr->getLLVMAddress(), name->getLLVMAddress(), type->getLLVMType()); // TODO : faudrait changer type par name ce serait plus propre
-  }
-  return 0;
-}*/
-
 
 int CodeGenVisitor::visitMethodNode(MethodNode *node){
 
   VSOPNode* prev_scope = current_scope;
+  ClassNode* current_class = (ClassNode*) prev_scope;
   current_scope = node;
 
   TypeIdentifierNode* ret_type = node->getRetType();
   FormalsNode* formals = node->getFormals();
 
-  // Start a new count from the number of fields : TODO : gros doute sur la manière dont on doit gérer les fields..., ça n'a pas vraiment de sens de leur donner une address
-  // comme on le fait pour le moment non?
+  // TODO : gros doute sur la manière dont on doit gérer les fields..., ça n'a pas vraiment de sens de leur donner une address
+  // comme on le fait pour le moment non? --> il faut appeler sur le self pour obtenir le bon élément
   int counter = 1;
 
   ClassNode* cur_class = (ClassNode*) prev_scope;
-  ir += tab + "define " + ret_type->getLLVMType() + " @" + node->getName()->getLiteral();
+  ir += tab + "define " + ret_type->getLLVMType() + " @" + current_class->getName()->getLiteral() + "_" + node->getName()->getLiteral();
   ir += "(%struct." + cur_class->getName()->getLiteral() + "* %self, ";
 	for(auto formal : formals->getFormals()){
-    formal->setLLVMAddress(counter++);
+    formal->setLLVMAddressAsString(formal->getName()->getLiteral());
 		ir += formal->getType()->getLLVMType() + " " + formal->getLLVMAddress() + ", ";
   }
 	ir.replace(ir.size() - 2, 2, ")");
   ir += " #0 {\n";
 
-  tab += "\t";
   // Allocate space for the arguments
+  tab += "\t";
   string address = "%" + to_string(counter++);
   ir += tab + getLLVMAllocationCode(address, "%struct." + cur_class->getName()->getLiteral() + "*");
   ir += tab + getLLVMStoreCode("%self", address, "%struct." + cur_class->getName()->getLiteral() + "*");
-  //ir += tab + "store %struct." + cur_class->getName()->getLiteral() + "* %self, %struct." + cur_class->getName()->getLiteral() + "* " + address + "\n";
   for(auto formal : formals->getFormals()){
     address = "%" + to_string(counter++);
     ir += tab + getLLVMAllocationCode(address, formal->getType()->getLLVMType());
     ir += tab + getLLVMStoreCode(formal->getLLVMAddress(), address, formal->getType()->getLLVMType());
-    //ir += tab + "store " + formal->getType()->getLLVMType() + " " + formal->getLLVMAddress() + ", " + formal->getType()->getLLVMType() + "* " + address + "\n";
   }
-  llvm_address_counters.push(counter);
-  // Visit the method instructions
-  Visitor::visitMethodNode(node);
-  counter = llvm_address_counters.top();
 
-  // Make a return statement by getting the address of the last expression of the block
-  string ret_address = node->getBlock()->getLastExprLLVMAddr();
-  // Load its value
-  string to_ret = "%" + to_string(counter);
-  ir += tab + getLLVMLoadCode(to_ret, ret_address, node->getRetType()->getLLVMType());
+  // Visit the block of instructions
+  BlockNode* block = node->getBlock();
+  block->setLLVMAddress(counter++);
+  ir += tab + getLLVMAllocationCode(block->getLLVMAddress(), block->getLLVMType());
+  llvm_address_counters.push(counter);
+  if (block->accept(this) < 0)
+    return -1;
+
+  // Make a return statement by returning the value of the block
+  counter = llvm_address_counters.top();
+  string to_ret = "%" + to_string(counter++);
+  ir += tab + getLLVMLoadCode(to_ret, block->getLLVMAddress(), node->getRetType()->getLLVMType());
   ir += tab + getLLVMReturnCode(to_ret, node->getRetType()->getLLVMType());
 
   tab.pop_back();
-
   ir += tab + "}\n\n";
 
+  // Save back the scope so that the following methods know to which class they belong
   current_scope = prev_scope;
+
   return 0;
 }
 

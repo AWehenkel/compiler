@@ -1,6 +1,6 @@
 class Main {
-  test (a : int32) : bool {
-    false
+  test () : bool {
+    let a : int32 in true
   }
   main () : int32 {
     while true
