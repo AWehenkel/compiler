@@ -25,7 +25,7 @@ private :
 		else if(content == "bool")
 			llvm_type = "i1";
 		else if(content == "string")
-			llvm_type = "c";
+			llvm_type = "i8";
 		else
 			llvm_type = "%struct."+ content + "*";
 	};

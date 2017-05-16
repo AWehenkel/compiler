@@ -6,6 +6,8 @@ struct Child;
 struct Parent;
 struct ParentVTable;
 
+void Child_overriddenMethod(struct Child* c);
+
 // A ChildVTable must be able to masquerade as a ParentVTable
 struct ParentVTable {
   // First, parent methods in the same order
@@ -19,13 +21,13 @@ struct Parent {
   int inheriteField; // Parent fields, in the same order as parent!
 };
 
-void Parent_init(struct Parent *self) {
-  self->inheriteField = 0;
-  self->_vtable = &ParentVTable_inst; // Override vtable
-}
-
 void Parent_inheritedMethod (struct Parent* p){}
 void Parent_overriddenMethod (struct Parent* p){}
+
+void Parent_init(struct Parent *self) {
+  self->inheriteField = 0;
+  //self->_vtable = &ParentVTable_inst; // Override vtable
+}
 
 // Child VTable can mix inherited, overridden and new methods
 struct ParentVTable ParentVTable_inst = {
@@ -77,8 +79,12 @@ struct Child *Child_new() {
 };
 
 int main () {
+
+  int i = 0;
+  while(i<5){
+    ++i;
+  }
+
   // let myObject : MyClass <- new MyClass in
-  struct Parent *myObject = Child_new();
-  // myObject.someOtherMethod(42)
-  myObject->_vtable->newMethod(myObject, 42);
+  struct Child;
 }

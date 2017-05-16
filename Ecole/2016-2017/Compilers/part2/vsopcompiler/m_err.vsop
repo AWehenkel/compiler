@@ -1,11 +1,10 @@
 class Main {
-  a : int32 <- 0;
-  test () : bool {
+  test (a : int32) : bool {
     false
   }
   main () : int32 {
-    while a < 5
-    do a <- a + 1;
+    while true
+    do 1 + 1;
     0
   }
 }

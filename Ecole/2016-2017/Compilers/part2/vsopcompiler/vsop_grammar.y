@@ -146,6 +146,17 @@ start :
 																											if(!semantic_error){
 																												CodeGenVisitor* generator = new CodeGenVisitor();
 																												$2->accept(generator);
+																												string ir = generator->getIR();
+																												string filename_no_ext;
+																												filename_no_ext = filename_no_ext.append(file_name);
+																												filename_no_ext = filename_no_ext.substr(0, filename_no_ext.size()-4);
+																												ofstream myfile;
+																											  myfile.open (filename_no_ext + "llvm");
+																											  myfile << ir;
+																											  myfile.close();
+																												string command = "llc-3.5 -filetype=obj -o " + filename_no_ext + "o " + filename_no_ext + "llvm";
+																												system(command.c_str());
+																												//cout << ir << endl;
 																												delete generator;
 																											}
 																										}
