@@ -599,7 +599,7 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
 
 int CodeGenVisitor::visitCallNode(CallNode* node){
   if(external_call)
-    return -1;//A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
+    return genExternalCallCode(node);//A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
   string method_name = node->getMethodName()->getLiteral();
   ExpressionNode* object = node->getObject();
   string obj_addr = object->getLLVMAddress();
@@ -633,4 +633,31 @@ int CodeGenVisitor::visitCallNode(CallNode* node){
   return 0;
 }
 
+int CodeGenVisitor::genExternalCallCode(node){
+  string method_name = node->getMethodName()->getLiteral();
+  ExpressionNode* object = node->getObject();
+  string obj_addr = object->getLLVMAddress();
+  ClassNode* obj_class = object->getType()->getClassType();
+  MethodNode* method = obj_class->getMethod(method_name);
+  obj_class->assignPositionToMethod();
+  size_t position_method = method->getPosition();
+  //Load of the vtable
+  int counter = llvm_address_counters.top();
+  string ll_vtable_pointer = "%" + to_string(counter++),
+  ll_vtable = "%" + to_string(counter++), obj_struct = object->getType()->getLLVMType(), ll_method = method_name,
+  struct_vtable = "%struct." + obj_class->getName()->getLiteral() + "VTable*";
+  ir += "call\n";
+  string llvm_obj_type = object->getType()->getLLVMType();
+  llvm_obj_type.pop_back();
+  //ir += getLLVMLoadCode(ll_object, obj_addr, llvm_obj_type);
+  vector<string> args_value, args_type;
+  for(auto arg : method->getFormals()->getFormals())//TODO faire plus propre(implementer dans une class methode ou call et utiliser .reserve)
+    args_type.push_back(arg->getType()->getLLVMType());
+  for(auto arg : node->getArgs()->getExpressions())//TODO la copie des arg doit etre faite ici ou dans l'implementation de la méthode.
+    args_value.push_back(arg->getLLVMAddress());
+  ir += tab + getLLVMCallCode(ll_method, method->getRetType()->getLLVMType(), args_value, args_type);
+  llvm_address_counters.pop();
+  llvm_address_counters.push(counter);
+  return 0;
+}
 //int CodeGenVisitor::visitBraceNode()

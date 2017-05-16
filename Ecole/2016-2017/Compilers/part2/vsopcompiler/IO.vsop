@@ -1,6 +1,7 @@
 class IO {
   print(s : string) : IO {
     (* print s on stdout, then return self *)
+    print(s);
     self
   }
 

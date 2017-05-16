@@ -25,6 +25,8 @@ class CodeGenVisitor : public Visitor{
     std::string getLLVMUnaryCode(UnaryOperatorNode* node, std::string op);
     std::string getLLVMGetElementPtr(std::string load_in, std::string type_struct, std::string load_from, size_t offset1, size_t offset2);
 
+    int genExternalCallCode(CallNode* node);
+
     int visitAssignNode(AssignNode *node);
     int visitBinaryOperatorNode(BinaryOperatorNode *node);
     int visitBlockNode(BlockNode *node);
