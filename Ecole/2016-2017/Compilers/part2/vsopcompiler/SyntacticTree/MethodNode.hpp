@@ -34,6 +34,7 @@ public :
 	FormalsNode* getFormals() const {return e_formals;};
 	TypeIdentifierNode* getRetType() const {return e_ret_type;};
 	BlockNode* getBlock() const {return e_block;};
+	ClassNode* getClassScope() const {return e_class_scope;};
 	unsigned int getPosition(){return position;};
 
 	//Setter
@@ -66,6 +67,7 @@ public :
 	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	const std::string getDeclarationLLVM(std::string id);
+	FieldNode* getFieldFromId(std::string id);
 	std::string getLiteral(bool with_type = false) const;
 };
 

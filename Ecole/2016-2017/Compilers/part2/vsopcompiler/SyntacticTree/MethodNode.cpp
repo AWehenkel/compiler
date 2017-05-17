@@ -37,6 +37,10 @@ const string MethodNode::getDeclarationLLVM(string id){
 	return to_ret;
 }
 
+FieldNode* MethodNode::getFieldFromId(string id){
+		return e_class_scope->getFieldFromId(id);
+}
+
 string MethodNode::getLiteral(bool with_type) const {
 	return "Method(" + e_name->getLiteral(with_type) + ", " + e_formals->getLiteral(with_type) + ", "
 									 + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";

@@ -189,6 +189,7 @@ public :
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	const std::string getDeclarationLLVM(std::string id);
+	FieldNode* getFieldFromId(std::string id);
 	std::string getLiteral(bool with_type = false) const;
 };
 
