@@ -375,7 +375,6 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
 //TODO : Changer les constructeur de LiteralNode et faire en sorte de prendre en charge correctement les literaux.
 int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
   string value = node->getLiteral();
-  cout << node->getLLVMType() << endl;
   if(node->getLLVMType() == "i8*"){
     //int id = llvm_address_counters.top();
     //llvm_address_counters.pop();

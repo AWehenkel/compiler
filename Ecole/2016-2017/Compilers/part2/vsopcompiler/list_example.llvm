@@ -260,20 +260,20 @@ define i32 @Cons_length(%struct.Cons* %self) #0 {
 %struct.MainVTable = type {
 	i32 (%struct.Main*)*,
 	%struct.IO* (%struct.Main*, i8*)*,
-	%struct.IO* (%struct.Main*, i1)*,
-	%struct.IO* (%struct.Main*, i32)*,
 	i1 (%struct.Main*)*,
+	%struct.IO* (%struct.Main*, i1)*,
 	i8* (%struct.Main*)*,
+	%struct.IO* (%struct.Main*, i32)*,
 	i32 (%struct.Main*)*
 }
 
 @MainVTable_inst = global %struct.MainVTable{
 	i32 (%struct.Main*)* bitcast (i32 (%struct.IO*)* @IO_inputInt32 to i32 (%struct.Main*)*),
 	%struct.IO* (%struct.Main*, i8*)* bitcast (%struct.IO* (%struct.IO*, i8*)* @IO_print to %struct.IO* (%struct.Main*, i8*)*),
-	%struct.IO* (%struct.Main*, i1)* bitcast (%struct.IO* (%struct.IO*, i1)* @IO_printBool to %struct.IO* (%struct.Main*, i1)*),
-	%struct.IO* (%struct.Main*, i32)* bitcast (%struct.IO* (%struct.IO*, i32)* @IO_printInt32 to %struct.IO* (%struct.Main*, i32)*),
 	i1 (%struct.Main*)* bitcast (i1 (%struct.IO*)* @IO_inputBool to i1 (%struct.Main*)*),
+	%struct.IO* (%struct.Main*, i1)* bitcast (%struct.IO* (%struct.IO*, i1)* @IO_printBool to %struct.IO* (%struct.Main*, i1)*),
 	i8* (%struct.Main*)* bitcast (i8* (%struct.IO*)* @IO_inputLine to i8* (%struct.Main*)*),
+	%struct.IO* (%struct.Main*, i32)* bitcast (%struct.IO* (%struct.IO*, i32)* @IO_printInt32 to %struct.IO* (%struct.Main*, i32)*),
 	i32 (%struct.Main*)* @Main_main
 }
 
@@ -341,7 +341,7 @@ define i32 @Main_main(%struct.Main* %self) #0 {
 	%25 = load %struct.Main** %1
 	%26 = getelementptr inbounds %struct.Main* %25, i32 0, i32 0
 	%27 = load %struct.MainVTable** %26
-	%28 = getelementptr inbounds %struct.MainVTable* %27, i32 0, i32 3
+	%28 = getelementptr inbounds %struct.MainVTable* %27, i32 0, i32 5
 	%29 = load %struct.IO* (%struct.Main*, i32)** %28
 	%30 = load i32* %16
 	%31 = call %struct.IO* %29(%struct.Main* %25, i32 %30)
@@ -382,19 +382,19 @@ define i32 @Main_main(%struct.Main* %self) #0 {
 %struct.IOVTable = type {
 	i32 (%struct.IO*)*,
 	%struct.IO* (%struct.IO*, i8*)*,
-	%struct.IO* (%struct.IO*, i1)*,
-	%struct.IO* (%struct.IO*, i32)*,
 	i1 (%struct.IO*)*,
-	i8* (%struct.IO*)*
+	%struct.IO* (%struct.IO*, i1)*,
+	i8* (%struct.IO*)*,
+	%struct.IO* (%struct.IO*, i32)*
 }
 
 @IOVTable_inst = global %struct.IOVTable{
 	i32 (%struct.IO*)* @IO_inputInt32,
 	%struct.IO* (%struct.IO*, i8*)* @IO_print,
-	%struct.IO* (%struct.IO*, i1)* @IO_printBool,
-	%struct.IO* (%struct.IO*, i32)* @IO_printInt32,
 	i1 (%struct.IO*)* @IO_inputBool,
-	i8* (%struct.IO*)* @IO_inputLine
+	%struct.IO* (%struct.IO*, i1)* @IO_printBool,
+	i8* (%struct.IO*)* @IO_inputLine,
+	%struct.IO* (%struct.IO*, i32)* @IO_printInt32
 }
 
 define void @IOInit(%struct.IO* %self){
