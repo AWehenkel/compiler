@@ -62,6 +62,16 @@ public :
 		return "";
 	};
 
+	/*
+	getFieldFromId
+	ROLE: This function returns the FieldNode corresponding a object identifier value
+	IN:		id: std::string, the name of the variable.
+	OUT: 	FieldNode*, null if the object identifier does not correspond to a field
+	*/
+	virtual FieldNode* getFieldFromId(std::string id){
+		return NULL;
+	};
+
 	//Accessors
 	const int getLine() const{
 		return n_line;

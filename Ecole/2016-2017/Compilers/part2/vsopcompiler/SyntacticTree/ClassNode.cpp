@@ -171,14 +171,25 @@ TypeIdentifierNode* ClassNode::getDeclarationType(string id){
 }
 
 const string ClassNode::getDeclarationLLVM(string id){
+
 	if(fields.find(id) != fields.end())
 		return fields.find(id)->second->getLLVMAddress();
 	else if (id == "self")
-		return "%self";
+		return "%1";
 	else if(parent)
 		return parent->getDeclarationLLVM(id);
 
 	return "";
+}
+
+FieldNode* ClassNode::getFieldFromId(string id){
+
+	if(fields.find(id) != fields.end())
+		return fields.find(id)->second;
+	else if(parent)
+		return parent->getFieldFromId(id);
+
+	return NULL;
 }
 
 string ClassNode::getLiteral(bool with_type) const{
