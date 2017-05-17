@@ -25,7 +25,7 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
 const std::string LetNode::getDeclarationLLVM(std::string id){
   cout << "LetNode::getDeclarationLLVM: " << id << endl;
   if(e_object_id->getLiteral() == id)
-    return this->getLLVMAddress();
+    return e_object_id->getLLVMAddress();
   else if(e_current_scope)
     return e_current_scope->getDeclarationLLVM(id);
 

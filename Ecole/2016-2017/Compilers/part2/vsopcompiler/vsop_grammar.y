@@ -29,6 +29,7 @@ int errors;
 int start_token;
 int syntax_error;
 ClassNode* io_node;
+ClassNode* obj_node;
 
 void yyerror(const char *s);
 
@@ -129,11 +130,12 @@ start :
   | START_SEMANTIC program                        {
 																										if(!syntax_error){
 																											$2->addClass(io_node);
+																											$2->addClass(obj_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
 																											// Remove IO class for the class table
 																											std::unordered_map<std::string, ClassNode*> c_table = $2->getTableClasses();
 																										  $2->removeClass(c_table["IO"]);
-																										  $2->addClassToDelete("Object");
+																										  $2->removeClass(c_table["Object"]);
 																											if(!semantic_error)
 																												cout << $2->getLiteral(true);
 																										}
@@ -142,6 +144,7 @@ start :
 	| START_CODE_GEN program												{
 																										if(!syntax_error){
 																											$2->addClass(io_node);
+																											$2->addClass(obj_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
 																											if(!semantic_error){
 																												CodeGenStringVisitor* s_gen = new CodeGenStringVisitor();
@@ -166,8 +169,9 @@ start :
 																										}
 																										delete $2;
 																									}
-	| START_IO class 																{
+	| START_IO class class													{
 																										io_node = $2;
+																										obj_node = $3;
 																									}
 ;
 

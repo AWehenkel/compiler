@@ -17,7 +17,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   vector<SemanticError> errors;
   unordered_map<string, ClassNode*> class_table;
   // Adding Object class to the class table
-  class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
+  //class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
   // Adding IO class to the class table (maybe good to replace with include system)
   //ClassNode* io_class = createIOClass();
   //program->addClass(io_class);

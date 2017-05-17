@@ -33,3 +33,7 @@ class IO {
     inputInt32()
   }
 }
+
+class Object{
+
+}

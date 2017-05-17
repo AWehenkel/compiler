@@ -22,7 +22,7 @@ private :
 	void setLLVMType(std::string vsop_type){
 		if(vsop_type == "int32")
 			llvm_type = "i32";
-		else if(vsop_type == "bool")
+		else if(vsop_type == "bool" || vsop_type == "unit")
 			llvm_type = "i1";
 		else if(vsop_type == "string")
 			llvm_type = "i8*";
