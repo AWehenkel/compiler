@@ -7,27 +7,29 @@ class IO {
 
   printBool(b : bool) : IO {
     (* print b on stdout, then return self *)
+    printBool(b);
     self
   }
 
   printInt32(i : int32) : IO {
     (* print i on stdout, then return self *)
+    printInt32(i);
     self
   }
 
   inputLine() : string {
     (* read one line from stdin, return "" in case of error *)
-    "test"
+    inputLine()
   }
 
   inputBool() : bool {
     (* read one boolean value from stdin, exit with error message in case of
     error *)
-    true
+    inputBool()
   }
 
   inputInt32() : int32 {
     (* read one integer from stdin, exit with error message in case of error *)
-    42
+    inputInt32()
   }
 }

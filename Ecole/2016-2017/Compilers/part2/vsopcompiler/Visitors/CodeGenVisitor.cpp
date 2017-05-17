@@ -350,7 +350,12 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
 
 //TODO : Changer les constructeur de LiteralNode et faire en sorte de prendre en charge correctement les literaux.
 int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
-  ir += tab + getLLVMStoreCode(node->getLiteral(), node->getLLVMAddress(), node->getLLVMType());
+  string value = node->getLiteral();
+  cout << node->getLLVMType() << endl;
+  if(node->getLLVMType() == "i8*"){
+    value = "getelementptr inbounds ([" + to_string(node->getLength()) + " x i8], [" + to_string(node->getLength()) + " x i8]* " + node->getConstantAdd() + ", i32 0, i32 0)";
+  }
+  ir += tab + getLLVMStoreCode(value, node->getLLVMAddress(), node->getLLVMType());
   return 0;
 }
 
@@ -659,17 +664,44 @@ int CodeGenVisitor::visitMethodNode(MethodNode *node){
 }
 
 int CodeGenVisitor::visitCallNode(CallNode* node){
+  //Visitor::visitCallNode(node);//TODO Je sais pas pourquoi ça y était pas mais j'ai rajouté...
+  int counter;
+  string var_name;
+
+  //Allocating space for the arguments and setting their value.
+  for(auto arg : node->getArgs()->getExpressions()){
+    counter = llvm_address_counters.top();
+    var_name = "%" + to_string(counter);
+    ir += tab + getLLVMAllocationCode(var_name, arg->getLLVMType());
+    arg->setLLVMAddress(counter++);
+    llvm_address_counters.pop();
+    llvm_address_counters.push(counter);
+    arg->accept(this);
+  }
+
+  //Allocating space for the object of the call.
+  ExpressionNode* object = node->getObject();
+  string obj_addr = "%self";
+  if(object && object->getLiteral() != "self"){
+    counter = llvm_address_counters.top();
+    var_name = "%" + to_string(counter);
+    ir += tab + getLLVMAllocationCode(var_name, object->getLLVMType());
+    obj_addr = var_name;
+    object->setLLVMAddress(counter++);
+    llvm_address_counters.pop();
+    llvm_address_counters.push(counter);
+    object->accept(this);
+  }
+
   if(external_call)
     return genExternalCallCode(node);//A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
   string method_name = node->getMethodName()->getLiteral();
-  ExpressionNode* object = node->getObject();
-  string obj_addr = object->getLLVMAddress();
   ClassNode* obj_class = object->getType()->getClassType();
   MethodNode* method = obj_class->getMethod(method_name);
   obj_class->assignPositionToMethod();
   size_t position_method = method->getPosition();
   //Load of the vtable
-  int counter = llvm_address_counters.top();
+  counter = llvm_address_counters.top();
   string ll_vtable_pointer = "%" + to_string(counter++),
   ll_vtable = "%" + to_string(counter++), ll_method_pointer = "%" + to_string(counter++), obj_struct = object->getType()->getLLVMType(), ll_method = "%" + to_string(counter++),
   struct_vtable = "%struct." + obj_class->getName()->getLiteral() + "VTable*";

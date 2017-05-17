@@ -12,6 +12,7 @@
 #include "SemanticAnalysis/SemanticError.hpp"
 #include "PairColLine.hpp"
 #include "Visitors/CodeGenVisitor.hpp"
+#include "Visitors/CodeGenStringVisitor.hpp"
 
 using namespace std;
 
@@ -143,9 +144,13 @@ start :
 																											$2->addClass(io_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
 																											if(!semantic_error){
+																												CodeGenStringVisitor* s_gen = new CodeGenStringVisitor();
+																												$2->accept(s_gen);
+																												string ir = s_gen->getIr();
+																												delete s_gen;
 																												CodeGenVisitor* generator = new CodeGenVisitor();
 																												$2->accept(generator);
-																												string ir = generator->getIR();
+																												ir += generator->getIR();
 																												string filename_no_ext;
 																												filename_no_ext = filename_no_ext.append(file_name);
 																												filename_no_ext = filename_no_ext.substr(0, filename_no_ext.size()-4);

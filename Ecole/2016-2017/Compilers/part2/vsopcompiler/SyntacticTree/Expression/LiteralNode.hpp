@@ -9,7 +9,8 @@
 class LiteralNode : public ExpressionNode {
 private :
 	std::string e_content;
-
+	size_t length = 0;
+	std::string constant_add;
 public :
 	//Constructors:
 	/*
@@ -21,10 +22,17 @@ public :
 	LiteralNode(std::string content, std::string type, int col = 0, int line = 0) : ExpressionNode(type, col, line), e_content(content){};
 	LiteralNode(int content, std::string type, int col = 0, int line = 0) : ExpressionNode(type, col, line), e_content(std::to_string(content)){};
 
+
 	//Public Methods:
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitLiteralNode(this);};
 	std::string getLiteral(bool with_type = false) const;
+	size_t getLength() const{return length;};
+	std::string getConstantAdd() const{return constant_add;};
+
+	void setLength(size_t len){length = len;};
+	void setConstantAdd(std::string add){constant_add = add;};
+
 };
 
 #endif //LiteralNode_hpp
