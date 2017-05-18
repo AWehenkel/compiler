@@ -4,3 +4,15 @@ class Main extends IO {
     1 + 1
   }
 }
+
+class A extends B {
+  f() : int32 {
+    0
+  }
+}
+class B extends A {
+  f() : int32 {
+    true;
+    f()
+  }
+}

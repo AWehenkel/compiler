@@ -9,7 +9,7 @@ int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
   // Get the class tables
   table_class = node->getTableClasses();
 
-  // Get the classes
+  // Visit the classes and check if the Main class is indeed defined
   std::vector<ClassNode*> classes = node->getClasses();
   bool as_main_class = false;
   int to_ret = 0, current_result;
@@ -23,29 +23,28 @@ int CheckUndefinedClassVisitor::visitProgramNode(ProgramNode *node){
   if(!as_main_class){
     SemanticError error("No Main class defined.");
     errors.push_back(error);
-    return 1;
   }
 
-  return 0;
+  return errors.size();
 }
 
 int CheckUndefinedClassVisitor::visitTypeIdentifierNode(TypeIdentifierNode *node){
 
   std::string type_id = node->getLiteral();
 
-  // Check if it is one the basic types
+  // Check if the node is one of the basic types
   if (type_id == "int32" || type_id == "bool"  || type_id == "string"  || type_id == "unit")
-    return 0;
+    return errors.size();
 
-  // Check if it is the name of class
+  // Check if the node is the name of class
   if (table_class.find(type_id) == table_class.end()){
     SemanticError error("Unknown type: " + type_id, node);
     errors.push_back(error);
 
     node->setContent("error");
-    return 1;
+    return errors.size();
   }
   node->setClassType(table_class.find(type_id)->second);
 
-  return 0;
+  return errors.size();
 }

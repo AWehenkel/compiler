@@ -75,8 +75,9 @@ void ClassNode::assignPositionToMethod(){
 
 	if(!e_extends)
 		nb_method = 0;
-	else
+	else{
 		nb_method = getInheritedMethods().size();
+	}
 
 	for(auto method : getOverridendMethods())
 		method->setPosition(nb_method++);
@@ -168,9 +169,6 @@ int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
 	else
 		return -1;
 
-	// Indicate to each method its position, used for the LLVM generation
-	assignPositionToMethod();
-
 	return 0;
 }
 
@@ -215,9 +213,10 @@ vector<MethodNode*> ClassNode::getInheritedMethods(){
 	vector<MethodNode*> inherited_methods;
 	if(parent){
 		vector<MethodNode*> parents_methods = parent->getAllMethods();
-		for(vector<MethodNode*>::iterator it = parents_methods.begin(); it != parents_methods.end(); ++it)
+		for(vector<MethodNode*>::iterator it = parents_methods.begin(); it != parents_methods.end(); ++it){
 			if(methods.find((*it)->getName()->getLiteral()) == methods.end())
 				inherited_methods.push_back(*it);
+		}
 	}
 
 	return inherited_methods;

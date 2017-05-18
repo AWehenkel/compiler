@@ -22,6 +22,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     SemanticError error("Redefintion of a class");
     errors.push_back(error);
     cerr << errors;
+    // Directly exit because a doublon in the class name would lead to incoherent error detection
     return 1;
   }
 
@@ -37,14 +38,15 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   }
 
   // Check for cycles
-  for(auto it = class_table.begin(); it != class_table.end(); ++it)
+  for(auto it = class_table.begin(); it != class_table.end(); ++it){
     if((it->second)->inCycle()){
       SemanticError error("Inheritance cycle detetected between class: " + it->first + " and class: " + it->second->getExtends()->getLiteral(), it->second);
       errors.push_back(error);
-      //Recovery by setting the parent at Object by default. TODO changer pour que ça laisse tel quel et que toutes les fonctions qui peuvent dépendre d'un cycle soient robuste.
+      //Recovery by setting the parent at Object by default.
       delete it->second->getExtends();
       it->second->setExtends(new TypeIdentifierNode("Object"));
     }
+  }
 
   // Check if any unkown class is used
   CheckUndefinedClassVisitor *visitor = new CheckUndefinedClassVisitor();
@@ -56,7 +58,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     if(result < 0){
       delete visitor;
       cerr << errors;
-      return result;
+      return errors.size();
     }
   }
   delete visitor;
@@ -70,7 +72,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     //Always consider it is an unrecoverable error.
     delete visitor1;
     cerr << errors;
-    return result;
+    return errors.size();
   }
   delete visitor1;
 
@@ -81,9 +83,6 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   if (result){
     vector<SemanticError> errors_generated = visitor2->getErrors();
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
-    delete visitor2;
-    cerr << errors;
-    return result;
   }
   delete visitor2;
 
