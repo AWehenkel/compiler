@@ -31,7 +31,7 @@ public :
 	virtual bool alreadyInstanciated(){return true;};
 
 	//Setters
-	void setType(TypeIdentifierNode* node, bool newly_created = false){node_type = node;self_type = newly_created; setLLVMType(node_type->getLiteral());}; //TODO : check qu'il faut bien mettre le setLLVMType là
+	void setType(TypeIdentifierNode* node, bool newly_created = false){node_type = node;self_type = newly_created;}; //TODO : check qu'il faut bien mettre le setLLVMType là
 
 	/*
 	equals

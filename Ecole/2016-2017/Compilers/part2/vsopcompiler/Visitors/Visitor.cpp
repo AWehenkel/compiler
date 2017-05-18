@@ -315,7 +315,7 @@ int Visitor::visitProgramNode(ProgramNode *node){
       return -1;
     }
 
-  return 0;
+  return errors.size();
 }
 
 int Visitor::visitTypeIdentifierNode(TypeIdentifierNode *node){

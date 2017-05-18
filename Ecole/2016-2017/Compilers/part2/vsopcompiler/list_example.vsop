@@ -18,7 +18,7 @@ class Cons extends List {
   head() : int32 { head }
   isNil() : bool { false }
   length() : int32 {
-    if not(isnull(tail)) then
+    if not("a" = "a") then
       1 + tail.length()
     else
       1
@@ -30,12 +30,24 @@ class Main extends IO {
     let xs : List in {
       print("List has length\n");
       xs <- new Cons;
-      xs.init(10, new List); //On a une seg fault dans notre code quelque part quand on lui donne ça, normalement ça devrait donner une erreur vu que init est pas déclaré chez List
+      test();
+      //xs.init(10, new List); //On a une seg fault dans notre code quelque part quand on lui donne ça, normalement ça devrait donner une erreur vu que init est pas déclaré chez List
       printInt32(xs.length());
+      let i : int32 <- 10 in {
+        while 0 < i do{
+          printInt32(i);
+          print(" ");
+          i <- i - 1
+        }
+      };
       print("\n");
-      ();
+      ("coucou");
       new Cons;
       0
     }
+  }
+
+  test() : unit{
+    ()
   }
 }

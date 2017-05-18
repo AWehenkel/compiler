@@ -46,50 +46,54 @@ string CodeGenVisitor::getLLVMReturnCode(string to_ret, string type){
 }
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
-
   int counter = llvm_address_counters.top();
   llvm_address_counters.pop();
-  string code, to_ret = "%" + to_string(counter++);
-
+  string code, to_ret = "%" + to_string(counter++), tmp;
   switch (node->getOperator()) {
     case b_op_and :
-      code = to_ret + " = and i1 " + op1 + ", "  + op2; // TODO : il faut convertir les false/true en 0/1
+      code = tab + to_ret + " = and i1 " + op1 + ", "  + op2; // TODO : il faut convertir les false/true en 0/1
       break;
     case b_op_minus :
-      code = to_ret + " = sub i32 " + op1 + ", "  + op2;
+      code = tab + to_ret + " = sub i32 " + op1 + ", "  + op2;
       break;
     case b_op_less :
-      code = to_ret + " = slt i32 " + op1 + ", "  + op2;
+      code = tab + to_ret + " = icmp slt i32 " + op1 + ", "  + op2;
       break;
     case b_op_leq :
-      code = to_ret + " = sle i32 " + op1 + ", "  + op2;
+      code = tab + to_ret + " = icmp sle i32 " + op1 + ", "  + op2;
       break;
     case BinaryOperator::b_op_plus :
-      code = to_ret + " = add nuw i32 " + op1 + ", "  + op2;
+      code = tab + to_ret + " = add nuw i32 " + op1 + ", "  + op2;
       break;
     case b_op_equal :
-      //TODO : Change to handle other type than int32.
-      code = to_ret + " = eq i32 " + op1 + ", "  + op2;
+      if(node->getLeft()->getLLVMType() == "i8*"){
+        tmp = "%" + to_string(counter - 1);
+        to_ret = "%" + to_string(counter++);
+        code = tab + tmp + " = call i32 @strcmp(i8* " + op1 + ", i8* " + op2 + ")\n";
+        code += tab + to_ret + " = icmp eq i32 0, "  + tmp;
+      }
+      else
+        code = tab + to_ret + " = icmp eq i32 " + op1 + ", "  + op2;
       break;
     case b_op_times :
-      code = to_ret + " = mul i32 " + op1 + ", "  + op2;
+      code = tab + to_ret + " = mul i32 " + op1 + ", "  + op2;
       break;
     case b_op_div :
-      code = to_ret + " = sdiv i32 " + op1 + ", "  + op2;
+      code = tab + to_ret + " = sdiv i32 " + op1 + ", "  + op2;
       break;
     case b_op_pow :
       string tmp1 = "%" + to_string(counter++), tmp2 = "%" + to_string(counter++);
 
-      code = tmp1 + " = sitofp i32 " + op1 + " to float\n";
-      code += tmp2 + " = call float @llvm.powi.f32(float " + tmp1 + ", i32 " + op2 + ")\n";
-      code += to_ret + " = fptosi float " + tmp2 + " to i32";
+      code = tab + tmp1 + " = sitofp i32 " + op1 + " to float\n";
+      code += tab + tmp2 + " = call float @llvm.powi.f32(float " + tmp1 + ", i32 " + op2 + ")\n";
+      code += tab + to_ret + " = fptosi float " + tmp2 + " to i32";
       break;
   }
   llvm_address_counters.push(counter);
 
   // Store the value if needed by the parent node
   if(node->getLLVMAddress().size())
-    code += "\n" + tab + getLLVMStoreCode(to_ret, node->getLLVMAddress(), "i32"); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
+    code += "\n" + tab + getLLVMStoreCode(to_ret, node->getLLVMAddress(), node->getLLVMType()); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
 
   return code;
 }
@@ -179,7 +183,6 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
 
   ExpressionNode* left = node->getLeft();
   ExpressionNode* right = node->getRight();
-
   ir += tab + "; binary operation\n";
 
   // Visit the children nodes
@@ -190,7 +193,6 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   llvm_address_counters.push(counter);
   if (left->accept(this) < 0)
     return -1;
-
   counter = llvm_address_counters.top();
   llvm_address_counters.pop();
   right->setLLVMAddress(counter++);
@@ -198,7 +200,6 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   llvm_address_counters.push(counter);
   if (right->accept(this) < 0)
     return -1;
-
   // Load the two operands
   counter = llvm_address_counters.top();
   llvm_address_counters.pop();
@@ -209,7 +210,7 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   ir += tab + getLLVMLoadCode(left_op_address, left->getLLVMAddress(), left->getLLVMType());
   ir += tab + getLLVMLoadCode(right_op_address, right->getLLVMAddress(), right->getLLVMType());
   // Make the operation and store the result
-  ir += tab + getLLVMBinaryCode(node, left_op_address, right_op_address);
+  ir += getLLVMBinaryCode(node, left_op_address, right_op_address);
 
   return 0;
 }
@@ -356,7 +357,12 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
     if (init_expr->accept(this) < 0)
       return -1;
     // Store the value of the init expression in the field
-    ir += tab + getLLVMStoreCode(init_expr->getLLVMAddress(), object_id->getLLVMAddress(), object_type->getLLVMType());
+    counter = llvm_address_counters.top();
+    llvm_address_counters.pop();
+    string tmp_var = "%" + to_string(counter++);
+    llvm_address_counters.push(counter);
+    ir += tab + getLLVMLoadCode(tmp_var, init_expr->getLLVMAddress(), object_id->getLLVMType());
+    ir += tab + getLLVMStoreCode(tmp_var, object_id->getLLVMAddress(), object_type->getLLVMType());
   }
 
   counter = llvm_address_counters.top();

@@ -27,17 +27,6 @@ public :
 	virtual ~ExpressionNode();
 
 	//Public method
-	// TODO : check qu'il faut bien le mettre là
-	void setLLVMType(std::string content){
-		if(content == "int32")
-			llvm_type = "i32";
-		else if(content == "bool")
-			llvm_type = "i1";
-		else if(content == "string")
-			llvm_type = "c";
-		else
-			llvm_type = content;
-	};
 
 	virtual bool alreadyInstanciated(){return false;};
 
@@ -49,7 +38,6 @@ public :
 	virtual void setType(TypeIdentifierNode* new_type, bool new_self_type = false){
 		node_type = new_type;
 		self_type = new_self_type;
-		setLLVMType(node_type->getLiteral()); // TODO : check que c'est bien là qu'il faut mettre ça
 	};
 };
 
