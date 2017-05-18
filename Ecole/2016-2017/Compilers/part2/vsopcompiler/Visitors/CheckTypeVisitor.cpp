@@ -74,7 +74,6 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
       node->setType(left_type);
       break;
     case BinaryOperator::b_op_equal :
-      // TODO : est-ce qu'on doit pas checker pour l'héritage ?
       // Check if the two types are the same (or errors) and return bool if ok
       if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
         SemanticError error("The two members of an equal-expression must have the same type, got '" + s_left_type +"' and '" + s_right_type + "'", node);
@@ -397,8 +396,7 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
       break;
     case UnaryOperator::u_op_isnull :
       // Check if it not a basic type and return bool if ok
-      // TODO : pourquoi il n'y a pas de comparaison à unit ?
-      if (s_op_type == "bool" || s_op_type == "int32" || s_op_type == "string"){
+      if (s_op_type == "bool" || s_op_type == "int32" || s_op_type == "string" || s_op_type == "unit"){
         SemanticError error("isnull-expression must be followed by a class : got '" + s_op_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);

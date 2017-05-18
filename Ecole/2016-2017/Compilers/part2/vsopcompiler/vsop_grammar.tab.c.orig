@@ -2643,7 +2643,6 @@ yyreturn:
 
 int main (int argc, char *argv[]){
 
-	// TODO : on peut aussi ne pouvoir mettre aucun - speciaux (voir énoncé partie 4)
 	if(argc != 2 && argc != 3 && argc != 4){
 		cerr << "Usage for only lexer: ./" << argv[0] << " -lex <Source_File>" << endl;
 		cerr << "Usage for both lexer and parse: ./" << argv[0] << " -parse <Source_File>" << endl;

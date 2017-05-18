@@ -2,7 +2,7 @@
 #define AssignNode_hpp
 
 #include <string>
-#include "ExpressionNode.hpp" // TODO refaire tourner include-what-you-use
+#include "ExpressionNode.hpp"
 /*
 *	Class used to represent a syntaxic node containing an assignment.
 */
@@ -26,7 +26,7 @@ public :
 	//Destructor:
 	virtual ~AssignNode();
 
-	//Accesors:
+	//Accessors:
 	ObjectIdentifierNode* getName() const{return e_name;};
 	ExpressionNode* getExpression() const{return e_expr;};
 

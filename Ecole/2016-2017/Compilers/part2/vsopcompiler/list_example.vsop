@@ -38,7 +38,7 @@ class Main extends IO {
         while 0 < i do{
           printInt32(i);
           print(" ");
-          i <- i - 1
+          (i <- i - 1)
         }
       };
       print("\n");

@@ -439,11 +439,9 @@ define i32 @Main_main(%struct.Main* %self) #0 {
 	%15 = alloca %struct.List*
 	; assignement
 	%16 = alloca %struct.Cons*
-;before_visit
 	; new
 	%17 = call %struct.Cons* @ConsNew()
 	store %struct.Cons* %17, %struct.Cons** %16
-;after_visit
 	%18 = load %struct.Cons** %16
 	%19 = bitcast %struct.Cons* %18 to %struct.List*
 	store %struct.List* %19, %struct.List** %4
@@ -547,7 +545,6 @@ do_5:
 	%86 = alloca i32
 	; assignement
 	%87 = alloca i32
-;before_visit
 	; binary operation
 	%88 = alloca i32
 	%89 = load i32* %54
@@ -558,7 +555,6 @@ do_5:
 	%92 = load i32* %90
 	%93 = sub i32 %91, %92
 	store i32 %93, i32* %87
-;after_visit
 	%94 = load i32* %87
 	store i32 %94, i32* %54
 	store i32 %94, i32* %86
@@ -621,10 +617,8 @@ define %struct.Cons* @Cons_init(%struct.Cons* %self, i32 %hd, %struct.List* %tl)
 	%5 = alloca i32
 	; assignement
 	%6 = alloca i32
-;before_visit
 	%7 = load i32* %2
 	store i32 %7, i32* %6
-;after_visit
 	%8 = load i32* %6
 ;field
 	%9 = load %struct.Cons** %1
@@ -634,10 +628,8 @@ define %struct.Cons* @Cons_init(%struct.Cons* %self, i32 %hd, %struct.List* %tl)
 	%11 = alloca %struct.List*
 	; assignement
 	%12 = alloca %struct.List*
-;before_visit
 	%13 = load %struct.List** %3
 	store %struct.List* %13, %struct.List** %12
-;after_visit
 	%14 = load %struct.List** %12
 ;field
 	%15 = load %struct.Cons** %1
@@ -747,11 +739,11 @@ end_14:
 }
 
 define i32 @main(){
-%1 = call %struct.Main* @MainNew()
-%2 = getelementptr inbounds %struct.Main* %1, i32 0, i32 0
-%3 = load %struct.MainVTable** %2
-%4 = getelementptr inbounds %struct.MainVTable* %3, i32 0, i32 7
-%5 = load i32 (%struct.Main*)** %4
-%6 = call i32 %5(%struct.Main* %1)
-ret i32 %6
+	%1 = call %struct.Main* @MainNew()
+	%2 = getelementptr inbounds %struct.Main* %1, i32 0, i32 0
+	%3 = load %struct.MainVTable** %2
+	%4 = getelementptr inbounds %struct.MainVTable* %3, i32 0, i32 7
+	%5 = load i32 (%struct.Main*)** %4
+	%6 = call i32 %5(%struct.Main* %1)
+	ret i32 %6
 }

@@ -29,7 +29,7 @@ public :
 	//Destructor:
 	virtual ~MethodNode();
 
-	//Accesors:
+	//Accessors:
 	ObjectIdentifierNode* getName() const {return e_name;};
 	FormalsNode* getFormals() const {return e_formals;};
 	TypeIdentifierNode* getRetType() const {return e_ret_type;};

@@ -3,7 +3,8 @@
 
 #include <string>
 #include "../VSOPNode.hpp"
-#include "../TypeIdentifierNode.hpp" // TODO : check que ça fout pas la merde
+#include "../TypeIdentifierNode.hpp"
+
 /*
 	Parent class of any node representing an expression.
 */
