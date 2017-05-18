@@ -2,7 +2,6 @@
 #define block_node_hpp
 
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 
 /*
@@ -14,7 +13,7 @@ private :
 	std::string last_expr_LLVM_addr;
 
 public :
-	//Constructors
+	//Constructor:
 	/*
 	BlockNode
 	IN:	col: 				int, the column where the node is present.
@@ -22,10 +21,18 @@ public :
 	*/
 	BlockNode(int col = 0, int line = 0) : ExpressionNode(col, line){};
 
-	//Destructor
+	//Destructor:
 	virtual ~BlockNode();
 
-	//Public methods
+	//Accessors:
+	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
+	std::string getLastExprLLVMAddr() const {return last_expr_LLVM_addr;};
+	void setLastExprLLVMAddr(std::string address){last_expr_LLVM_addr = address;};
+
+	//Inherited:
+	int accept(Visitor* visitor){return visitor->visitBlockNode(this);};
+	std::string getLiteral(bool with_type = false) const;
+
 	/*
 	addExpression
 	IN: expression: ExpressionNode*, the expression to add.
@@ -41,15 +48,6 @@ public :
 	ROLE: Add an expression at the frond of the list expression of the block.
 	*/
 	void insertExpr(ExpressionNode *expression);
-
-	//Accessors
-	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
-	std::string getLastExprLLVMAddr() const {return last_expr_LLVM_addr;};
-	void setLastExprLLVMAddr(std::string address){last_expr_LLVM_addr = address;};
-
-	//Inherited
-	int accept(Visitor* visitor){return visitor->visitBlockNode(this);};
-	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //block_node_hpp

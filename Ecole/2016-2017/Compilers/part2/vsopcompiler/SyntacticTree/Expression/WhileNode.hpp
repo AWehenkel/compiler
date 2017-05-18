@@ -2,7 +2,6 @@
 #define WhileNode_hpp
 
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Class used to represent a while statement.
@@ -27,12 +26,11 @@ public :
 	//Destructor:
 	virtual ~WhileNode();
 
-	//Public Methods:
 	//Accessors:
 	ExpressionNode* getCondition() const{return e_condition;};
 	ExpressionNode* getAction() const{return e_action;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitWhileNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

@@ -16,10 +16,6 @@ MethodNode::~MethodNode(){
 	delete e_block;
 }
 
-bool MethodNode::equals(MethodNode &method){
-	return *(method.getName()) == *(getName()) && *(method.getFormals()) == *(getFormals()) && *(method.getRetType()) == *(getRetType());
-}
-
 TypeIdentifierNode* MethodNode::getDeclarationType(string id){
 
 	TypeIdentifierNode* to_ret = e_formals->getDeclarationType(id);
@@ -30,6 +26,7 @@ TypeIdentifierNode* MethodNode::getDeclarationType(string id){
 }
 
 const string MethodNode::getDeclarationLLVM(string id){
+
 	string to_ret = e_formals->getDeclarationLLVM(id);
 	if(!to_ret.size())
 		to_ret = e_class_scope->getDeclarationLLVM(id);
@@ -46,16 +43,23 @@ string MethodNode::getLiteral(bool with_type) const {
 									 + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
 }
 
+bool MethodNode::equals(MethodNode &method){
+	return *(method.getName()) == *(getName()) && *(method.getFormals()) == *(getFormals()) && *(method.getRetType()) == *(getRetType());
+}
+
 string MethodNode::getLLVMStructure(string struct_class) const{
+
 	string code_struct = getRetType()->getLLVMType() + " (" + struct_class + "*, ";
 	for(auto formal : e_formals->getFormals())
 		code_struct += formal->getType()->getLLVMType() + ", ";
 
 	code_struct.replace(code_struct.size() - 2, 2, ")*");
+
 	return code_struct;
 }
 
 string MethodNode::getLLVMInstance(string class_name, string parent_name) const{
+
 	string code_inst = getLLVMStructure("%struct." + class_name);
 	if(!parent_name.empty()){
 		code_inst += " bitcast (" + getLLVMStructure("%struct." + parent_name) + " @" + parent_name + "_" + getName()->getLiteral() + "";

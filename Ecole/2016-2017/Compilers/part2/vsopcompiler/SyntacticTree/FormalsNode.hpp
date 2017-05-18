@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "VSOPNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing formals(arguments)
 */
@@ -16,13 +17,21 @@ private :
 	};
 
 public :
-	//Constructors
+	//Constructor:
 	FormalsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
-	//Destructor
+	//Destructor:
 	virtual ~FormalsNode();
 
-	//Public methods
+	//Accessor:
+	std::vector<FormalNode*> getFormals() const {return formals;};
+
+	//Inherited:
+	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	const std::string getDeclarationLLVM(std::string id);
+	std::string getLiteral(bool with_type = false) const;
+
 	/*
 	addFormal
 	IN: formal: FormalNode*, the formal to add.
@@ -46,15 +55,6 @@ public :
 	OUT: bool, true if the name, the type and the arguments are equal.
 	*/
 	bool equals(FormalsNode &formals);
-
-	//Accessors
-	std::vector<FormalNode*> getFormals() const {return formals;};
-
-	//Inherited
-	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
-	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //formals_node_hpp

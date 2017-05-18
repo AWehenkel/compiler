@@ -22,16 +22,15 @@ public :
 	LiteralNode(std::string content, std::string type, int col = 0, int line = 0) : ExpressionNode(type, col, line), e_content(content){};
 	LiteralNode(int content, std::string type, int col = 0, int line = 0) : ExpressionNode(type, col, line), e_content(std::to_string(content)){};
 
+	//Accessors:
+	void setLength(size_t len){length = len;};
+	void setConstantAdd(std::string add){constant_add = add;};
 
-	//Public Methods:
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitLiteralNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 	size_t getLength() const{return length;};
 	std::string getConstantAdd() const{return constant_add;};
-
-	void setLength(size_t len){length = len;};
-	void setConstantAdd(std::string add){constant_add = add;};
 
 };
 

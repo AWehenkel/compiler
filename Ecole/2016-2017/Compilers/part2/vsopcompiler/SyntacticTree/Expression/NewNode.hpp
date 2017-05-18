@@ -2,7 +2,6 @@
 #define NewNode_hpp
 
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a new statement
@@ -12,7 +11,7 @@ private :
 	TypeIdentifierNode* e_type_id;
 
 public :
-	//Constructors:
+	//Constructor:
 	/*
 	NewNode
 	IN:	type_id:	TypeIdentifierNode*, the type of the new object.
@@ -24,11 +23,10 @@ public :
 	//Destructor
 	virtual ~NewNode();
 
-	//Public Methods:
 	//Accessors:
 	TypeIdentifierNode* getTypeId() const{return e_type_id;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitNewNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

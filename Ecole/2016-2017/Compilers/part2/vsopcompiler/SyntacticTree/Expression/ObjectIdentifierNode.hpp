@@ -3,6 +3,7 @@
 
 #include <string>
 #include "ExpressionNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing an object identifier
 */
@@ -24,14 +25,13 @@ public :
 	*/
 	ObjectIdentifierNode(std::string content, int col = 0, int line = 0) : ExpressionNode(col, line), e_content(content){};
 
-	//Public Methods:
-	//Inherited
+	//Accesor:
+	void setType(TypeIdentifierNode* node, bool newly_created = false){node_type = node;self_type = newly_created; setLLVMType(node_type->getLiteral());}; //TODO : check qu'il faut bien mettre le setLLVMType là
+
+	//Inherited:
 	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
 	virtual bool alreadyInstanciated(){return true;};
-
-	//Setters
-	void setType(TypeIdentifierNode* node, bool newly_created = false){node_type = node;self_type = newly_created; setLLVMType(node_type->getLiteral());}; //TODO : check qu'il faut bien mettre le setLLVMType là
 
 	/*
 	equals

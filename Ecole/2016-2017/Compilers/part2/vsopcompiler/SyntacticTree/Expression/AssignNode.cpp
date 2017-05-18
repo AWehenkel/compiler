@@ -1,6 +1,4 @@
 #include "AssignNode.hpp"
-#include "../ClassNode.hpp"
-#include "../TypeIdentifierNode.hpp"
 #include "ObjectIdentifierNode.hpp"
 
 using namespace std;

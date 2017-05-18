@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Enumeration listing the unary operator
@@ -19,7 +18,7 @@ private :
 	std::map<UnaryOperator, std::string> literal_op_table;
 
 public :
-	//Constructors:
+	//Constructor:
 	/*
 	UnaryOperatorNode
 	IN:	op:				int, the integer corresponding to the unary operator.
@@ -36,12 +35,11 @@ public :
 	//Destructor:
 	virtual ~UnaryOperatorNode();
 
-	//Public Methods:
 	//Accessors:
 	UnaryOperator getOperator() const{return e_op;};
 	ExpressionNode* getOperand() const{return e_operand;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitUnaryOperatorNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

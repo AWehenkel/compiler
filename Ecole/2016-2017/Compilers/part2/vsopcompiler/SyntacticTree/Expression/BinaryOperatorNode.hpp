@@ -1,10 +1,10 @@
 #ifndef BinaryOperatorNode_hpp
 #define BinaryOperatorNode_hpp
 
-#include <map>
 #include <string>
-#include <vector>
+#include <map>
 #include "ExpressionNode.hpp"
+
 /*
 	Enumeration listing the possible binary operator.
 */
@@ -21,7 +21,7 @@ private :
 	std::map<BinaryOperator, std::string> literal_op_table;
 
 public :
-	//Constructors:
+	//Constructor:
 	/*
 	BinaryOperatorNode
 	IN:	op:					int, the integer corresponding to the binary symbol.
@@ -46,14 +46,13 @@ public :
 	//Destructor:
 	virtual ~BinaryOperatorNode();
 
-	//Public Methods:
-	//getters
+	//Accesors:
 	BinaryOperator getOperator() const {return e_op;};
 	ExpressionNode* getLeft() const{return e_left_operand;};
 	ExpressionNode* getRight() const{return e_right_operand;};
 	TypeIdentifierNode* getType() const{return node_type;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitBinaryOperatorNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

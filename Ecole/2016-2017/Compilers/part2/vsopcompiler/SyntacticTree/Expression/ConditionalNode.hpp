@@ -2,7 +2,6 @@
 #define ConditionalNode_hpp
 
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 
 /*
@@ -30,13 +29,12 @@ public :
 	//Destructor:
 	virtual ~ConditionalNode();
 
-	//Public Methods:
-	//getters
+	//Accessors:
 	ExpressionNode* getCondition() const{return e_condition;};
 	ExpressionNode* getAction() const{return e_action;};
 	ExpressionNode* getElseAction() const{return e_else_action;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitConditionalNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

@@ -2,7 +2,6 @@
 #define BraceNode_hpp
 
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 
 /*
@@ -25,11 +24,10 @@ public :
 	//Destructor:
 	virtual ~BraceNode();
 
-	//Public Methods:
-	//getters
+	//Accessors:
 	ExpressionNode* getExpression() const{return e_expr;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitBraceNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

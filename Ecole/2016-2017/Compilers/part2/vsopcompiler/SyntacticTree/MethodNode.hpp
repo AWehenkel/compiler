@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "VSOPNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing a method
 */
@@ -14,7 +15,7 @@ private :
 	TypeIdentifierNode* e_ret_type;
 	BlockNode* e_block;
 	ClassNode* e_class_scope;
-	unsigned int position;//Position in the vtable structure.
+	unsigned int position; //Position in the vtable structure.
 	//Overloaded operator
 	friend inline bool operator==(MethodNode &method1, MethodNode &method2){
 		return method1.equals(method2);
@@ -25,21 +26,25 @@ public :
 	MethodNode(ObjectIdentifierNode* name, FormalsNode *formals, TypeIdentifierNode *ret_type, BlockNode *block,int col = 0, int line = 0) :
 		VSOPNode(col, line), e_name(name), e_formals(formals), e_ret_type(ret_type), e_block(block) {};
 
-	//Destructor
+	//Destructor:
 	virtual ~MethodNode();
 
-	//Public methods
-	//Accesors
+	//Accesors:
 	ObjectIdentifierNode* getName() const {return e_name;};
 	FormalsNode* getFormals() const {return e_formals;};
 	TypeIdentifierNode* getRetType() const {return e_ret_type;};
 	BlockNode* getBlock() const {return e_block;};
 	ClassNode* getClassScope() const {return e_class_scope;};
 	unsigned int getPosition(){return position;};
-
-	//Setter
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
 	void setPosition(unsigned int pos){position = pos;};
+
+	//Inherited:
+	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	const std::string getDeclarationLLVM(std::string id);
+	FieldNode* getFieldFromId(std::string id);
+	std::string getLiteral(bool with_type = false) const;
 
 	/*
 	equals
@@ -62,13 +67,6 @@ public :
 	Return: std::string, the code
 	*/
 	std::string getLLVMInstance(std::string class_name, std::string parent_name = "") const;
-
-	//Inherited
-	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
-	FieldNode* getFieldFromId(std::string id);
-	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //method_node_hpp

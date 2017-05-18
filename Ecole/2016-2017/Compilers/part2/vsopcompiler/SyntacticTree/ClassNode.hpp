@@ -62,13 +62,29 @@ public :
 	//Destructor
 	virtual ~ClassNode();
 
-	//Public methods
 	//Accesors
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
 	ClassBodyNode* getBody() const {return e_body;};
 	ClassNode* getParent() const {return parent;};
+	void setExtends(TypeIdentifierNode* node){
+		e_extends = node;
+		in_cycle = false;
+		parent = NULL;
+	};
 
+	//Inherited
+	int accept(Visitor* visitor);
+	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
+	TypeIdentifierNode* getDeclarationType(std::string id);
+	const std::string getDeclarationLLVM(std::string id);
+	FieldNode* getFieldFromId(std::string id);
+	std::string getLiteral(bool with_type = false) const;
+
+	/*
+	assignPositionToMethod
+	ROLE : indicates to each method in the class its position
+	*/
 	void assignPositionToMethod();
 
 	/*
@@ -176,21 +192,6 @@ public :
 	OUT: std::vector<FieldNode*>, the new declared fields.
 	*/
 	std::vector<FieldNode*> getNewFields();
-
-
-	//setters
-	void setExtends(TypeIdentifierNode* node){
-		e_extends = node;
-		in_cycle = false;
-		parent = NULL;
-	};
-	//Inherited
-	int accept(Visitor* visitor);
-	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
-	FieldNode* getFieldFromId(std::string id);
-	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //class_node_hpp

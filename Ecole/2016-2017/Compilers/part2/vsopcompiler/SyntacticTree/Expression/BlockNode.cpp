@@ -1,5 +1,4 @@
 #include "BlockNode.hpp"
-#include "../TypeIdentifierNode.hpp"
 
 using namespace std;
 
@@ -8,21 +7,14 @@ BlockNode::~BlockNode(){
 		delete *it;
 }
 
-void BlockNode::addExpression(ExpressionNode *expression){
-	expressions.push_back(expression);
-}
-
-void BlockNode::insertExpr(ExpressionNode *expression){
-	expressions.insert(expressions.begin(), expression);
-}
-
 string BlockNode::getLiteral(bool with_type) const {
 
 	string literal;
 	string type = "";
 	if(with_type){
 	 type = node_type ? " : " + node_type->getLiteral(with_type) : "";
- }
+ 	}
+
 	size_t expr_size = expressions.size();
 	if (expr_size == 0)
 		//No empty expression should be generated
@@ -38,5 +30,14 @@ string BlockNode::getLiteral(bool with_type) const {
 		}
 		literal += "]" + type;
 	}
+
 	return  literal;
+}
+
+void BlockNode::addExpression(ExpressionNode *expression){
+	expressions.push_back(expression);
+}
+
+void BlockNode::insertExpr(ExpressionNode *expression){
+	expressions.insert(expressions.begin(), expression);
 }

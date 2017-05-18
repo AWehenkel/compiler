@@ -2,7 +2,6 @@
 #define CallNode_hpp
 
 #include <string>
-#include <vector>
 #include "../ArgsNode.hpp"
 #include "ExpressionNode.hpp"
 #include "ObjectIdentifierNode.hpp"
@@ -32,18 +31,15 @@ public :
 	//Destructor:
 	virtual ~CallNode();
 
-	//Public Methods:
-	// Setters
+	//Accessors:
 	void setCurrentClass(ClassNode* node){current_class = node;}
 	void setObject(ExpressionNode* node){e_object = node;}
-
-	//getters
 	ObjectIdentifierNode* getMethodName() const{return e_method_name;};
 	ArgsNode* getArgs() const{return e_args;};
 	ExpressionNode* getObject() const{return e_object;};
 	ClassNode* getCurrentClass() const{return current_class;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitCallNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

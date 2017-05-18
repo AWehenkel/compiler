@@ -3,9 +3,6 @@
 #include "ProgramNode.hpp"
 #include "ClassNode.hpp"
 
-//To remove:
-#include "TypeIdentifierNode.hpp"
-
 using namespace std;
 
 ProgramNode& ProgramNode::operator+=(const ProgramNode &p1) {
@@ -19,29 +16,6 @@ ProgramNode::~ProgramNode(){
 		delete (*it);
 	for (std::vector<ClassNode*>::const_iterator it = to_delete.begin(); it < to_delete.end(); ++it)
 		delete (*it);
-}
-
-void ProgramNode::addClass(ClassNode *new_class) {
-	classes.push_back(new_class);
-}
-
-void ProgramNode::addClassToDelete(string new_class) {
-	to_delete.push_back(table_classes[new_class]);
-}
-
-int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
-
-	for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); ++class_it)
-		if((*class_it)->fillClassTable(table) < 0)
-			return -1;
-	table_classes = table;
-
-	return 0;
-}
-
-void ProgramNode::removeClass(ClassNode* node){
-	classes.erase(std::remove(classes.begin(), classes.end(), node), classes.end());
-	to_delete.push_back(node);
 }
 
 int ProgramNode::accept(Visitor* visitor){
@@ -59,4 +33,23 @@ string ProgramNode::getLiteral(bool with_type) const{
 	literal += "]\n";
 
 	return literal;
+}
+
+void ProgramNode::removeClass(ClassNode* node){
+	classes.erase(std::remove(classes.begin(), classes.end(), node), classes.end());
+	to_delete.push_back(node);
+}
+
+void ProgramNode::addClass(ClassNode *new_class) {
+	classes.push_back(new_class);
+}
+
+int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
+
+	for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); ++class_it)
+		if((*class_it)->fillClassTable(table) < 0)
+			return -1;
+	table_classes = table;
+
+	return 0;
 }
