@@ -62,7 +62,7 @@ public :
 	//Destructor
 	virtual ~ClassNode();
 
-	//Accesors
+	//Accessors
 	TypeIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getExtends() const {return e_extends;};
 	ClassBodyNode* getBody() const {return e_body;};

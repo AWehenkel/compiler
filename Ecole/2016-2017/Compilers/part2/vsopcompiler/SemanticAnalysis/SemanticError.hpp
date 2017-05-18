@@ -10,6 +10,7 @@ class SemanticError{
 private:
   std::string m_message;
   VSOPNode* m_context_node;
+  // Use because some errors can be empty and is_valid is then set to false
   bool is_valid = true;
 
 public:
@@ -19,6 +20,9 @@ public:
   //Construtors:
   SemanticError(std::string message, VSOPNode* context_node = NULL) : m_message(message), m_context_node(context_node){};
   SemanticError() : is_valid(false){};
+
+  //Accessor;
+  bool isValid() const{return is_valid;};
 
   /*printError
   *ROLE: Print an error message according to the node where it occured and the
@@ -34,11 +38,6 @@ public:
   OUT : string, the error message
   */
   std::string getErrorMessage() const;
-
-  // TODO : ça sert à quoi ça ?
-  bool isValid() const{
-    return is_valid;
-  };
 };
 
 #endif

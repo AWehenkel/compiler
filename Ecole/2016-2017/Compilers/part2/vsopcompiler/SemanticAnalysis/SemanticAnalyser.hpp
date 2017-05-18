@@ -1,7 +1,7 @@
 #ifndef semantic_analyser_hpp
 #define semantic_analyser_hpp
 
-#include "../all_headers.hpp" // TODO : réappliquer include-what-you-use
+#include "../all_headers.hpp"
 
 /*
 * This class is used to do the semantic analysis of the parse tree generated

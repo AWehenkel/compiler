@@ -26,7 +26,7 @@ public :
 	//Destructor
 	virtual ~FormalNode();
 
-	//Accesors
+	//Accessors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};
 

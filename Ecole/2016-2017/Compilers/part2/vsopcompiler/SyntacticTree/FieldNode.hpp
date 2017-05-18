@@ -37,7 +37,7 @@ public :
 	//Destructor:
 	virtual ~FieldNode();
 
-	//Accesors:
+	//Accessors:
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
 	void setPosition(int pos) {position = pos;};
 	ObjectIdentifierNode* getName() const {return e_name;};

@@ -18,7 +18,7 @@ private :
 
 public :
 
-    // Accesor
+    // Accessor
     std::string getIR(){return ir;}
 
     // Automatic LLVM code generators
