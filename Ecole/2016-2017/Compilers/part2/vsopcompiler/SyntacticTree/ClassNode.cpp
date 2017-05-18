@@ -33,12 +33,13 @@ void ClassNode::assignPositionToMethod(){
 	if(!e_extends)
 		nb_method = 0;
 	else{
-		parent->assignPositionToMethod();
-		nb_method = parent->nb_method;
+		nb_method = getInheritedMethods().size();
 	}
 
-	for(auto method : methods)
-		method.second->setPosition(nb_method++);
+	for(auto method : getOverridendMethods())
+		method->setPosition(nb_method++);
+	for(auto method : getNewMethods())
+		method->setPosition(nb_method++);
 }
 
 bool ClassNode::hasField(FieldNode* field) const{

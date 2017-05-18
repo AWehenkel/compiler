@@ -24,5 +24,6 @@ string CodeGenStringVisitor::transformStringInLLVMFormat(const string& lit) cons
     new_lit.replace(i, find.length(), "\\");
     i += new_lit.length();
   }
-  return new_lit;
+
+  return new_lit.insert(new_lit.size() - 1, "\\00");
 }

@@ -61,6 +61,8 @@ string MethodNode::getLLVMInstance(string class_name, string parent_name) const{
 		code_inst += " bitcast (" + getLLVMStructure("%struct." + parent_name) + " @" + parent_name + "_" + getName()->getLiteral() + "";
 		code_inst += " to " + getLLVMStructure("%struct." + class_name) + ")";
 	}
+	else if(class_name == "Main" && e_name->getLiteral() == "main" && 0)
+		code_inst += " @main";
 	else
 		code_inst += " @" + class_name + "_" + getName()->getLiteral();
 

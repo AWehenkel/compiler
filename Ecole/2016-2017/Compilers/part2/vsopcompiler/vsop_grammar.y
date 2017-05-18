@@ -6,6 +6,7 @@
 #include <cstring>
 #include <stdlib.h>
 #include <utility>
+#include <sstream>
 #include "all_headers.hpp"
 #include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
@@ -159,9 +160,13 @@ start :
 																												filename_no_ext = filename_no_ext.substr(0, filename_no_ext.size()-4);
 																												ofstream myfile;
 																											  myfile.open (filename_no_ext + "llvm");
-																											  myfile << ir;
+																												ifstream io_declaration;
+																												io_declaration.open("Libraries/IO_declarations.ll");
+																											  myfile << io_declaration.rdbuf() << ir;
 																											  myfile.close();
 																												string command = "llc-3.5 -filetype=obj -o " + filename_no_ext + "o " + filename_no_ext + "llvm";
+																												system(command.c_str());
+																												command = "gcc " + filename_no_ext + "o" + " Libraries/io.o -o " + filename_no_ext + "exe";
 																												system(command.c_str());
 																												//cout << ir << endl;
 																												delete generator;
@@ -444,7 +449,7 @@ int main (int argc, char *argv[]){
 
 	//Insert IO class if needed.
 	if(start_token == START_CODE_GEN || start_token == START_SEMANTIC){
-		FILE *io_class = fopen("IO.vsop", "r");
+		FILE *io_class = fopen("Libraries/IO.vsop", "r");
 		int t = start_token;
 		start_token = START_IO;
 		if (!io_class) {

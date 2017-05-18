@@ -23,7 +23,9 @@ class Cons extends List {
 class Main extends IO {
   main() : int32 {
     let xs : List in {
-      print("List has length ");
+      print("List has length\n");
+      xs <- new Cons;
+      //xs.init(10, new List); On a une seg fault dans notre code quelque part quand on lui donne ça, normalement ça devrait donner une erreur vu que init est pas déclaré chez List
       printInt32(xs.length());
       print("\n");
       ();
