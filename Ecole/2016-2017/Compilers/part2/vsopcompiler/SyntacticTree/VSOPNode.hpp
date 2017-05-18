@@ -20,13 +20,20 @@ protected :
 	friend std::ostream &operator<<(std::ostream &out, VSOPNode const &node);
 
 public :
-	//Constructor
+	//Constructor:
 	VSOPNode(int col, int line) : n_col(col), n_line(line){};
 
-	//Destructor
+	//Destructor:
 	virtual ~VSOPNode(){};
 
-	//Public method
+	//Accessors:
+	const int getLine() const{return n_line;};
+	const int getCol() const{return n_col;};
+	const std::string getLLVMAddress(){return llvm_address;};
+	void setLLVMAddress(int i_llvm_address){llvm_address = "%" + std::to_string(i_llvm_address);};
+	void setLLVMAddressAsString(std::string s_llvm_address){llvm_address = "%" + s_llvm_address;};
+	void setLLVMAddress(std::string s_llvm_address){llvm_address = s_llvm_address;};
+
 	/*
 	getLiteral
 	IN: -
@@ -71,27 +78,6 @@ public :
 	virtual FieldNode* getFieldFromId(std::string id){
 		return NULL;
 	};
-
-	//Accessors
-	const int getLine() const{
-		return n_line;
-	};
-	const int getCol() const{
-		return n_col;
-	};
-	const std::string getLLVMAddress(){
-		return llvm_address;
-	};
-	void setLLVMAddress(int i_llvm_address){
-		 llvm_address = "%" + std::to_string(i_llvm_address);
-	};
-	void setLLVMAddressAsString(std::string s_llvm_address){
-		 llvm_address = "%" + s_llvm_address;
-	};
-	void setLLVMAddress(std::string s_llvm_address){
-		 llvm_address = s_llvm_address;
-	};
-
 };
 
 #endif //vsop_node_hpp

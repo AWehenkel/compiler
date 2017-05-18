@@ -2,7 +2,6 @@
 #define LetNode_hpp
 
 #include <string>
-#include <vector>
 #include "ExpressionNode.hpp"
 /*
 	Class used to represent a syntaxic node containing a let statement
@@ -14,8 +13,9 @@ private :
 	ExpressionNode* e_init_exp;
 	ExpressionNode* e_scope_exp;
 	VSOPNode* e_current_scope;
+
 public :
-	//Constructors:
+	//Constructor:
 	/*
 	LetNode
 	IN:	object_id:	ObjectIdentifierNode*, the object identifier.
@@ -31,22 +31,19 @@ public :
 	//Destructor:
 	virtual ~LetNode();
 
-	//Public Methods:
 	//Accessors
 	ObjectIdentifierNode* getObjectId() const{return e_object_id;};
 	TypeIdentifierNode* getObjectType() const{return e_object_type;};
 	ExpressionNode* getInitExp() const{return e_init_exp;};
 	ExpressionNode* getScopeExp() const{return e_scope_exp;};
 	VSOPNode* getCurrentScope() const{return e_current_scope;};
+	void setCurrentScope(VSOPNode* node){e_current_scope = node;};
 
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitLetNode(this);};
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	const std::string getDeclarationLLVM(std::string id);
 	std::string getLiteral(bool with_type = false) const;
-
-	//Setters
-	void setCurrentScope(VSOPNode* node){e_current_scope = node;};
 
 };
 

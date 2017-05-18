@@ -4,6 +4,7 @@
 #include <string>
 #include "VSOPNode.hpp"
 #include "TypeIdentifierNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing a formal argument
 */
@@ -13,7 +14,7 @@ private :
 	TypeIdentifierNode* e_type;
 
 public :
-	//Constructors
+	//Constructor:
 	/*
 	IN: name:	ObjectIdentifierNode*, the name of the parameter.
 			type:	TypeIdentifierNode*, the type of the parameter.
@@ -25,7 +26,6 @@ public :
 	//Destructor
 	virtual ~FormalNode();
 
-	//Public methods
 	//Accesors
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};

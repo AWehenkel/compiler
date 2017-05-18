@@ -19,7 +19,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
 
   // Fill the class table with the other class in the program
   if(program->fillClassTable(class_table)){
-    SemanticError error("Internal failure of the compiler during the first pass."); // TODO : change error
+    SemanticError error("Redefintion of a class");
     errors.push_back(error);
     cerr << errors;
     return 1;
@@ -63,75 +63,30 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
 
   // Record all the methods, fields and local variables
   FillScopeTablesVisitor *visitor1 = new FillScopeTablesVisitor();
-  int current_result = program->accept(visitor1);
-  result += current_result;
-  if(current_result){
+  result = program->accept(visitor1);
+  if(result){
     vector<SemanticError> errors_generated = visitor1->getErrors();
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
-    //If negative then it is an unrecoverable error.
+    //Always consider it is an unrecoverable error.
     delete visitor1;
     cerr << errors;
-    return current_result;
+    return result;
   }
   delete visitor1;
 
 
-// Check all the types
+  // Check all the types
   CheckTypeVisitor *visitor2 = new CheckTypeVisitor();
   result = program->accept(visitor2);
-  if (result != 0){
+  if (result){
     vector<SemanticError> errors_generated = visitor2->getErrors();
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     delete visitor2;
     cerr << errors;
-    return -6;
+    return result;
   }
   delete visitor2;
 
   cerr << errors;
   return errors.size();
-}
-
-ClassNode* SemanticAnalyser::createIOClass(){
-
-  ClassBodyNode* body = new ClassBodyNode();
-  ClassNode* io_class = new ClassNode(new TypeIdentifierNode("IO"), body);
-
-  FormalsNode* formals = new FormalsNode();
-  BlockNode* content = new BlockNode();
-  content->addExpression(new NewNode(new TypeIdentifierNode("IO")));
-  formals->addFormal(new FormalNode(new ObjectIdentifierNode("s"), new TypeIdentifierNode("string")));
-  body->addMethod(new MethodNode(new ObjectIdentifierNode("print"), formals, new TypeIdentifierNode("IO"), content));
-
-  formals = new FormalsNode();
-  content = new BlockNode();
-  content->addExpression(new NewNode(new TypeIdentifierNode("IO")));
-  formals->addFormal(new FormalNode(new ObjectIdentifierNode("b"), new TypeIdentifierNode("bool")));
-  body->addMethod(new MethodNode(new ObjectIdentifierNode("printBool"), formals, new TypeIdentifierNode("IO"), content));
-
-  formals = new FormalsNode();
-  content = new BlockNode();
-  //ArgsNode args = new ArgsNode();
-  //args->
-  //content->addExpression(new CallNode(new ObjectIdentifierNode("printInt32"), ));
-  content->addExpression(new NewNode(new TypeIdentifierNode("IO")));
-  formals->addFormal(new FormalNode(new ObjectIdentifierNode("i"), new TypeIdentifierNode("int32")));
-  body->addMethod(new MethodNode(new ObjectIdentifierNode("printInt32"), formals, new TypeIdentifierNode("IO"), content));
-
-  formals = new FormalsNode();
-  content = new BlockNode();
-  content->addExpression(new LiteralNode("to_ret", "string"));
-  body->addMethod(new MethodNode(new ObjectIdentifierNode("inputLine"), formals, new TypeIdentifierNode("string"), content));
-
-  formals = new FormalsNode();
-  content = new BlockNode();
-  content->addExpression(new LiteralNode("true", "bool"));
-  body->addMethod(new MethodNode(new ObjectIdentifierNode("inputBool"), formals, new TypeIdentifierNode("bool"), content));
-
-  formals = new FormalsNode();
-  content = new BlockNode();
-  content->addExpression(new LiteralNode("42", "int32"));
-  body->addMethod(new MethodNode(new ObjectIdentifierNode("inputInt32"), formals, new TypeIdentifierNode("int32"), content));
-
-  return io_class;
 }

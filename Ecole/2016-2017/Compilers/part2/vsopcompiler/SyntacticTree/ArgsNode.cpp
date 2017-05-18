@@ -4,14 +4,10 @@
 using namespace std;
 
 ArgsNode::~ArgsNode(){
-	for (std::vector<ExpressionNode*>::const_iterator it = expressions.begin(); it < expressions.end(); ++it) {
+	for (vector<ExpressionNode*>::const_iterator it = expressions.begin(); it < expressions.end(); ++it) {
 		delete (*it);
 	}
 }
-
-void ArgsNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
-
-void ArgsNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}
 
 string ArgsNode::getLiteral(bool with_type) const {
 
@@ -26,3 +22,7 @@ string ArgsNode::getLiteral(bool with_type) const {
 
 	return literal;
 }
+
+void ArgsNode::addExpression(ExpressionNode *expression) { expressions.push_back(expression);}
+
+void ArgsNode::insertExpr(ExpressionNode *expression) { expressions.insert(expressions.begin(), expression);}

@@ -14,140 +14,6 @@ ClassNode::~ClassNode(){
 	delete e_body;
 }
 
-int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
-
-	// Can have no parents
-	if (!e_extends){
-		parent = table.find("Object")->second;
-	}
-	else if(table.find(e_extends->getLiteral()) != table.end()){
-		parent = table.find(e_extends->getLiteral())->second;
-	}
-	else
-		return -1;
-	assignPositionToMethod();
-	return 0;
-}
-
-void ClassNode::assignPositionToMethod(){
-	if(!e_extends)
-		nb_method = 0;
-	else{
-		nb_method = getInheritedMethods().size();
-	}
-
-	for(auto method : getOverridendMethods())
-		method->setPosition(nb_method++);
-	for(auto method : getNewMethods())
-		method->setPosition(nb_method++);
-}
-
-bool ClassNode::hasField(FieldNode* field) const{
-	return ((fields.find(field->getName()->getLiteral()) != fields.end()) || (parent && parent->hasField(field)));
-}
-
-bool ClassNode::hasMethod(MethodNode* method) const{
-	return ((methods.find(method->getName()->getLiteral()) != methods.end()) || (parent && parent->hasMethod(method)));
-}
-
-bool ClassNode::parentHasMethod(MethodNode* method) const{
-	return (parent && parent->hasMethod(method));
-}
-
-FieldNode* ClassNode::getField(string name){
-
-	FieldNode* to_ret;
-	if(fields.find(name) == fields.end()){
-		if(parent)
-			to_ret = parent->getField(name);
-		else
-			to_ret = NULL;
-	}
-	else
-		to_ret = fields.find(name)->second;
-
-	return to_ret;
-}
-
-SemanticError ClassNode::addField(FieldNode* field){
-
-	FieldNode* old_field = getField(field->getName()->getLiteral());
-	SemanticError error;
-	if(!old_field){
-		fields[field->getName()->getLiteral()] = field;
-	}
-	else
-		error = SemanticError("Error the field \"" + field->getName()->getLiteral() + "\" has already been declared in a parent class(" + to_string(old_field->getLine()) + ":" + to_string(old_field->getCol()) +").", field);
-	return error;
-}
-
-MethodNode* ClassNode::getMethod(string name){
-
-	MethodNode* to_ret;
-	if(methods.find(name) == methods.end()){
-		if(parent){
-			to_ret = parent->getMethod(name);
-		}
-		else
-			to_ret = NULL;
-	}
-	else
-		to_ret = methods.find(name)->second;
-
-	return to_ret;
-}
-
-SemanticError ClassNode::addMethod(MethodNode* method){
-
-	if(methods.find(method->getName()->getLiteral()) == methods.end()){
-		MethodNode* inherit_method = parent ? parent->getMethod(method->getName()->getLiteral()) : NULL;
-		if(!inherit_method || *method == *inherit_method){
-			methods[method->getName()->getLiteral()] = method;
-			return SemanticError();
-		}
-		SemanticError error("The method \"" + method->getName()->getLiteral() + "\" has already been declared in a parent class(" +
-			to_string(inherit_method->getLine()) + ":" + to_string(inherit_method->getCol()) + ") ", method);
-		return error;
-	}
-	SemanticError error("The method \"" + method->getName()->getLiteral() + "\" has already been declared in the class(" +
-		to_string((methods.find(method->getName()->getLiteral())->second)->getLine()) + ":" + to_string((methods.find(method->getName()->getLiteral())->second)->getCol()) + ") ", method);
-	return error;
-}
-
-bool ClassNode::inCycle(){
-	if(!in_cycle){
-		in_cycle = true;
-		in_cycle = !parent ? false : parent->inCycle();
-	}
-	return in_cycle;
-}
-
-TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
-
-	TypeIdentifierNode* common_parent =  NULL;
-	if(other == NULL)
-		return NULL;
-
-	// Check if there is a direct parent linkage
-	TypeIdentifierNode* other_type = other->getName();
-	if (*other_type == *e_name)
-		common_parent = e_name;
-
-	// If not check if there is a common ancestor
-	if (!common_parent && parent)
-		common_parent = parent->getCommonParent(other);
-
-	if(!common_parent && other->parent)
-		common_parent = other->parent->getCommonParent(this);
-
-	return common_parent;
-}
-
-bool ClassNode::hasParent(ClassNode* candidate){
-	TypeIdentifierNode* common_parent = getCommonParent(candidate);
-	return common_parent && common_parent->getLiteral() == candidate->getName()->getLiteral();
-}
-
 int ClassNode::accept(Visitor* visitor){
 	return visitor->visitClassNode(this);
 }
@@ -205,7 +71,147 @@ string ClassNode::getLiteral(bool with_type) const{
 	return literal;
 }
 
+void ClassNode::assignPositionToMethod(){
+
+	if(!e_extends)
+		nb_method = 0;
+	else
+		nb_method = getInheritedMethods().size();
+
+	for(auto method : getOverridendMethods())
+		method->setPosition(nb_method++);
+	for(auto method : getNewMethods())
+		method->setPosition(nb_method++);
+}
+
+bool ClassNode::hasField(FieldNode* field) const{
+	return ((fields.find(field->getName()->getLiteral()) != fields.end()) || (parent && parent->hasField(field)));
+}
+
+bool ClassNode::hasMethod(MethodNode* method) const{
+	return ((methods.find(method->getName()->getLiteral()) != methods.end()) || (parent && parent->hasMethod(method)));
+}
+
+bool ClassNode::parentHasMethod(MethodNode* method) const{
+	return (parent && parent->hasMethod(method));
+}
+
+FieldNode* ClassNode::getField(string name){
+
+	FieldNode* to_ret;
+	if(fields.find(name) == fields.end()){
+		if(parent)
+			to_ret = parent->getField(name);
+		else
+			to_ret = NULL;
+	}
+	else
+		to_ret = fields.find(name)->second;
+
+	return to_ret;
+}
+
+SemanticError ClassNode::addField(FieldNode* field){
+
+	FieldNode* old_field = getField(field->getName()->getLiteral());
+	SemanticError error;
+	if(!old_field)
+		fields[field->getName()->getLiteral()] = field;
+	else
+		error = SemanticError("Error the field \"" + field->getName()->getLiteral() + "\" has already been declared in a parent class(" + to_string(old_field->getLine()) + ":" + to_string(old_field->getCol()) +").", field);
+
+	return error;
+}
+
+MethodNode* ClassNode::getMethod(string name){
+
+	MethodNode* to_ret;
+	if(methods.find(name) == methods.end()){
+		if(parent)
+			to_ret = parent->getMethod(name);
+		else
+			to_ret = NULL;
+	}
+	else
+		to_ret = methods.find(name)->second;
+
+	return to_ret;
+}
+
+SemanticError ClassNode::addMethod(MethodNode* method){
+
+	if(methods.find(method->getName()->getLiteral()) == methods.end()){
+		MethodNode* inherit_method = parent ? parent->getMethod(method->getName()->getLiteral()) : NULL;
+		if(!inherit_method || *method == *inherit_method){
+			methods[method->getName()->getLiteral()] = method;
+			return SemanticError();
+		}
+		SemanticError error("The method \"" + method->getName()->getLiteral() + "\" has already been declared in a parent class(" +
+			to_string(inherit_method->getLine()) + ":" + to_string(inherit_method->getCol()) + ") ", method);
+		return error;
+	}
+
+	SemanticError error("The method \"" + method->getName()->getLiteral() + "\" has already been declared in the class(" +
+		to_string((methods.find(method->getName()->getLiteral())->second)->getLine()) + ":" + to_string((methods.find(method->getName()->getLiteral())->second)->getCol()) + ") ", method);
+
+	return error;
+}
+
+
+int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
+
+	// Can have no parents
+	if (!e_extends)
+		parent = table.find("Object")->second;
+	else if(table.find(e_extends->getLiteral()) != table.end())
+		parent = table.find(e_extends->getLiteral())->second;
+	else
+		return -1;
+
+	// Indicate to each method its position, used for the LLVM generation
+	assignPositionToMethod();
+
+	return 0;
+}
+
+bool ClassNode::inCycle(){
+
+	if(!in_cycle){
+		in_cycle = true;
+		in_cycle = !parent ? false : parent->inCycle();
+	}
+
+	return in_cycle;
+}
+
+TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
+
+	TypeIdentifierNode* common_parent =  NULL;
+	if(other == NULL)
+		return NULL;
+
+	// Check if there is a direct parent linkage
+	TypeIdentifierNode* other_type = other->getName();
+	if (*other_type == *e_name)
+		common_parent = e_name;
+
+	// If not check if there is a common ancestor
+	if (!common_parent && parent)
+		common_parent = parent->getCommonParent(other);
+
+	if(!common_parent && other->parent)
+		common_parent = other->parent->getCommonParent(this);
+
+	return common_parent;
+}
+
+bool ClassNode::hasParent(ClassNode* candidate){
+	TypeIdentifierNode* common_parent = getCommonParent(candidate);
+	return common_parent && common_parent->getLiteral() == candidate->getName()->getLiteral();
+}
+
 vector<MethodNode*> ClassNode::getInheritedMethods(){
+
 	vector<MethodNode*> inherited_methods;
 	if(parent){
 		vector<MethodNode*> parents_methods = parent->getAllMethods();
@@ -213,10 +219,12 @@ vector<MethodNode*> ClassNode::getInheritedMethods(){
 			if(methods.find((*it)->getName()->getLiteral()) == methods.end())
 				inherited_methods.push_back(*it);
 	}
+
 	return inherited_methods;
 }
 
 vector<MethodNode*> ClassNode::getOverridendMethods(){
+
 	vector<MethodNode*> overriden_methods;
 	if(parent){
 		vector<MethodNode*> parents_methods = parent->getAllMethods();
@@ -224,10 +232,12 @@ vector<MethodNode*> ClassNode::getOverridendMethods(){
 			if(methods.find((*it)->getName()->getLiteral()) != methods.end())
 				overriden_methods.push_back(*it);
 	}
+
 	return overriden_methods;
 }
 
 vector<MethodNode*> ClassNode::getNewMethods(){
+
 	unordered_map<string, MethodNode*> all_methods(methods);
 	vector<MethodNode*> overriden_methods = getOverridendMethods();
 	vector<MethodNode*> new_methods;
@@ -242,6 +252,7 @@ vector<MethodNode*> ClassNode::getNewMethods(){
 }
 
 vector<MethodNode*> ClassNode::getAllMethods(){
+
 	vector<MethodNode*> all_methods;
 	vector<MethodNode*> new_methods = getNewMethods();
 	vector<MethodNode*> overriden_methods = getOverridendMethods();
@@ -256,6 +267,7 @@ vector<MethodNode*> ClassNode::getAllMethods(){
 }
 
 vector<FieldNode*> ClassNode::getInheritedFields(){
+
 	vector<FieldNode*> all_fields;
 	vector<FieldNode*> parent_inh_fields;
 	vector<FieldNode*> parent_new_fields;
@@ -270,9 +282,12 @@ vector<FieldNode*> ClassNode::getInheritedFields(){
 
 	return all_fields;
 }
+
 vector<FieldNode*> ClassNode::getNewFields(){
+
 	vector<FieldNode*> new_fields;
 	for(auto field : fields)
 		new_fields.push_back(field.second);
+
 	return new_fields;
 }

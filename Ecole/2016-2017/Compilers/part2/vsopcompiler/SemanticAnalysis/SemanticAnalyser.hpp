@@ -1,21 +1,13 @@
 #ifndef semantic_analyser_hpp
 #define semantic_analyser_hpp
 
-#include "../all_headers.hpp"
+#include "../all_headers.hpp" // TODO : réappliquer include-what-you-use
 
 /*
 * This class is used to do the semantic analysis of the parse tree generated
 * after parsing.
 */
 class SemanticAnalyser{
-private:
-  /* createIOClass
-  *ROLE: Create a ClassNode corresponding to the class IO
-  *IN: -
-  *OUT: pointer to the ClassNode
-  */
-  static ClassNode* createIOClass();
-
 public:
   /* semanticAnalysis
   *ROLE: Do the necessary passes to do the semantic analysis
@@ -25,4 +17,4 @@ public:
   static int semanticAnalysis(ProgramNode* program);
 };
 
-#endif
+#endif // semantic_analyser_hpp

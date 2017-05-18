@@ -2,8 +2,7 @@
 #define AssignNode_hpp
 
 #include <string>
-#include <vector>
-#include "ExpressionNode.hpp"
+#include "ExpressionNode.hpp" // TODO refaire tourner include-what-you-use
 /*
 *	Class used to represent a syntaxic node containing an assignment.
 */
@@ -13,7 +12,7 @@ private :
 	ExpressionNode* e_expr;
 
 public :
-	//Constructors:
+	//Constructor:
 	/*
 	AssignNode
 	IN:	name:	ObjectIdentifierNode*, The name of the variable.
@@ -27,12 +26,11 @@ public :
 	//Destructor:
 	virtual ~AssignNode();
 
-	//Public Methods:
-	//Getter
+	//Accesors:
 	ObjectIdentifierNode* getName() const{return e_name;};
 	ExpressionNode* getExpression() const{return e_expr;};
 
-	//Inherited
+	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitAssignNode(this);};
 	std::string getLiteral(bool with_type = false) const;
 };

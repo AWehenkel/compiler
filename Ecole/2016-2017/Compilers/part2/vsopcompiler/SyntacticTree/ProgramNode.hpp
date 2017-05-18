@@ -20,7 +20,7 @@ public :
 	//Overloaded operator
 	ProgramNode& operator+=(const ProgramNode &p1);
 
-	//Constructors
+	//Constructor:
 	/*
 	new_class : ClassNode *, The last class of the program.
 	col: 				int, the column where the node is present.
@@ -28,10 +28,18 @@ public :
 	*/
 	ProgramNode(ClassNode *new_class = NULL, int col = 0, int line = 0) : VSOPNode(col, line){if(new_class)addClass(new_class);};
 
-	//Destructors
+	//Destructor:
 	virtual ~ProgramNode();
 
-	//Public methods
+	//Accessors:
+	std::vector<ClassNode*> getClasses() const {return classes;};
+	std::unordered_map<std::string, ClassNode*> getTableClasses() const {return table_classes;};
+	void removeClass(ClassNode* node);
+
+	//Inherited:
+	int accept(Visitor* visitor);
+	std::string getLiteral(bool with_type = false) const;
+
 	/*
 	addClass
 	IN:	new_class:	ClassNode *, A class
@@ -40,24 +48,12 @@ public :
 	*/
 	void addClass(ClassNode *new_class);
 
-	void addClassToDelete(std::string new_class);
-
 	/*
 	fillClassTable
 	IN: std::unordered_maptable, a reference to the table to fill with the class contained in the subnode of the current node.
 	Out: -
 	*/
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
-
-	//Accessor
-	std::vector<ClassNode*> getClasses() const {return classes;};
-	std::unordered_map<std::string, ClassNode*> getTableClasses() const {return table_classes;};
-	void removeClass(ClassNode* node);
-
-	//Inherited
-	int accept(Visitor* visitor);
-	std::string getLiteral(bool with_type = false) const;
-
 };
 
 #endif //program_node_hpp

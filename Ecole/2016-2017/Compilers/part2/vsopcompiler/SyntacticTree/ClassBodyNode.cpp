@@ -7,15 +7,11 @@
 using namespace std;
 
 ClassBodyNode::~ClassBodyNode(){
-	for (std::vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it)
+	for (vector<FieldNode*>::const_iterator it = fields.begin(); it < fields.end(); ++it)
 		delete (*it);
-	for (std::vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it)
+	for (vector<MethodNode*>::const_iterator it = methods.begin(); it < methods.end(); ++it)
 		delete (*it);
 }
-
-void ClassBodyNode::addField(FieldNode *field) { fields.push_back(field);}
-
-void ClassBodyNode::addMethod(MethodNode *method) { methods.push_back(method);}
 
 string ClassBodyNode::getLiteral(bool with_type) const{
 
@@ -39,3 +35,7 @@ string ClassBodyNode::getLiteral(bool with_type) const{
 
 	return literal;
 }
+
+void ClassBodyNode::addField(FieldNode *field) { fields.push_back(field);}
+
+void ClassBodyNode::addMethod(MethodNode *method) { methods.push_back(method);}

@@ -22,7 +22,7 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
   return NULL;
 }
 
-const std::string LetNode::getDeclarationLLVM(std::string id){
+const string LetNode::getDeclarationLLVM(string id){
 
   if(e_object_id->getLiteral() == id)
     return e_object_id->getLLVMAddress();

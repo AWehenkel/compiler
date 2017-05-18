@@ -3,6 +3,7 @@
 
 #include <string>
 #include "VSOPNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing a type identifier
 */
@@ -36,21 +37,21 @@ public :
 	TypeIdentifierNode(std::string content, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(NULL){setLLVMType(content);};
 	TypeIdentifierNode(std::string content, ClassNode* class_type, int col = 0, int line = 0) : VSOPNode(col, line), t_content(content), t_class_type(class_type){setLLVMType(content);};
 
-	//Public Methods:
-	//Setter
-	void setClassType(ClassNode* class_type){
-		t_class_type = class_type;
-	};
-
-	void setContent(std::string content){
-		t_content = content;
-	};
-
-	// getters
+	//Accessors:
+	void setClassType(ClassNode* class_type){t_class_type = class_type;};
+	void setContent(std::string content){t_content = content;};
 	ClassNode* getClassType() const{return t_class_type;};
 	std::string getLLVMType() const{return llvm_type;};
 
-	//TODO changer peut etre
+	//Inherited:
+	int accept(Visitor* visitor){return visitor->visitTypeIdentifierNode(this);};
+	std::string getLiteral(bool with_type = false) const{return t_content;};
+
+	/*
+	getInitLLVMValue
+	ROLE: Get the initial value for the corresponding type
+	OUT: string, initial value
+	*/
 	std::string getInitLLVMValue() const{
 		std::string init_val;
 		if(llvm_type == "i32")
@@ -73,11 +74,6 @@ public :
 	bool equals(TypeIdentifierNode &id){
 		return id.t_content == t_content;
 	};
-
-	//Inherited
-	int accept(Visitor* visitor){return visitor->visitTypeIdentifierNode(this);};
-	std::string getLiteral(bool with_type = false) const{return t_content;};
-
 };
 
 #endif //TypeIdentifierNode_hpp

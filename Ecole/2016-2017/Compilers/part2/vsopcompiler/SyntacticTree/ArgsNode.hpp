@@ -13,7 +13,7 @@ private :
 	std::vector<ExpressionNode*> expressions;
 
 public :
-	//Constructors
+	//Constructor:
 	/*
 	ArgsNode
 	IN:	col: 	int, the column where the node is present.
@@ -21,10 +21,16 @@ public :
 	*/
 	ArgsNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
-	//Destructor
+	//Destructor:
 	virtual ~ArgsNode();
 
-	//Public methods
+	//Accessor:
+	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
+
+	//Inherited:
+	int accept(Visitor* visitor){return visitor->visitArgsNode(this);};
+	std::string getLiteral(bool with_type = false) const;
+
 	/*
 	addExpression
 	IN: expression: ExpressionNode*, the expression to add.
@@ -40,13 +46,6 @@ public :
 	ROLE: Add an expression at the front of the list of argument
 	*/
 	void insertExpr(ExpressionNode *expression);
-
-	//Accessor
-	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
-
-	//Inherited
-	int accept(Visitor* visitor){return visitor->visitArgsNode(this);};
-	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //args_node_hpp

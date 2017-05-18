@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "VSOPNode.hpp"
+
 /*
 	Class used to represent a syntaxic node containing the body of a class
 */
@@ -13,7 +14,7 @@ private :
 	std::vector<MethodNode*> methods;
 
 public :
-	//Constructors
+	//Constructor:
 	/*
 	ArgsNode : -
 	IN:	col: 	int, the column where the node is present.
@@ -21,10 +22,17 @@ public :
 	*/
 	ClassBodyNode(int col = 0, int line = 0) : VSOPNode(col, line){};
 
-	//Destructor
+	//Destructor:
 	virtual ~ClassBodyNode();
 
-	//Public methods
+	//Accessors:
+	std::vector<FieldNode*> getFields() const {return fields;};
+	std::vector<MethodNode*> getMethods() const {return methods;};
+
+	//Inherited:
+	int accept(Visitor* visitor){return visitor->visitClassBodyNode(this);};
+	std::string getLiteral(bool with_type = false) const;
+
 	/*
 	addField
 	IN: expression: FieldNode*, the field to add.
@@ -40,14 +48,6 @@ public :
 	ROLE: Add a field at the end of the list of methods.
 	*/
 	void addMethod(MethodNode *method);
-
-	//Accessors
-	std::vector<FieldNode*> getFields() const {return fields;};
-	std::vector<MethodNode*> getMethods() const {return methods;};
-
-	//Inherited
-	int accept(Visitor* visitor){return visitor->visitClassBodyNode(this);};
-	std::string getLiteral(bool with_type = false) const;
 };
 
 #endif //class_body_node_hpp

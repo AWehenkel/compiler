@@ -11,26 +11,6 @@ FormalsNode::~FormalsNode(){
 	}
 }
 
-void FormalsNode::addFormal(FormalNode *formal) {
-	formals.push_back(formal);
-}
-
-void FormalsNode::insertFormal(FormalNode *formal) {
-	formals.insert(formals.begin(), formal);
-}
-
-bool FormalsNode::equals(FormalsNode &formals){
-
-	if(formals.formals.size() != this->formals.size())
-		return false;
-	for(size_t i = 0; i < formals.formals.size(); i++){
-		if(*(formals.formals.at(i)->getType()) != *(this->formals.at(i)->getType()))
-			return false;
-	}
-
-	return true;
-}
-
 TypeIdentifierNode* FormalsNode::getDeclarationType(string id){
 
 	for(vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
@@ -60,4 +40,24 @@ string FormalsNode::getLiteral(bool with_type) const {
 	literal += "]";
 
 	return literal;
+}
+
+void FormalsNode::addFormal(FormalNode *formal) {
+	formals.push_back(formal);
+}
+
+void FormalsNode::insertFormal(FormalNode *formal) {
+	formals.insert(formals.begin(), formal);
+}
+
+bool FormalsNode::equals(FormalsNode &formals){
+
+	if(formals.formals.size() != this->formals.size())
+		return false;
+	for(size_t i = 0; i < formals.formals.size(); i++){
+		if(*(formals.formals.at(i)->getType()) != *(this->formals.at(i)->getType()))
+			return false;
+	}
+
+	return true;
 }
