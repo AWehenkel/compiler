@@ -194,11 +194,9 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
   // Check if the method called exists for the given object
   MethodNode *method = object_class->getMethod(node->getMethodName()->getLiteral());
   if (!method){
-    cout << "hello" << endl;
     SemanticError error("Undefined method '" + node->getMethodName()->getLiteral() + " for object of type '" + object_type->getLiteral() + "'", node);
 		errors.push_back(error);
     node->setType(new TypeIdentifierNode("error"), true);
-    cout << nb_errors << endl;
     return ++nb_errors;
   }
 
@@ -577,6 +575,5 @@ int CheckTypeVisitor::visitProgramNode(ProgramNode *node){
       return -1;
     nb_errors += error;
   }
-
-  return nb_errors;
+  return errors.size();
 }

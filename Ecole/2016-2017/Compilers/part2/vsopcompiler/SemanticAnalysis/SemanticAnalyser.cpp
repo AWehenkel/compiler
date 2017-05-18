@@ -16,19 +16,12 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
 
   vector<SemanticError> errors;
   unordered_map<string, ClassNode*> class_table;
-  // Adding Object class to the class table
-  //class_table["Object"] = new ClassNode(new TypeIdentifierNode("Object"), new ClassBodyNode());
-  // Adding IO class to the class table (maybe good to replace with include system)
-  //ClassNode* io_class = createIOClass();
-  //program->addClass(io_class);
 
   // Fill the class table with the other class in the program
   if(program->fillClassTable(class_table)){
     SemanticError error("Internal failure of the compiler during the first pass."); // TODO : change error
     errors.push_back(error);
     cerr << errors;
-    //program->removeClass(io_class);
-    //program->addClassToDelete("Object");
     return 1;
   }
 
@@ -63,8 +56,6 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     if(result < 0){
       delete visitor;
       cerr << errors;
-      //program->removeClass(io_class);
-      //program->addClassToDelete("Object");
       return result;
     }
   }
@@ -80,8 +71,6 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     //If negative then it is an unrecoverable error.
     delete visitor1;
     cerr << errors;
-    //program->removeClass(io_class);
-    //program->addClassToDelete("Object");
     return current_result;
   }
   delete visitor1;
@@ -95,8 +84,6 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
     errors.insert(errors.end(), errors_generated.begin(), errors_generated.end());
     delete visitor2;
     cerr << errors;
-    //program->removeClass(io_class);
-    //program->addClassToDelete("Object");
     return -6;
   }
   delete visitor2;
