@@ -5,10 +5,13 @@ all:	vsopc
 .PHONY:	all archive clean install-tools
 
 # Your compiler
-vsopc: bison flex preprocessing g++
+vsopc: bison flex preprocessing g++ io
 
 bison:
 	bison -v -d vsop_grammar.y
+
+io:
+	gcc -g -O -c Libraries/io.c -o Libraries/io.o
 
 flex:
 	flex vsop_syntax.l
@@ -25,7 +28,7 @@ generation :
 # Should clean built files, and keep only source code. Adapt to your language
 # and folder structure. If using git, you might want to use `git clean`.
 clean:
-	rm -f vsopc *~ *.bak *.o *.class *.pyc vsop_grammar.output vsop_grammar.tab.c vsop_grammar.tab.h lex.yy.c
+	rm -f vsopc *~ *.bak *.o *.class *.pyc vsop_grammar.output vsop_grammar.tab.c vsop_grammar.tab.h lex.yy.c Libraries/io.o
 
 # First rule called when in a new VM. Use this target to install any software
 # tools or libraries needed to build your compiler. e.g. assuming a C++ project

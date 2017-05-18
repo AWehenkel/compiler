@@ -485,46 +485,62 @@ define i32 @Cons_length(%struct.Cons* %self) #0 {
 	%3 = alloca i32
 	; condition
 	%4 = alloca i1
-	store i1 false, i1* %4
-	%5 = load i1* %4
-	br i1 %5, label %then_4, label %else_4
+	; unary
+	%5 = alloca i1
+	; unary
+	%6 = alloca %struct.List*
+	%7 = load %struct.Cons** %1
+	%8 = getelementptr inbounds %struct.Cons* %7, i32 0, i32 1
+	%9 = load %struct.List** %8
+	store %struct.List* %9, %struct.List** %6
+	%10 = load %struct.List** %6
+	%11 = icmp eq%struct.List* %10, null
+	store i1 %11, i1* %5
+	%12 = load i1* %5
+	%13 = add i1 %12, 1
+	store i1 %13, i1* %4
+	%14 = load i1* %4
+	br i1 %14, label %then_14, label %else_14
 	
-then_4:
-		%6 = alloca i32
+then_14:
+		%15 = alloca i32
 		; binary operation
-		%7 = alloca i32
-		store i32 1, i32* %7
-		%8 = alloca i32
-		%9 = alloca %struct.List*
-		%10 = load %struct.Cons** %1
-		%11 = getelementptr inbounds %struct.Cons* %10, i32 0, i32 1
-		%12 = load %struct.List** %11
-		store %struct.List* %12, %struct.List** %9
+		%16 = alloca i32
+		store i32 1, i32* %16
+		%17 = alloca i32
+		%18 = alloca %struct.List*
+		%19 = load %struct.Cons** %1
+		%20 = getelementptr inbounds %struct.Cons* %19, i32 0, i32 1
+		%21 = load %struct.List** %20
+		store %struct.List* %21, %struct.List** %18
 ; call
-		%13 = load %struct.List** %9
-		%14 = getelementptr inbounds %struct.List* %13, i32 0, i32 0
-		%15 = load %struct.ListVTable** %14
-		%16 = getelementptr inbounds %struct.ListVTable* %15, i32 0, i32 0
-		%17 = load i32 (%struct.List*)** %16
-		%18 = call i32 %17(%struct.List* %13)
-		store i32 %18, i32* %8
-		%19 = load i32* %7
-		%20 = load i32* %8
-		%21 = add nuw i32 %19, %20
-		store i32 %21, i32* %6
-		store i32 %6, i32* %3
-		br label %end_4
+		%22 = load %struct.List** %18
+		%23 = getelementptr inbounds %struct.List* %22, i32 0, i32 0
+		%24 = load %struct.ListVTable** %23
+		%25 = getelementptr inbounds %struct.ListVTable* %24, i32 0, i32 0
+		%26 = load i32 (%struct.List*)** %25
+		%27 = call i32 %26(%struct.List* %22)
+		store i32 %27, i32* %17
+		%28 = load i32* %16
+		%29 = load i32* %17
+		%30 = add nuw i32 %28, %29
+		store i32 %30, i32* %15
+		%31 = load i32* %15
+		store i32 %31, i32* %3
+		br label %end_14
 	
-else_4:
-		%22 = alloca i32
-		store i32 1, i32* %22
-		store i32 %22, i32* %3
+else_14:
+		%32 = alloca i32
+		store i32 1, i32* %32
+		%33 = load i32* %32
+		store i32 %33, i32* %3
+		br label %end_14
 	
-end_3:
-	%23 = load i32* %3
-	store i32 %23, i32* %2
-	%24 = load i32* %2
-	ret i32 %24
+end_14:
+	%34 = load i32* %3
+	store i32 %34, i32* %2
+	%35 = load i32* %2
+	ret i32 %35
 }
 
 define i32 @Main_main(%struct.Main* %self) #0 {

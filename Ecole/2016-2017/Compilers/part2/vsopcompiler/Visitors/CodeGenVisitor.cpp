@@ -111,7 +111,7 @@ string CodeGenVisitor::getLLVMUnaryCode(UnaryOperatorNode* node, string op){
       type = "i32";
       break;
     case u_op_isnull :
-      // TODO : ! pour le isnull..., faut checker d'une manière ou d'une autre que de la mémoire a déjà été allouée à l'objet (qu'il a été instantié -> new)
+      code = to_ret + " = icmp eq" + node->getOperand()->getLLVMType() + " " + op + ", null";
       type = "i1";
       break;
   }
@@ -266,9 +266,9 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
     return -1;
 
   // Branch on the result
-  string br_id = condition->getLLVMAddress().substr(1, 1);
   counter = llvm_address_counters.top();
   llvm_address_counters.pop();
+  string br_id = to_string(counter);
   string cond_var = "%" + to_string(counter++);
   ir += tab + getLLVMLoadCode(cond_var, condition->getLLVMAddress(), "i1");
   if (else_action)
@@ -285,8 +285,14 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   if(action->accept(this) < 0)
     return -1;
   // Store the value if needed by the parent node
-  if(expr_addr != "")
-      ir += tab + getLLVMStoreCode(action->getLLVMAddress(), expr_addr, action->getLLVMType());
+  if(expr_addr != ""){
+      counter = llvm_address_counters.top();
+      llvm_address_counters.pop();
+      string tmp_val = "%" + to_string(counter++);
+      ir += tab + getLLVMLoadCode(tmp_val, action->getLLVMAddress(), action->getLLVMType());
+      ir += tab + getLLVMStoreCode(tmp_val, expr_addr, action->getLLVMType());
+      llvm_address_counters.push(counter);
+    }
   tab.pop_back();
 
   // Branch 2
@@ -302,11 +308,18 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
     if(else_action->accept(this) < 0)
       return -1;
     // Store the value if needed by the parent node
-    if(expr_addr != "")
-      ir += tab + getLLVMStoreCode(else_action->getLLVMAddress(), expr_addr, else_action->getLLVMType());
+    if(expr_addr != ""){
+      counter = llvm_address_counters.top();
+      llvm_address_counters.pop();
+      string tmp_val = "%" + to_string(counter++);
+      ir += tab + getLLVMLoadCode(tmp_val, else_action->getLLVMAddress(), action->getLLVMType());
+      ir += tab + getLLVMStoreCode(tmp_val, expr_addr, action->getLLVMType());
+      llvm_address_counters.push(counter);
+    }
     tab.pop_back();
+    ir += tab + "\tbr label %end_" + br_id + "\n";
   }
-  ir += tab + "\nend_" + node->getLLVMAddress().substr(1,1) + ":\n";
+  ir += tab + "\nend_" + br_id + ":\n";
 
   return 0;
 }
