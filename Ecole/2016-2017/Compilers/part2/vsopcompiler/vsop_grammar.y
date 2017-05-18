@@ -68,7 +68,7 @@ void yyerror(const char *s);
 %token T_PLUS T_MINUS T_TIMES T_DIV T_POW T_DOT T_EQUAL T_LOWER T_LEQ
 %token T_ASSIGN
 %token T_COMMENTS
-%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN START_IO;
+%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN START_IO START_EX_GEN;
 %token T_ERROR
 
 %type <program_node>            program
@@ -143,6 +143,25 @@ start :
 																										delete $2;
 																									}
 	| START_CODE_GEN program												{
+																									if(!syntax_error){
+																										$2->addClass(io_node);
+																										$2->addClass(obj_node);
+																										semantic_error = SemanticAnalyser::semanticAnalysis($2);
+																										if(!semantic_error){
+																											CodeGenStringVisitor* s_gen = new CodeGenStringVisitor();
+																											$2->accept(s_gen);
+																											string ir = s_gen->getIr();
+																											delete s_gen;
+																											CodeGenVisitor* generator = new CodeGenVisitor();
+																											$2->accept(generator);
+																											ir += generator->getIR();
+																											cout << ir << endl;
+																											delete generator;
+																										}
+																										delete $2;
+																									}
+																								}
+	| START_EX_GEN program												{
 																										if(!syntax_error){
 																											$2->addClass(io_node);
 																											$2->addClass(obj_node);
@@ -423,32 +442,36 @@ boolean-literal :
 int main (int argc, char *argv[]){
 
 	// TODO : on peut aussi ne pouvoir mettre aucun - speciaux (voir énoncé partie 4)
-	if(argc != 3){
-		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
-		cerr << "Usage for both lexer and parse: ./main <Source_File>" << endl;
-		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
-		cerr << "Usage for code generation: ./main -llvm <Source_File" << endl;
+	if(argc != 2 && argc != 3 && argc != 4){
+		cerr << "Usage for only lexer: ./" << argv[1] << " -lex <Source_File>" << endl;
+		cerr << "Usage for both lexer and parse: ./" << argv[1] << " -parse <Source_File>" << endl;
+		cerr << "Usage for lexer, parse and semantic: ./" << argv[1] << " -check <Source_File>" << endl;
+		cerr << "Usage for code generation: ./" << argv[1] << " -llvm <Source_File>" << endl;
+		cerr << "Usage for executable generation : ./" << argv[1] << " <Source_File>" << endl;
+		cerr << "You can also add -lex to activate the extensions" << endl;
 		return -1;
 	}
 
-	if(!strcmp(argv[1], "-lex"))
-		start_token = START_LEXICAL;
-	else if(!strcmp(argv[1], "-check"))
-    start_token = START_SEMANTIC;
-  else if(!strcmp(argv[1], "-parse"))
-		start_token = START_SYNTAX;
-	else if(!strcmp(argv[1], "-llvm"))
-		start_token = START_CODE_GEN;
-	else{
-		cerr << "Usage for only lexer: ./main -lex <Source_File>" << endl;
-		cerr << "Usage for both lexer and parse: ./main -parse <Source_File>" << endl;
-		cerr << "Usage for lexer, parse and semantic: ./main -check <Source_File" << endl;
-		cerr << "Usage for code generation: ./main -llvm <Source_File" << endl;
-		return -1;
+	start_token = START_EX_GEN;
+	for(int i = 1; i < argc; ++i){
+		if(!strcmp(argv[i], "-lex"))
+			start_token = START_LEXICAL;
+		else if(!strcmp(argv[i], "-check"))
+			start_token = START_SEMANTIC;
+		else if(!strcmp(argv[i], "-parse"))
+			start_token = START_SYNTAX;
+		else if(!strcmp(argv[i], "-llvm"))
+			start_token = START_CODE_GEN;
+		else if(!strcmp(argv[i], "-ext")){
+			// Do nothing for now
+		}else if(argv[i][0] == '-'){
+			cerr << "Undefined argument" << endl;
+			return -1;
+		}
 	}
 
 	//Insert IO class if needed.
-	if(start_token == START_CODE_GEN || start_token == START_SEMANTIC){
+	if(start_token == START_EX_GEN || start_token == START_CODE_GEN || start_token == START_SEMANTIC){
 		FILE *io_class = fopen("Libraries/IO.vsop", "r");
 		int t = start_token;
 		start_token = START_IO;

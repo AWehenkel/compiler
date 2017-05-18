@@ -24,7 +24,7 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
 
   // Fill the class table with the other class in the program
   if(program->fillClassTable(class_table)){
-    SemanticError error("Internal failure of the compiler during the first pass.");
+    SemanticError error("Internal failure of the compiler during the first pass."); // TODO : change error
     errors.push_back(error);
     cerr << errors;
     //program->removeClass(io_class);
