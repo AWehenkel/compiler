@@ -75,7 +75,7 @@ public :
 	IN:		id: std::string, the name of the variable.
 	OUT: 	FieldNode*, null if the object identifier does not correspond to a field
 	*/
-	virtual FieldNode* getFieldFromId(std::string id){
+	virtual FieldNode* getFieldFromId(std::string id) const{
 		return NULL;
 	};
 };

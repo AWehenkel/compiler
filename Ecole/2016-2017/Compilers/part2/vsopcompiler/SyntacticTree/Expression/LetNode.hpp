@@ -44,6 +44,7 @@ public :
 	TypeIdentifierNode* getDeclarationType(std::string id);
 	const std::string getDeclarationLLVM(std::string id);
 	std::string getLiteral(bool with_type = false) const;
+	FieldNode* getFieldFromId(std::string id) const;
 
 };
 

@@ -13,6 +13,7 @@ private :
     std::string ir;
     std::string tab;
     VSOPNode* current_scope = NULL;
+    ClassNode* current_class = NULL;
     bool external_call = false;
 
 public :

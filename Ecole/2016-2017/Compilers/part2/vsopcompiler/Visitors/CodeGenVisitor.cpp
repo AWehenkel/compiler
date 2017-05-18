@@ -144,14 +144,13 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   }
   else
     ir += tab + getLLVMLoadCode(load, expr->getLLVMAddress(), expr->getLLVMType());
+
   // Have to particularize if it is a field
   FieldNode* field = current_scope->getFieldFromId(name->getLiteral());
-  if (field){
-    MethodNode* cur_method = (MethodNode*) current_scope;
-    ClassNode* cur_class = cur_method->getClassScope();
+  if(field){
     ir += ";field\n";
-    ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + cur_class->getName()->getLiteral() + "*"); // TODO : attention incohérence avec call
-    ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + cur_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
+    ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + current_class->getName()->getLiteral() + "*"); // TODO : attention incohérence avec call
+    ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + current_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
     ir += tab + getLLVMStoreCode(load, "%" + to_string(addr_counter-1), name->getLLVMType());
   }else
     ir += tab + getLLVMStoreCode(load, current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType());
@@ -763,6 +762,7 @@ int CodeGenVisitor::visitProgramNode(ProgramNode* node){
 
   Visitor::visitProgramNode(node);
   for(auto class_node : node->getTableClasses()){
+    current_class = class_node.second;
     if(class_node.first == "IO")
       external_call = true;
     else{

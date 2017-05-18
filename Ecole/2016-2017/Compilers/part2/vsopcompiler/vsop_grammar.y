@@ -133,6 +133,7 @@ start :
 																											$2->addClass(io_node);
 																											$2->addClass(obj_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
+																											cout << semantic_error << endl;
 																											// Remove IO class for the class table
 																											std::unordered_map<std::string, ClassNode*> c_table = $2->getTableClasses();
 																										  $2->removeClass(c_table["IO"]);
@@ -158,6 +159,7 @@ start :
 																											cout << ir << endl;
 																											delete generator;
 																										}
+
 																										delete $2;
 																									}
 																								}

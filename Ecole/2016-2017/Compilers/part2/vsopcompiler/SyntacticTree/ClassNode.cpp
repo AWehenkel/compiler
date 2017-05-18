@@ -49,8 +49,7 @@ const string ClassNode::getDeclarationLLVM(string id){
 	return "";
 }
 
-FieldNode* ClassNode::getFieldFromId(string id){
-
+FieldNode* ClassNode::getFieldFromId(string id) const{
 	if(fields.find(id) != fields.end())
 		return fields.find(id)->second;
 	else if(parent)

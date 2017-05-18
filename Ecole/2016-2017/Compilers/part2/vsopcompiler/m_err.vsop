@@ -1,18 +1,15 @@
+class Parent {
+    name() : string { "Parent" }
+}
+class Child extends Parent {
+    name() : string { "Child" }
+}
 class Main extends IO {
-  main() : int32 {
-    printInt32(10);
-    1 + 1
-  }
-}
-
-class A extends B {
-  f() : int32 {
-    0
-  }
-}
-class B extends A {
-  f() : int32 {
-    true;
-    f()
-  }
+    main() : int32 {
+        print((if true then new Parent else new Child).name());
+        print("\n");
+        print((if false then new Parent else new Child).name());
+        print("\n");
+        0
+    }
 }

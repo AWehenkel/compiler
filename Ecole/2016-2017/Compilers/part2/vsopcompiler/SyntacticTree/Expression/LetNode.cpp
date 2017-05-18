@@ -21,6 +21,15 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
 
   return NULL;
 }
+FieldNode* LetNode::getFieldFromId(std::string id) const{
+  if(e_object_id->getLiteral() == id)
+    return NULL;
+
+  if(e_current_scope)
+    return e_current_scope->getFieldFromId(id);
+
+  return NULL;
+}
 
 const string LetNode::getDeclarationLLVM(string id){
 
