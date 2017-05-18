@@ -2662,7 +2662,10 @@ int main (int argc, char *argv[]){
 				syntax_error++;
 			}
 		} while (!feof(yyin));
-
+		yylloc.first_line = 0;
+		yylloc.first_column = 0;
+		yylloc.last_line = 0;
+		yylloc.last_column = 0;
 		start_token = t;
 		fclose(yyin);
 	}

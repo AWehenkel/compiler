@@ -17,7 +17,12 @@ class Cons extends List {
 
   head() : int32 { head }
   isNil() : bool { false }
-  length() : int32 { 1 + tail.length() }
+  length() : int32 {
+    if false then
+      1 + tail.length()
+    else
+      1
+  }
 }
 
 class Main extends IO {

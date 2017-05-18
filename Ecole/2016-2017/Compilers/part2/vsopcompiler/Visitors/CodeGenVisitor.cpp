@@ -267,16 +267,18 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
 
   // Branch on the result
   string br_id = condition->getLLVMAddress().substr(1, 1);
+  counter = llvm_address_counters.top();
+  llvm_address_counters.pop();
+  string cond_var = "%" + to_string(counter++);
+  ir += tab + getLLVMLoadCode(cond_var, condition->getLLVMAddress(), "i1");
   if (else_action)
-    ir += tab + "br i1 " + condition->getLLVMAddress() + "*, label %then_" + br_id + ", label %else_" + br_id + "\n";
+    ir += tab + "br i1 " + cond_var + ", label %then_" + br_id + ", label %else_" + br_id + "\n";
   else
-    ir += tab + "br i1 " + condition->getLLVMAddress() + "*, label %then_" + br_id + ", label %end_" + br_id + "\n";
+    ir += tab + "br i1 " + cond_var + ", label %then_" + br_id + ", label %end_" + br_id + "\n";
 
   // First branch
   ir += tab + "\nthen_" + br_id + ":\n";
   tab += "\t";
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
   action->setLLVMAddress(counter++);
   ir += tab + getLLVMAllocationCode(action->getLLVMAddress(), action->getLLVMType());
   llvm_address_counters.push(counter);
