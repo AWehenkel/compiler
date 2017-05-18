@@ -6,7 +6,10 @@ void printInt32(int i){
 }
 
 void printBool(short int i){
-  printf("%hd", i);
+  if(i)
+    printf("true");
+  else
+    printf("false");
 }
 
 void print(char* string){

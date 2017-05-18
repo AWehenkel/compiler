@@ -185,7 +185,7 @@ start :
 																											  myfile.close();
 																												string command = "llc-3.5 -filetype=obj -o " + filename_no_ext + "o " + filename_no_ext + "llvm";
 																												system(command.c_str());
-																												command = "gcc " + filename_no_ext + "o" + " Libraries/io.o -o " + filename_no_ext + "exe";
+																												command = "gcc " + filename_no_ext + "o" + " Libraries/io.o -o " + filename_no_ext.substr(0, filename_no_ext.size() - 1);
 																												system(command.c_str());
 																												//cout << ir << endl;
 																												delete generator;
@@ -443,11 +443,11 @@ int main (int argc, char *argv[]){
 
 	// TODO : on peut aussi ne pouvoir mettre aucun - speciaux (voir énoncé partie 4)
 	if(argc != 2 && argc != 3 && argc != 4){
-		cerr << "Usage for only lexer: ./" << argv[1] << " -lex <Source_File>" << endl;
-		cerr << "Usage for both lexer and parse: ./" << argv[1] << " -parse <Source_File>" << endl;
-		cerr << "Usage for lexer, parse and semantic: ./" << argv[1] << " -check <Source_File>" << endl;
-		cerr << "Usage for code generation: ./" << argv[1] << " -llvm <Source_File>" << endl;
-		cerr << "Usage for executable generation : ./" << argv[1] << " <Source_File>" << endl;
+		cerr << "Usage for only lexer: ./" << argv[0] << " -lex <Source_File>" << endl;
+		cerr << "Usage for both lexer and parse: ./" << argv[0] << " -parse <Source_File>" << endl;
+		cerr << "Usage for lexer, parse and semantic: ./" << argv[0] << " -check <Source_File>" << endl;
+		cerr << "Usage for code generation: ./" << argv[0] << " -llvm <Source_File>" << endl;
+		cerr << "Usage for executable generation : ./" << argv[0] << " <Source_File>" << endl;
 		cerr << "You can also add -lex to activate the extensions" << endl;
 		return -1;
 	}
