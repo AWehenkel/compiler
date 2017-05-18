@@ -2,15 +2,15 @@
 #include <stdlib.h>
 
 void printInt32(int i){
-  printf("printInt32: %d", i);
+  printf("%d", i);
 }
 
 void printBool(short int i){
-  printf("printBool: %hd", i);
+  printf("%hd", i);
 }
 
 void print(char* string){
-  printf("print: %s", string);
+  printf("%s", string);
 }
 
 int inputInt32(){

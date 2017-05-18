@@ -27,8 +27,6 @@ public :
 	virtual ~ExpressionNode();
 
 	//Public method
-	virtual bool alreadyInstanciated(){return false;};
-	
 	//Inherited
 	virtual int accept(Visitor* visitor) = 0;
 	virtual bool alreadyInstanciated(){return false;};
@@ -38,18 +36,6 @@ public :
 	virtual void setType(TypeIdentifierNode* new_type, bool new_self_type = false){
 		node_type = new_type;
 		self_type = new_self_type;
-	};
-
-	// TODO : check que ça a un sens
-	void setLLVMType(std::string content){
-		if(content == "int32")
-			llvm_type = "i32";
-		else if(content == "bool")
-			llvm_type = "i1";
-		else if(content == "string")
-			llvm_type = "c";
-		else
-			llvm_type = content;
 	};
 };
 
