@@ -45,9 +45,7 @@ string CodeGenVisitor::getLLVMReturnCode(string to_ret, string type){
 }
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string code, to_ret = "%" + to_string(counter++), tmp;
+  string code, to_ret = "%" + to_string(addr_counter++), tmp;
   switch (node->getOperator()) {
     case b_op_and :
       code = tab + to_ret + " = and i1 " + op1 + ", "  + op2; // TODO : il faut convertir les false/true en 0/1
@@ -66,8 +64,8 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       break;
     case b_op_equal :
       if(node->getLeft()->getLLVMType() == "i8*"){
-        tmp = "%" + to_string(counter - 1);
-        to_ret = "%" + to_string(counter++);
+        tmp = "%" + to_string(addr_counter - 1);
+        to_ret = "%" + to_string(addr_counter++);
         code = tab + tmp + " = call i32 @strcmp(i8* " + op1 + ", i8* " + op2 + ")\n";
         code += tab + to_ret + " = icmp eq i32 0, "  + tmp;
       }
@@ -81,27 +79,24 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       code = tab + to_ret + " = sdiv i32 " + op1 + ", "  + op2;
       break;
     case b_op_pow :
-      string tmp1 = "%" + to_string(counter++), tmp2 = "%" + to_string(counter++);
+      string tmp1 = "%" + to_string(addr_counter++), tmp2 = "%" + to_string(addr_counter++);
 
       code = tab + tmp1 + " = sitofp i32 " + op1 + " to float\n";
       code += tab + tmp2 + " = call float @llvm.powi.f32(float " + tmp1 + ", i32 " + op2 + ")\n";
       code += tab + to_ret + " = fptosi float " + tmp2 + " to i32";
       break;
   }
-  llvm_address_counters.push(counter);
 
   // Store the value if needed by the parent node
   if(node->getLLVMAddress().size())
-    code += "\n" + tab + getLLVMStoreCode(to_ret, node->getLLVMAddress(), node->getLLVMType()); // TODO : pourquoi est-ce qu'on store forcément un i32 ?
+    code += "\n" + tab + getLLVMStoreCode(to_ret, node->getLLVMAddress(), node->getLLVMType());
 
   return code;
 }
 
 string CodeGenVisitor::getLLVMUnaryCode(UnaryOperatorNode* node, string op){
 
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string code, to_ret = "%" + to_string(counter++);
+  string code, to_ret = "%" + to_string(addr_counter++);
   string type;
 
   switch (node->getOperator()) {
@@ -118,7 +113,6 @@ string CodeGenVisitor::getLLVMUnaryCode(UnaryOperatorNode* node, string op){
       type = "i1";
       break;
   }
-  llvm_address_counters.push(counter);
 
   code += "\n" + tab +  getLLVMStoreCode(to_ret, node->getLLVMAddress(), type);
 
@@ -130,29 +124,21 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   ExpressionNode* expr = node->getExpression();
   ObjectIdentifierNode* name = node->getName();
   string node_addr = node->getLLVMAddress();
-  int counter;
 
   ir += tab + "; assignement\n";
 
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  expr->setLLVMAddress(counter++);
+  expr->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
-  llvm_address_counters.push(counter);
   // Visit the init expression
-  ir += ";before_visit\n";
   if (expr->accept(this) < 0)
     return -1;
-  ir += ";after_visit\n";
 
   // Store the value of the expression in the left term //TODO ici je rajoute le bitcast dans le cas du polymorphisme, cependant qu'elle est la bon type pour le assign
   // en lui meme? le parent ou le fils? Pour le moment je mets la meme chose pour les duex. si à changer il faut faire gaffe car le code se sert de ça.
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string load = "%" + to_string(counter++);
+  string load = "%" + to_string(addr_counter++);
   if(expr->getLLVMType() != node->getLLVMType()){
     ir += tab + getLLVMLoadCode(load, expr->getLLVMAddress(), expr->getLLVMType());
-    string new_load = "%" + to_string(counter++);;
+    string new_load = "%" + to_string(addr_counter++);;
     ir += tab + getLLVMBitCastCode(new_load, expr->getLLVMType(), load, node->getLLVMType());
     load = new_load;
   }
@@ -164,16 +150,14 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
     MethodNode* cur_method = (MethodNode*) current_scope;
     ClassNode* cur_class = cur_method->getClassScope();
     ir += ";field\n";
-    ir += tab + getLLVMLoadCode("%" + to_string(counter++), "%1", "%struct." + cur_class->getName()->getLiteral() + "*"); // TODO : attention incohérence avec call
-    ir += tab + getLLVMGetElementPtr("%" + to_string(counter++), "%struct." + cur_class->getName()->getLiteral(), "%" + to_string(counter-1), 0, field->getPosition());
-    ir += tab + getLLVMStoreCode(load, "%" + to_string(counter-1), name->getLLVMType());
+    ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + cur_class->getName()->getLiteral() + "*"); // TODO : attention incohérence avec call
+    ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + cur_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
+    ir += tab + getLLVMStoreCode(load, "%" + to_string(addr_counter-1), name->getLLVMType());
   }else
     ir += tab + getLLVMStoreCode(load, current_scope->getDeclarationLLVM(name->getLiteral()), name->getLLVMType());
 
   if(node_addr != "")
     ir += tab + getLLVMStoreCode(load, node_addr, node->getLLVMType());
-
-  llvm_address_counters.push(counter);
 
   return 0;
 }
@@ -185,26 +169,17 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   ir += tab + "; binary operation\n";
 
   // Visit the children nodes
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  left->setLLVMAddress(counter++);
+  left->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(left->getLLVMAddress(), left->getLLVMType());
-  llvm_address_counters.push(counter);
   if (left->accept(this) < 0)
     return -1;
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  right->setLLVMAddress(counter++);
+  right->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(right->getLLVMAddress(), right->getLLVMType());
-  llvm_address_counters.push(counter);
   if (right->accept(this) < 0)
     return -1;
   // Load the two operands
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string left_op_address = "%" + to_string(counter++);
-  string right_op_address = "%" + to_string(counter++);
-  llvm_address_counters.push(counter);
+  string left_op_address = "%" + to_string(addr_counter++);
+  string right_op_address = "%" + to_string(addr_counter++);
   // Load the values of the two child
   ir += tab + getLLVMLoadCode(left_op_address, left->getLLVMAddress(), left->getLLVMType());
   ir += tab + getLLVMLoadCode(right_op_address, right->getLLVMAddress(), right->getLLVMType());
@@ -217,15 +192,11 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
 int CodeGenVisitor::visitBlockNode(BlockNode* node){
 
   std::vector<ExpressionNode*> exprs = node->getExpressions();
-  int counter;
 
   // Visit all the expresssions contained in the block
   for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
     ExpressionNode* expr = *it;
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    expr->setLLVMAddress(counter++);
-    llvm_address_counters.push(counter);
+    expr->setLLVMAddress(addr_counter++);
     ir += tab + getLLVMAllocationCode(expr->getLLVMAddress(), expr->getLLVMType());
     if(expr->accept(this) < 0)
       return -1;
@@ -234,10 +205,7 @@ int CodeGenVisitor::visitBlockNode(BlockNode* node){
   // Get the address where we stored the last expression and store it as return value
   if (node->getLLVMAddress().size()){
     ExpressionNode* last = *(exprs.end()-1);
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    string load = "%" + to_string(counter++);
-    llvm_address_counters.push(counter);
+    string load = "%" + to_string(addr_counter++);
     ir += tab + getLLVMLoadCode(load, last->getLLVMAddress(), last->getLLVMType());
     ir += tab + getLLVMStoreCode(load, node->getLLVMAddress(), node->getLLVMType());
   }
@@ -257,19 +225,14 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   ir += tab + "; condition\n";
 
   // Generate code for the condition
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  condition->setLLVMAddress(counter++);
+  condition->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(condition->getLLVMAddress(), condition->getLLVMType());
-  llvm_address_counters.push(counter);
   if (condition->accept(this) < 0)
     return -1;
 
   // Branch on the result
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string br_id = to_string(counter);
-  string cond_var = "%" + to_string(counter++);
+  string br_id = to_string(addr_counter);
+  string cond_var = "%" + to_string(addr_counter++);
   ir += tab + getLLVMLoadCode(cond_var, condition->getLLVMAddress(), "i1");
   if (else_action)
     ir += tab + "br i1 " + cond_var + ", label %then_" + br_id + ", label %else_" + br_id + "\n";
@@ -279,19 +242,15 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   // First branch
   ir += tab + "\nthen_" + br_id + ":\n";
   tab += "\t";
-  action->setLLVMAddress(counter++);
+  action->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(action->getLLVMAddress(), action->getLLVMType());
-  llvm_address_counters.push(counter);
   if(action->accept(this) < 0)
     return -1;
   // Store the value if needed by the parent node
   if(expr_addr != ""){
-      counter = llvm_address_counters.top();
-      llvm_address_counters.pop();
-      string tmp_val = "%" + to_string(counter++);
+      string tmp_val = "%" + to_string(addr_counter++);
       ir += tab + getLLVMLoadCode(tmp_val, action->getLLVMAddress(), action->getLLVMType());
       ir += tab + getLLVMStoreCode(tmp_val, expr_addr, action->getLLVMType());
-      llvm_address_counters.push(counter);
     }
   tab.pop_back();
 
@@ -300,21 +259,15 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
     ir += tab + "\tbr label %end_" + br_id + "\n";
     ir += tab + "\nelse_" + br_id + ":\n";
     tab += "\t";
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    else_action->setLLVMAddress(counter++);
+    else_action->setLLVMAddress(addr_counter++);
     ir += tab + getLLVMAllocationCode(else_action->getLLVMAddress(), else_action->getLLVMType());
-    llvm_address_counters.push(counter);
     if(else_action->accept(this) < 0)
       return -1;
     // Store the value if needed by the parent node
     if(expr_addr != ""){
-      counter = llvm_address_counters.top();
-      llvm_address_counters.pop();
-      string tmp_val = "%" + to_string(counter++);
+      string tmp_val = "%" + to_string(addr_counter++);
       ir += tab + getLLVMLoadCode(tmp_val, else_action->getLLVMAddress(), action->getLLVMType());
       ir += tab + getLLVMStoreCode(tmp_val, expr_addr, action->getLLVMType());
-      llvm_address_counters.push(counter);
     }
     tab.pop_back();
     ir += tab + "\tbr label %end_" + br_id + "\n";
@@ -338,46 +291,31 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
   string expr_addr = node->getLLVMAddress();
 
   // Allocate space for the let
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  object_id->setLLVMAddress(counter++);
+  object_id->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(object_id->getLLVMAddress(), object_type->getLLVMType());
-  llvm_address_counters.push(counter);
 
   // If there is an init expression, store its value in the let
   if (init_expr != NULL){
     // Allocate memory for the init expression
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    init_expr->setLLVMAddress(counter++);
+    init_expr->setLLVMAddress(addr_counter++);
     ir += tab + getLLVMAllocationCode(init_expr->getLLVMAddress(), init_expr->getLLVMType());
-    llvm_address_counters.push(counter);
     // Visit the init expression
     if (init_expr->accept(this) < 0)
       return -1;
     // Store the value of the init expression in the field
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    string tmp_var = "%" + to_string(counter++);
-    llvm_address_counters.push(counter);
+    string tmp_var = "%" + to_string(addr_counter++);
     ir += tab + getLLVMLoadCode(tmp_var, init_expr->getLLVMAddress(), object_id->getLLVMType());
     ir += tab + getLLVMStoreCode(tmp_var, object_id->getLLVMAddress(), object_type->getLLVMType());
   }
 
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  scope_exp->setLLVMAddress(counter++);
+  scope_exp->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(scope_exp->getLLVMAddress(), scope_exp->getLLVMType());
-  llvm_address_counters.push(counter);
   if(scope_exp->accept(this))
     return 1;
 
   // Store the value if needed by the parent node
   if (expr_addr != ""){
-    counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    string tmp_var = "%" + to_string(counter++);
-    llvm_address_counters.push(counter);
+    string tmp_var = "%" + to_string(addr_counter++);
     ir += tab + getLLVMLoadCode(tmp_var, scope_exp->getLLVMAddress(), scope_exp->getLLVMType());
     ir += tab + getLLVMStoreCode(tmp_var, expr_addr, scope_exp->getLLVMType());
   }
@@ -387,18 +325,11 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
   return 0;
 }
 
-//TODO : Changer les constructeur de LiteralNode et faire en sorte de prendre en charge correctement les literaux.
 int CodeGenVisitor::visitLiteralNode(LiteralNode *node){
   string value = node->getLiteral();
-  if(node->getLLVMType() == "i8*"){
-    //int id = llvm_address_counters.top();
-    //llvm_address_counters.pop();
-    //llvm_address_counters.push(id);
+  if(node->getLLVMType() == "i8*")
     ir += tab + getLLVMStoreCode("getelementptr inbounds ([" + to_string(node->getLength()) + " x i8]* " + node->getConstantAdd() + ", i32 0, i32 0)",
                   node->getLLVMAddress(), "i8*");
-    //ir += tab + getLLVMLoadCode("%" + to_string(id), node->getLLVMAddress(), "i8*");
-    //node->setLLVMAddress("%" + to_string(id));
-  }
   else
     ir += tab + getLLVMStoreCode(value, node->getLLVMAddress(), node->getLLVMType());
   return 0;
@@ -412,10 +343,7 @@ int CodeGenVisitor::visitNewNode(NewNode *node){
 
   string new_function = "@"+ node->getTypeId()->getLiteral() + "New";
   if (expr_addr != ""){
-    int counter = llvm_address_counters.top();
-    llvm_address_counters.pop();
-    string tmp_add = "%" + to_string(counter++);
-    llvm_address_counters.push(counter);
+    string tmp_add = "%" + to_string(addr_counter++);
     ir += tab + tmp_add + " = " + getLLVMCallCode(new_function, node->getTypeId()->getLLVMType(), vector<string>(), vector<string>());
     ir += tab + getLLVMStoreCode(tmp_add, expr_addr, node->getLLVMType());
   }
@@ -426,9 +354,6 @@ int CodeGenVisitor::visitNewNode(NewNode *node){
 }
 
 int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
-  // TODO : il faut particulariser le truc au différents cas , genre pour un field il faut faire un getelementptr sur la structure
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
 
   if(current_scope && node->getLLVMAddress().size()){
     FieldNode* field = current_scope->getFieldFromId(node->getLiteral());
@@ -436,15 +361,15 @@ int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
     if (field){
       MethodNode* cur_method = (MethodNode*) current_scope;
       ClassNode* cur_class = cur_method->getClassScope();
-      ir += tab + getLLVMLoadCode("%" + to_string(counter++), "%1", "%struct." + cur_class->getName()->getLiteral() + "*");
-      ir += tab + getLLVMGetElementPtr("%" + to_string(counter++), "%struct." + cur_class->getName()->getLiteral(), "%" + to_string(counter-1), 0, field->getPosition());
-      ir += tab + getLLVMLoadCode("%" + to_string(counter++), "%" + to_string(counter - 1), node->getLLVMType());
+      ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + cur_class->getName()->getLiteral() + "*");
+      ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + cur_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
+      ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%" + to_string(addr_counter - 1), node->getLLVMType());
     }else
-      ir += tab + getLLVMLoadCode("%" + to_string(counter++), current_scope->getDeclarationLLVM(node->getLiteral()), node->getLLVMType());
+      ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), current_scope->getDeclarationLLVM(node->getLiteral()), node->getLLVMType());
 
-    ir += tab + getLLVMStoreCode("%" + to_string(counter - 1), node->getLLVMAddress(), node->getLLVMType());
+    ir += tab + getLLVMStoreCode("%" + to_string(addr_counter - 1), node->getLLVMAddress(), node->getLLVMType());
   }
-  llvm_address_counters.push(counter);
+
   return 0;
 }
 
@@ -455,19 +380,13 @@ int CodeGenVisitor::visitUnaryOperatorNode(UnaryOperatorNode* node){
   ir += tab + "; unary\n";
 
   // Visit the child
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  operand->setLLVMAddress(counter++);
+  operand->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(operand->getLLVMAddress(), operand->getLLVMType());
-  llvm_address_counters.push(counter);
   if (operand->accept(this) < 0)
     return -1;
 
   // Load the value of the operand
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string llvm_address = "%" + to_string(counter++);
-  llvm_address_counters.push(counter);
+  string llvm_address = "%" + to_string(addr_counter++);
   ir += tab + getLLVMLoadCode(llvm_address, operand->getLLVMAddress(), operand->getLLVMType());
   // Make the operation and store it
   ir += tab + getLLVMUnaryCode(node, llvm_address);
@@ -488,20 +407,14 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
   ir += "\nloop_" + br_id + ":\n";
 
   // Visit the condition
-  int counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  condition->setLLVMAddress(counter++);
+  condition->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(condition->getLLVMAddress(), condition->getLLVMType());
-  llvm_address_counters.push(counter);
   if (condition->accept(this) < 0)
     return -1;
 
   // Load the value of the condition
-  counter = llvm_address_counters.top();
-  llvm_address_counters.pop();
-  string conditon_value = "%" + to_string(counter++);
+  string conditon_value = "%" + to_string(addr_counter++);
   ir += tab + getLLVMLoadCode(conditon_value, condition->getLLVMAddress(), condition->getLLVMType());
-  llvm_address_counters.push(counter);
 
   // Branch according to the condition
   ir += tab + "br i1 " + conditon_value + ", label %do_" + br_id + ", label %end_" + br_id + "\n";
@@ -537,8 +450,8 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   }
   current_scope = (VSOPNode *) node;
 
-  // Reinitialize the stack
-  llvm_address_counters.push(0);
+  // Initialize the counteur
+  addr_counter = 0;
 
   string struct_name = "%struct." + node->getName()->getLiteral();
   string struct_vtable = "%struct." + node->getName()->getLiteral() + "VTable";
@@ -583,7 +496,6 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   ir += "\n" + tab + "}\n\n";
 
   //Class structure instanciation
-  //TODO peut être que le struct_vtable devrait être le code de la vtable explicitement.
   ir += tab + struct_instance + " = global " + struct_vtable + "{";
   tab += "\t";
   for(auto method : inherited_methods)
@@ -599,13 +511,13 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   ir += "\n" + tab + "}\n\n";
 
   //Init function
-  int var_counter = 0;
+  addr_counter = 0;
   ir += tab + "define void " + struct_init + "(" + struct_name + "* %self){\n";
   tab += "\t";
   if(node->getParent()){
-    ir += tab + getLLVMBitCastCode("%" + to_string(++var_counter), struct_name + "*", "%self", "%struct." + node->getParent()->getName()->getLiteral() + "*");
+    ir += tab + getLLVMBitCastCode("%" + to_string(++addr_counter), struct_name + "*", "%self", "%struct." + node->getParent()->getName()->getLiteral() + "*");
     vector<string> args_value;
-    args_value.push_back("%" + to_string(var_counter));
+    args_value.push_back("%" + to_string(addr_counter));
     vector<string> args_type;
     args_type.push_back("%struct." + node->getParent()->getName()->getLiteral() + "*");
     ir += tab + getLLVMCallCode("@" + node->getParent()->getName()->getLiteral() + "Init", "void", args_value, args_type);
@@ -617,48 +529,47 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
     field->setLLVMAddressAsString(field->getName()->getLiteral());
     ir += tab + getLLVMGetElementPtr(field->getLLVMAddress(), struct_name, "%self", 0, i);
     field->setPosition(i);
-    string init_value; //TODO Peut être changer le zero par une valeur qui dépend du type.
+    string init_value;
     ExpressionNode *init_expr = field->getInitExpr();
     if (init_expr){
         // Visit the init expression
-        init_expr->setLLVMAddress(++var_counter);
+        init_expr->setLLVMAddress(++addr_counter);
         ir += tab + getLLVMAllocationCode(init_expr->getLLVMAddress(), init_expr->getLLVMType());
         if (init_expr->accept(this) < 0)
           return -1;
         // Load the value
-        ir += tab + getLLVMLoadCode("%" + to_string(++var_counter), init_expr->getLLVMAddress(), init_expr->getLLVMType());
-        init_value = "%" + to_string(var_counter);
+        ir += tab + getLLVMLoadCode("%" + to_string(++addr_counter), init_expr->getLLVMAddress(), init_expr->getLLVMType());
+        init_value = "%" + to_string(addr_counter);
     }
     else
       init_value = field->getType()->getInitLLVMValue();
     ir += tab + getLLVMStoreCode(init_value, field->getLLVMAddress(), field->getType()->getLLVMType());
   }
-  ir += tab + getLLVMGetElementPtr("%" + to_string(++var_counter), struct_name, "%self", 0, 0);
-  //ir += tab + "%" + to_string(++var_counter) + " = getelementptr inbounds " + struct_name + "* %self, i32 0, i32 0\n";
-  ir += tab + getLLVMStoreCode(struct_instance, "%" + to_string(var_counter), struct_vtable + "*");//TODO j'ai pas cast comme dans le code car je comprends pas à quoi aç sert.
+  ir += tab + getLLVMGetElementPtr("%" + to_string(++addr_counter), struct_name, "%self", 0, 0);
+  ir += tab + getLLVMStoreCode(struct_instance, "%" + to_string(addr_counter), struct_vtable + "*");//TODO j'ai pas cast comme dans le code car je comprends pas à quoi aç sert.
   ir += tab + "ret void\n";
   tab.pop_back();
   ir += tab + "}\n\n";
 
   // New function
-  var_counter = 1;
+  addr_counter = 1; // TODO : pourquoi c'est à 1 ici? on peut pas mettre à 0 ?
   ir += tab + "define " + struct_name + "* " + struct_new + "(){\n";
   ir += tab + "\t%self = alloca " + struct_name + "*\n";
 
   // Code to compute the code of a structure and store it in memory, case a bit special so stay like that without call to getLLVMGetElementPtr
-  ir += tab + "\t%" + to_string(var_counter) + " = getelementptr " + struct_name + "* null, i32 1\n";
-  ir += tab + "\t%size = ptrtoint " + struct_name + "* %" + to_string(var_counter) + " to i32\n";
+  ir += tab + "\t%" + to_string(addr_counter) + " = getelementptr " + struct_name + "* null, i32 1\n";
+  ir += tab + "\t%size = ptrtoint " + struct_name + "* %" + to_string(addr_counter) + " to i32\n";
 
   // Malloc
-  ir += tab + "\t%" + to_string(++var_counter) + " = call noalias i8* @malloc(i32 %size)\n";
-  ir += tab + "\t%" + to_string(++var_counter) + " = bitcast i8* %" + to_string(var_counter) + " to " + struct_name + "*\n";
-  ir += tab + "\tstore " + struct_name + "* %" + to_string(var_counter) + ", " + struct_name + "** %self\n";
+  ir += tab + "\t%" + to_string(++addr_counter) + " = call noalias i8* @malloc(i32 %size)\n";
+  ir += tab + "\t%" + to_string(++addr_counter) + " = bitcast i8* %" + to_string(addr_counter) + " to " + struct_name + "*\n";
+  ir += tab + "\tstore " + struct_name + "* %" + to_string(addr_counter) + ", " + struct_name + "** %self\n";
 
   // Assert
-  string llvm_load = "%" + to_string(++var_counter);
+  string llvm_load = "%" + to_string(++addr_counter);
   ir += tab + "\t" + getLLVMLoadCode(llvm_load, "%self", struct_name + "*");
-  string llvm_assert = to_string(++var_counter);
-  ir += tab + "\t%" + llvm_assert + " = icmp ne " + struct_name + "* %" + to_string(var_counter - 1) + ", null\n";
+  string llvm_assert = to_string(++addr_counter);
+  ir += tab + "\t%" + llvm_assert + " = icmp ne " + struct_name + "* %" + to_string(addr_counter - 1) + ", null\n";
   ir += tab + "\tbr i1 %" + llvm_assert + ", label %notnull, label %null\n";
   ir += tab + "\nnotnull:\t\t\t; preds = %" + llvm_assert + "\n";
   ir += tab + "\tcall void " + struct_init + "(" + struct_name + "* " + llvm_load + ")\n";
@@ -667,12 +578,6 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
   ir += tab + "\nnull:   \t\t\t; preds = %" + llvm_assert + "\n";
   ir += tab + "\tret " + struct_name + "* " + llvm_load + "\n}\n\n";
 
-  // Visit the methods and classes TODO j'ai changé ici car sinon les structures n'étaient pas toutes déclarée au début et il y avait des probleme.
-  //ClassBodyNode* body = node->getBody();
-  //if(body->accept(this) < 0)
-  //  return -1;
-
-  llvm_address_counters.pop();
   return 0;
 }
 
@@ -686,9 +591,7 @@ int CodeGenVisitor::visitMethodNode(MethodNode *node){
   TypeIdentifierNode* ret_type = node->getRetType();
   FormalsNode* formals = node->getFormals();
 
-  // TODO : gros doute sur la manière dont on doit gérer les fields..., ça n'a pas vraiment de sens de leur donner une address
-  // comme on le fait pour le moment non? --> il faut appeler sur le self pour obtenir le bon élément
-  int counter = 1;
+  addr_counter = 1; // TODO : de nouveau pourquoi 1 pas 0 ?
 
   ClassNode* cur_class = (ClassNode*) prev_scope;
   if(current_class->getName()->getLiteral() == "Main" && node->getName()->getLiteral() == "main" && 0)
@@ -705,11 +608,11 @@ int CodeGenVisitor::visitMethodNode(MethodNode *node){
 
   // Allocate space for the arguments
   tab += "\t";
-  string address = "%" + to_string(counter++);
+  string address = "%" + to_string(addr_counter++);
   ir += tab + getLLVMAllocationCode(address, "%struct." + cur_class->getName()->getLiteral() + "*");
   ir += tab + getLLVMStoreCode("%self", address, "%struct." + cur_class->getName()->getLiteral() + "*");
   for(auto formal : formals->getFormals()){
-    address = "%" + to_string(counter++);
+    address = "%" + to_string(addr_counter++);
     ir += tab + getLLVMAllocationCode(address, formal->getType()->getLLVMType());
     ir += tab + getLLVMStoreCode(formal->getLLVMAddress(), address, formal->getType()->getLLVMType());
     // Change the address of the formal to the local address
@@ -718,15 +621,13 @@ int CodeGenVisitor::visitMethodNode(MethodNode *node){
 
   // Visit the block of instructions
   BlockNode* block = node->getBlock();
-  block->setLLVMAddress(counter++);
+  block->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(block->getLLVMAddress(), block->getLLVMType());
-  llvm_address_counters.push(counter);
   if (block->accept(this) < 0)
     return -1;
 
   // Make a return statement by returning the value of the block
-  counter = llvm_address_counters.top();
-  string to_ret = "%" + to_string(counter++);
+  string to_ret = "%" + to_string(addr_counter++);
   ir += tab + getLLVMLoadCode(to_ret, block->getLLVMAddress(), node->getRetType()->getLLVMType());
   ir += tab + getLLVMReturnCode(to_ret, node->getRetType()->getLLVMType());
 
@@ -741,17 +642,13 @@ int CodeGenVisitor::visitMethodNode(MethodNode *node){
 
 int CodeGenVisitor::visitCallNode(CallNode* node){
   //Visitor::visitCallNode(node);//TODO Je sais pas pourquoi ça y était pas mais j'ai rajouté...
-  int counter;
   string var_name;
 
   //Allocating space for the arguments and setting their value.
   for(auto arg : node->getArgs()->getExpressions()){
-    counter = llvm_address_counters.top();
-    var_name = "%" + to_string(counter);
+    var_name = "%" + to_string(addr_counter);
     ir += tab + getLLVMAllocationCode(var_name, arg->getLLVMType());
-    arg->setLLVMAddress(counter++);
-    llvm_address_counters.pop();
-    llvm_address_counters.push(counter);
+    arg->setLLVMAddress(addr_counter++);
     arg->accept(this);
   }
 
@@ -759,13 +656,10 @@ int CodeGenVisitor::visitCallNode(CallNode* node){
   ExpressionNode* object = node->getObject();
   string obj_addr = "%1";
   if(object && object->getLiteral() != "self"){
-    counter = llvm_address_counters.top();
-    var_name = "%" + to_string(counter);
+    var_name = "%" + to_string(addr_counter);
     ir += tab + getLLVMAllocationCode(var_name, object->getLLVMType());
     obj_addr = var_name;
-    object->setLLVMAddress(counter++);
-    llvm_address_counters.pop();
-    llvm_address_counters.push(counter);
+    object->setLLVMAddress(addr_counter++);
     if(object->accept(this))
       return -1;
   }
@@ -780,9 +674,8 @@ int CodeGenVisitor::visitCallNode(CallNode* node){
   size_t position_method = method->getPosition();
 
   //Load of the vtable
-  counter = llvm_address_counters.top();
-  string ll_object = "%" + to_string(counter++), ll_vtable_pointer = "%" + to_string(counter++),
-  ll_vtable = "%" + to_string(counter++),ll_method_pointer = "%" + to_string(counter++), obj_struct = object->getType()->getLLVMType(), ll_method = "%" + to_string(counter++),
+  string ll_object = "%" + to_string(addr_counter++), ll_vtable_pointer = "%" + to_string(addr_counter++),
+  ll_vtable = "%" + to_string(addr_counter++),ll_method_pointer = "%" + to_string(addr_counter++), obj_struct = object->getType()->getLLVMType(), ll_method = "%" + to_string(addr_counter++),
   struct_vtable = "%struct." + obj_class->getName()->getLiteral() + "VTable";
 
   ir += "; call\n";
@@ -804,27 +697,27 @@ int CodeGenVisitor::visitCallNode(CallNode* node){
     args_type.push_back(arg->getType()->getLLVMType());
 
   string curr_add;
-  for(auto arg : node->getArgs()->getExpressions()){//TODO la copie des arg doit etre faite ici ou dans l'implementation de la méthode.
-    curr_add = "%" + to_string(counter++);
+  for(auto arg : node->getArgs()->getExpressions()){
+    curr_add = "%" + to_string(addr_counter++);
     ir += tab + getLLVMLoadCode(curr_add, arg->getLLVMAddress(), arg->getLLVMType());
     args_value.push_back(curr_add);
   }
 
   if(!node->getLLVMAddress().empty()){
-    string id = "%" + to_string(counter++);
+    string id = "%" + to_string(addr_counter++);
     ir += tab + id + " = " + getLLVMCallCode(ll_method, method->getRetType()->getLLVMType(), args_value, args_type);
     ir += tab + getLLVMStoreCode(id, node->getLLVMAddress(), node->getLLVMType());
   }
   else
     ir += tab + getLLVMCallCode(ll_method, method->getRetType()->getLLVMType(), args_value, args_type);
 
-  llvm_address_counters.pop();
-  llvm_address_counters.push(counter);
-
   return 0;
 }
 
 int CodeGenVisitor::genExternalCallCode(CallNode* node){
+
+  // TODO : code à nettoyer
+
   string method_name = node->getMethodName()->getLiteral();
   ExpressionNode* object = node->getObject();
   string obj_addr = object->getLLVMAddress();
@@ -833,7 +726,6 @@ int CodeGenVisitor::genExternalCallCode(CallNode* node){
   obj_class->assignPositionToMethod();
   size_t position_method = method->getPosition();
   //Load of the vtable
-  int counter = llvm_address_counters.top();
   string ll_method = method_name,
   struct_vtable = "%struct." + obj_class->getName()->getLiteral() + "VTable*";
   ir += ";call\n";
@@ -847,7 +739,7 @@ int CodeGenVisitor::genExternalCallCode(CallNode* node){
 
   string curr_add;
   for(auto arg : node->getArgs()->getExpressions()){//TODO la copie des arg doit etre faite ici ou dans l'implementation de la méthode.
-    curr_add = "%" + to_string(counter++);
+    curr_add = "%" + to_string(addr_counter++);
     ir += tab + getLLVMLoadCode(curr_add, arg->getLLVMAddress(), arg->getLLVMType());
     args_value.push_back(curr_add);
   }
@@ -855,7 +747,7 @@ int CodeGenVisitor::genExternalCallCode(CallNode* node){
   if(!node->getLLVMAddress().empty()){
     string llvm_type = method->getRetType()->getLLVMType();
     if(llvm_type == "i8*" || llvm_type == "i32" || llvm_type == "i1"){
-      string id = "%" + to_string(counter++);
+      string id = "%" + to_string(addr_counter++);
       ir += tab + id + " = " + getLLVMCallCode("@" + ll_method, method->getRetType()->getLLVMType(), args_value, args_type);
       ir += tab + getLLVMStoreCode(id, node->getLLVMAddress(), node->getLLVMType());
     }
@@ -864,11 +756,9 @@ int CodeGenVisitor::genExternalCallCode(CallNode* node){
   }
   else
     ir += tab + getLLVMCallCode(ll_method, "void", args_value, args_type);
-  llvm_address_counters.pop();
-  llvm_address_counters.push(counter);
   return 0;
 }
-//int CodeGenVisitor::visitBraceNode()
+
 int CodeGenVisitor::visitProgramNode(ProgramNode* node){
 
   // Add the malloc function
@@ -889,17 +779,18 @@ int CodeGenVisitor::visitProgramNode(ProgramNode* node){
   unordered_map<string, ClassNode*> table_classes = node->getTableClasses();
   ClassNode* main_class = table_classes["Main"];
   size_t position = main_class->getMethod("main")->getPosition();
-  ir += "define i32 @main(){\n";
-  ir += "%1 = call %struct.Main* @MainNew()\n";
-  ir += "%2 = getelementptr inbounds %struct.Main* %1, i32 0, i32 0\n";
-  ir += "%3 = load %struct.MainVTable** %2\n";
-  ir += "%4 = getelementptr inbounds %struct.MainVTable* %3, i32 0, i32 " + to_string(position) + "\n";
-  ir += "%5 = load i32 (%struct.Main*)** %4\n";
-  ir += "%6 = call i32 %5(%struct.Main* %1)\n";
-  ir += "ret i32 %6\n}\n";
+  ir += tab + "define i32 @main(){\n";
+  tab += "\t";
+  ir += tab + "%1 = call %struct.Main* @MainNew()\n";
+  ir += tab + "%2 = getelementptr inbounds %struct.Main* %1, i32 0, i32 0\n";
+  ir += tab + "%3 = load %struct.MainVTable** %2\n";
+  ir += tab + "%4 = getelementptr inbounds %struct.MainVTable* %3, i32 0, i32 " + to_string(position) + "\n";
+  ir += tab + "%5 = load i32 (%struct.Main*)** %4\n";
+  ir += tab + "%6 = call i32 %5(%struct.Main* %1)\n";
+  ir += tab + "ret i32 %6\n}\n";
+  tab.pop_back();
 
-  //ir += "attributes #0 = { nounwind \"disable-tail-calls\"=\"false\" \"less-precise-fpmad\"=\"false\" \"no-frame-pointer-elim\"=\"true\" \"no-frame-pointer-elim-non-leaf\" \"no-infs-fp-math\"=\"false\" \"no-nans-fp-math\"=\"false\" \"stack-protector-buffer-size\"=\"8\" \"target-cpu\"=\"pentium4\" \"target-features\"=\"+fxsr,+mmx,+sse,+sse2\" \"unsafe-fp-math\"=\"false\" \"use-soft-float\"=\"false\" }";
   return 0;
 }
 
-//int CodeGenVisitor::visitBraceNode() : TODO return result
+//int CodeGenVisitor::visitBraceNode() : TODO checker que ça ne pose pas de probleme si on ne le visite pas ici

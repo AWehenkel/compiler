@@ -9,8 +9,7 @@
 */
 class CodeGenVisitor : public Visitor{
 private :
-    std::stack<std::string> llvm_addresses; // TODO : possibly to remove
-    std::stack<int> llvm_address_counters;
+    int addr_counter;
     std::string ir;
     std::string tab;
     VSOPNode* current_scope = NULL;
