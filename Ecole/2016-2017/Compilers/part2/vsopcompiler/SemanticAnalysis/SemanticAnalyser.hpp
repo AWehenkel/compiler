@@ -12,7 +12,7 @@ public:
   /* semanticAnalysis
   *ROLE: Do the necessary passes to do the semantic analysis
   *IN: pointer to the ProgramNode at the root of the parse tree
-  *OUT : error number
+  *OUT : number of errors
   */
   static int semanticAnalysis(ProgramNode* program);
 };

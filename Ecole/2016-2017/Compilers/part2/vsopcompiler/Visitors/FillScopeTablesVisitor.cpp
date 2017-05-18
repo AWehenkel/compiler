@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "FillScopeTablesVisitor.hpp"
 #include "../SyntacticTree/ClassNode.hpp"
 #include "../SyntacticTree/MethodNode.hpp"
@@ -18,16 +16,20 @@ using namespace std;
 
 int FillScopeTablesVisitor::visitAssignNode(AssignNode *node){
 
+  // Check for forbidden assignment on self
   if(node->getName()->getLiteral() == "self"){
+
     SemanticError error("Self assignment is forbiden.", node);
+
     //Error recovery consists in setting a type for self which is linked to the current class.
     TypeIdentifierNode* self_type = new TypeIdentifierNode(current_class->getName()->getLiteral(), current_class);
     node->getName()->setType(self_type, true);
     errors.push_back(error);
-    int result = node->getExpression()->accept(this);
-    if(result < 0)
+
+    if(node->getExpression()->accept(this) < 0)
       return -1;
-    return 1 + result;
+
+    return errors.size();
   }
 
   return Visitor::visitAssignNode(node);
@@ -35,25 +37,27 @@ int FillScopeTablesVisitor::visitAssignNode(AssignNode *node){
 
 int FillScopeTablesVisitor::visitCallNode(CallNode *node){
 
+  // Set which class the call is part of
   node->setCurrentClass(current_class);
-  int to_ret = 0;
+
   if(!node->getObject()){
     if(!current_scope){
       //In this case we are in a field so call is not authorized.
       SemanticError error("Field assignment with call to self function is forbiden.", node);
       errors.push_back(error);
-      to_ret = 1;
     }
     node->setObject(new ObjectIdentifierNode("self"));
   }
-  int result = node->getObject()->accept(this);
-  if(result < 0)
+
+  // Visit the object
+  if(node->getObject()->accept(this) < 0)
     return -1;
-  to_ret += result;
-  result = node->getArgs()->accept(this);
-  if(result < 0)
+
+  // Visit the args
+  if(node->getArgs()->accept(this) < 0)
     return -1;
-  return to_ret + result;
+
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitLetNode(LetNode *node){
@@ -68,16 +72,21 @@ int FillScopeTablesVisitor::visitLetNode(LetNode *node){
     return 1;
   }
 
-  int result = Visitor::visitLetNode(node);
+  if (Visitor::visitLetNode(node) < 0)
+    return -1;
+
   current_scope = node->getCurrentScope();
-  return result;
+
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
 
+  // In an objectidentifier, we set the type of the node directly during this pass
+  // because we have the necessary information to do so
   if(node->getLiteral() == "self"){
     node->setType(current_class->getName());
-    return 0;
+    return errors.size();
   }
 
   TypeIdentifierNode* obj_type = current_scope ? current_scope->getDeclarationType(node->getLiteral()) : NULL;
@@ -86,11 +95,11 @@ int FillScopeTablesVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node
     errors.push_back(error);
     TypeIdentifierNode* var_type = new TypeIdentifierNode("error");
     node->setType(var_type, true);
-    return 1;
+    return errors.size();
   }
   node->setType(obj_type);
 
-  return 0;
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitClassNode(ClassNode *node){
@@ -101,26 +110,25 @@ int FillScopeTablesVisitor::visitClassNode(ClassNode *node){
   if(Visitor::visitClassNode(node) < 0)
     return -1;
 
+  // If we are in the Main class, check that it contains the right method
   if(node->getName()->getLiteral() == "Main"){
     MethodNode* main = node->getMethod("main");
     if(!main){
       SemanticError error("Function main not defined in main class.", node);
       errors.push_back(error);
-      return 1;
+      return errors.size();
     }
     if(main->getRetType()->getLiteral() != "int32"){
       SemanticError error("Function main must return an int32.", main);
       errors.push_back(error);
-      return 1;
     }
     if(main->getFormals()->getFormals().size()){
       SemanticError error("Function main must not take argument.", main);
       errors.push_back(error);
-      return 1;
     }
   }
 
-  return 0;
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
@@ -138,22 +146,24 @@ int FillScopeTablesVisitor::visitFieldNode(FieldNode *node){
   }
   node->setClassScope(current_class);
   node->getName()->setType(node->getType());
-  ExpressionNode* init_expr = node->getInitExpr();
-  if(init_expr)
-    return init_expr->accept(this);
 
-  return 0;
+  // Visit the init expression if there is one
+  ExpressionNode* init_expr = node->getInitExpr();
+  if(init_expr && init_expr->accept(this) < 0)
+    return -1;
+
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitFormalNode(FormalNode *node){
   //The sub-nodes won't be visited.
-  return 0;
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitFormalsNode(FormalsNode *node){
 
   vector<FormalNode*> formals = node->getFormals();
-  //Ok for an inneficient search of doublon because we don't expect too much formals
+  //Ok for an inneficient search of doublons because we don't expect too much formals
   for(vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it){
     for(vector<FormalNode*>::iterator formal_it2 = formal_it + 1; formal_it2 != formals.end(); ++formal_it2){
       if(*((*formal_it)->getName()) == *((*formal_it2)->getName())){
@@ -165,17 +175,20 @@ int FillScopeTablesVisitor::visitFormalsNode(FormalsNode *node){
     }
   }
 
-  return 0;
+  return errors.size();
 }
 
 int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
 
   current_scope = (VSOPNode*) node;
+
+  // TODO : mettre un commentaire qui explique ce qu'on fait
   int result_formals_pass = node->getFormals()->accept(this);
-  if(result_formals_pass < 0 || !current_class )
+  if(result_formals_pass < 0 || !current_class)
     return -1;
   if(result_formals_pass)
     return result_formals_pass;
+
   SemanticError error = current_class->addMethod(node);
   if(error.isValid()){
     errors.push_back(error);
@@ -185,5 +198,8 @@ int FillScopeTablesVisitor::visitMethodNode(MethodNode *node){
   node->setClassScope(current_class);
   current_method = node;
 
-  return node->getBlock()->accept(this);
+  if(node->getBlock()->accept(this) < 0)
+    return -1;
+
+  return errors.size();
 }

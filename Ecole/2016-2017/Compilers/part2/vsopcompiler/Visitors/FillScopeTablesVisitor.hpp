@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include "Visitor.hpp"
+
 /*
 This class is a subclass of the Visitor. Its purpose is to
 create the scope table(methods and fields) of the declared

@@ -4,7 +4,6 @@
 #include "all_headers.hpp"
 
 using namespace std;
-//TODO Storer dans toutes les expressions leur valeur de retour
 
 string CodeGenVisitor::getLLVMAllocationCode(string name, string type){
   return name + " = alloca " + type + "\n";

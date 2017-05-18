@@ -7,8 +7,7 @@ using namespace std;
 
 int CheckTypeVisitor::visitAssignNode(AssignNode *node){
 
-  int nb_errors = Visitor::visitAssignNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitAssignNode(node) < 0)
      return -1;
 
   // Get types
@@ -30,21 +29,20 @@ int CheckTypeVisitor::visitAssignNode(AssignNode *node){
   * errors */
   if (expr_type->getLiteral() == "error" || *name_type == *expr_type || (expr_type->getClassType() && expr_type->getClassType()->hasParent(name_type->getClassType()))){
     node->setType(name_type);
-    return nb_errors;
+    return errors.size();
   }
 
   // If the two types were different, assign "error" to e_name and create an error
   node->setType(new TypeIdentifierNode("error"));
   SemanticError error("Assignement of different types : '" + node->getName()->getLiteral() + "' of type '" + name_type->getLiteral() + "' has not the same type as assigned expression of type '" + expr_type->getLiteral() + "'", node);
   errors.push_back(error);
-  return ++nb_errors;
+  return errors.size();
 }
 
 
 int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
 
-  int nb_errors = Visitor::visitBinaryOperatorNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitBinaryOperatorNode(node) < 0)
      return -1;
 
   // Get the types of the two operands
@@ -71,7 +69,7 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
         SemanticError error("The two members of an and-expression must be boolean, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(left_type);
       break;
@@ -82,7 +80,7 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
         SemanticError error("The two members of an equal-expression must have the same type, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(new TypeIdentifierNode("bool"), true);
       break;
@@ -93,7 +91,7 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
         SemanticError error("The two members of a comparison must be int32, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(new TypeIdentifierNode("bool"), true);
       break;
@@ -103,24 +101,20 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
         SemanticError error("The two members of a math expression must be int32, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(left_type);
   }
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitBlockNode(BlockNode *node){
 
-  int nb_errors = 0;
-  int error;
   std::vector<ExpressionNode*> exprs = node->getExpressions();
   for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
-    error = (*it)->accept(this);
-    if(error < 0)
+    if((*it)->accept(this) < 0)
       return -1;
-    nb_errors += error;
   }
 
   vector<ExpressionNode*> expressions = node->getExpressions();
@@ -137,19 +131,16 @@ int CheckTypeVisitor::visitBlockNode(BlockNode *node){
 	/* Even if there is an error in the last instruction, it wasn't in the block
 	* directly, so we don't return an error code
 	*/
-  return nb_errors;
+  return errors.size();
 }
 
 
 int CheckTypeVisitor::visitBraceNode(BraceNode *node){
 
-  int nb_errors = Visitor::visitBraceNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitBraceNode(node) < 0)
      return -1;
 
-  /*
-  ATTENTION j'ai mis unit quand il y a pas d'expression dans le brace mais je suis pas sur que c'est juste!
-  */
+  // If the braces are empty, they are of type unit, in the other case get the type of the expression
   ExpressionNode* expr = node->getExpression();
   TypeIdentifierNode *expr_type = expr ? expr->getType() : new TypeIdentifierNode("unit");
   if(!expr)
@@ -157,13 +148,12 @@ int CheckTypeVisitor::visitBraceNode(BraceNode *node){
   else
     node->setType(expr_type);
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitCallNode(CallNode *node){
 
-  int nb_errors = Visitor::visitCallNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitCallNode(node) < 0)
      return -1;
 
   // Get the type of the object
@@ -188,7 +178,7 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
     SemanticError error("Calls must be done on object : '" + object_type->getLiteral() + "' is not a class.", node);
 		errors.push_back(error);
     node->setType(new TypeIdentifierNode("error"), true);
-    return ++nb_errors;
+    return errors.size();
   }
 
   // Check if the method called exists for the given object
@@ -197,7 +187,7 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
     SemanticError error("Undefined method '" + node->getMethodName()->getLiteral() + " for object of type '" + object_type->getLiteral() + "'", node);
 		errors.push_back(error);
     node->setType(new TypeIdentifierNode("error"), true);
-    return ++nb_errors;
+    return errors.size();
   }
 
   // Check if the arguments correspond to the formals of the method
@@ -208,7 +198,7 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
     SemanticError error("Wrong number of argument in call : need " + to_string(ls_formals.size()) + " and got "  +  to_string(ls_args.size()), node);
 		errors.push_back(error);
     node->setType(new TypeIdentifierNode("error"), true);
-    return ++nb_errors;
+    return errors.size();
   }
 
   vector<ExpressionNode*>::const_iterator it = ls_args.begin();
@@ -233,20 +223,18 @@ int CheckTypeVisitor::visitCallNode(CallNode *node){
       SemanticError error("Type of argument " + to_string(i) + " in call does not correspond to type in method :  got '" + arg_type->getLiteral() + "' and needed '" + formal_type->getLiteral() + "'" , node);
   		errors.push_back(error);
       node->setType(new TypeIdentifierNode("error"), true);
-      ++nb_errors;
     }
     ++it;
     ++i;
   }
   node->setType(method->getRetType());
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
 
-  int nb_errors = Visitor::visitConditionalNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitConditionalNode(node) < 0)
      return -1;
 
   TypeIdentifierNode *condition_type = node->getCondition()->getType();
@@ -262,7 +250,7 @@ int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
     SemanticError error("Condition of if-expression must be bool in conditional : got '" + s_condition_type + "'", node);
 		errors.push_back(error);
     node->setType(new TypeIdentifierNode("error"), true);
-    return ++nb_errors;
+    return errors.size();
   }
 
   // Check the types of the two branches
@@ -296,46 +284,45 @@ int CheckTypeVisitor::visitConditionalNode(ConditionalNode *node){
     node->setType(then_type);
     if(is_else_new_type)
       delete else_type;
-    return nb_errors;
+    return errors.size();
   }
   if(s_else_type == "unit"){
     node->setType(else_type, is_else_new_type);
-    return nb_errors;
+    return errors.size();
   }
   // If one branch is in error, return the type of the other branch
   if(s_then_type == "error"){
     node->setType(else_type);
-    return nb_errors;
+    return errors.size();
   }else if (s_else_type == "error"){
     node->setType(then_type);
-    return nb_errors;
+    return errors.size();
   }
 
   // If one of the branch is a basic type, check if the other one is the same
   if (!then_type->getClassType() || !else_type->getClassType()){
     if(*then_type == *else_type){
       node->setType(then_type);
-      return nb_errors;
+      return errors.size();
     }else{
       SemanticError error("If they are basic types, the types of then and else branch must be the same : got '" + then_type->getLiteral() + "' and '" + else_type->getLiteral() + "'", node);
   		errors.push_back(error);
       node->setType(new TypeIdentifierNode("error"), true);
-      return ++nb_errors;
+      return errors.size();
     }
   }
 
   // If both types are clases, need to check the inheritance, at least Object in common
   node->setType(then_type->getClassType()->getCommonParent(else_type->getClassType()));
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitLetNode(LetNode *node){
 
   current_scope = (VSOPNode*) node;
 
-  int nb_errors = Visitor::visitLetNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitLetNode(node) < 0)
      return -1;
 
   // Check the type of the initialization expression, if any
@@ -360,7 +347,7 @@ int CheckTypeVisitor::visitLetNode(LetNode *node){
         errors.push_back(error);
       }
       node->setType(new TypeIdentifierNode("error"), true);
-      return ++nb_errors;
+      return errors.size();
     }
   }
 
@@ -372,19 +359,18 @@ int CheckTypeVisitor::visitLetNode(LetNode *node){
     return -1;
   }
   node->setType(scope_expr_type);
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitNewNode(NewNode *node){
 
   node->setType(node->getTypeId());
-  return 0;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
 
-  int nb_errors = Visitor::visitUnaryOperatorNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitUnaryOperatorNode(node) < 0)
      return -1;
 
   // Get the type of the operand
@@ -405,7 +391,7 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
         SemanticError error("not-expression must be followed by a bool : got '" + s_op_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(op_type);
       break;
@@ -416,7 +402,7 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
         SemanticError error("isnull-expression must be followed by a class : got '" + s_op_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(new TypeIdentifierNode("bool"), true);
       break;
@@ -426,19 +412,18 @@ int CheckTypeVisitor::visitUnaryOperatorNode(UnaryOperatorNode *node){
         SemanticError error("minus-expression must be followed by a int32 : got '" + s_op_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
-        return ++nb_errors;
+        return errors.size();
       }
       node->setType(op_type);
       break;
   }
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitWhileNode(WhileNode *node){
 
-  int nb_errors = Visitor::visitWhileNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitWhileNode(node) < 0)
      return -1;
 
    // Check if the condition is a bool
@@ -454,58 +439,45 @@ int CheckTypeVisitor::visitWhileNode(WhileNode *node){
      SemanticError error("Condition of while must be bool : got '" + s_condition_type + "'", node);
      errors.push_back(error);
      node->setType(new TypeIdentifierNode("error"), true);
-     return ++nb_errors;
+     return errors.size();
    }
    node->setType(new TypeIdentifierNode("unit"), true);
-   return nb_errors;
+   return errors.size();
 }
 
 int CheckTypeVisitor::visitArgsNode(ArgsNode *node){
 
-  int nb_errors = 0;
-  int error ;
   std::vector<ExpressionNode*> exprs = node->getExpressions();
   for(std::vector<ExpressionNode*>::iterator it = exprs.begin(); it != exprs.end(); ++it){
-    error = (*it)->accept(this);
-    if(error < 0)
+    if((*it)->accept(this) < 0)
       return -1;
-    nb_errors += error;
   }
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitClassBodyNode(ClassBodyNode *node){
 
-  int nb_errors = 0;
-  int error ;
   std::vector<FieldNode*> fields = node->getFields();
-  for(std::vector<FieldNode*>::iterator it = fields.begin(); it != fields.end(); ++it){
-    error = (*it)->accept(this);
-    if(error < 0)
+  for(std::vector<FieldNode*>::iterator it = fields.begin(); it != fields.end(); ++it)
+    if((*it)->accept(this) < 0)
       return -1;
-    nb_errors += error;
-  }
 
   std::vector<MethodNode*> methods = node->getMethods();
-  for(std::vector<MethodNode*>::iterator it = methods.begin(); it != methods.end(); ++it){
-    error = (*it)->accept(this);
-    if(error < 0)
+  for(std::vector<MethodNode*>::iterator it = methods.begin(); it != methods.end(); ++it)
+    if((*it)->accept(this) < 0)
       return -1;
-    nb_errors += error;
-  }
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitFieldNode(FieldNode *node){
 
-  int nb_errors = Visitor::visitFieldNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitFieldNode(node) < 0)
      return -1;
 
-   // Check if the type of the initialization expression if any
-   ExpressionNode* init_expr = node->getInitExpr();
+  // Check if the type of the initialization expression if any
+  ExpressionNode* init_expr = node->getInitExpr();
  	if (init_expr){
  		TypeIdentifierNode *init_expr_type = init_expr->getType();
  		if (!init_expr_type){
@@ -524,19 +496,18 @@ int CheckTypeVisitor::visitFieldNode(FieldNode *node){
           SemanticError error("The initialization expression of a field must have a type that inherits from the object type : got '" + init_expr_type->getLiteral() + "' and need a children of '" + type->getLiteral() + "'", node);
           errors.push_back(error);
         }
- 			return ++nb_errors;
+ 			return errors.size();
  		}
  	}
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitMethodNode(MethodNode *node){
 
   current_scope = (VSOPNode*) node;
 
-  int nb_errors = Visitor::visitMethodNode(node);
-  if(nb_errors < 0)
+  if(Visitor::visitMethodNode(node) < 0)
      return -1;
 
    // Get block type
@@ -558,22 +529,18 @@ int CheckTypeVisitor::visitMethodNode(MethodNode *node){
  			SemanticError error("The type of the block of a method must have a type that inherits from the return type of that method : got '" + block_type->getLiteral() + "' and need a children of '" + ret_type->getLiteral() + "'", node);
  			errors.push_back(error);
  		}
- 		return ++nb_errors;
+ 		return errors.size();
  	}
 
-  return nb_errors;
+  return errors.size();
 }
 
 int CheckTypeVisitor::visitProgramNode(ProgramNode *node){
 
-  int nb_errors = 0;
-  int error;
   std::vector<ClassNode*> classes = node->getClasses();
-  for(std::vector<ClassNode*>::iterator it = classes.begin(); it != classes.end(); ++it){
-    error = (*it)->accept(this);
-    if(error < 0)
+  for(std::vector<ClassNode*>::iterator it = classes.begin(); it != classes.end(); ++it)
+    if((*it)->accept(this) < 0)
       return -1;
-    nb_errors += error;
-  }
+
   return errors.size();
 }
