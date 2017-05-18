@@ -59,7 +59,7 @@ public :
 		else if(llvm_type == "i1")
 			init_val = "0";
 		else if(llvm_type == "i8*")
-			init_val = "null";
+			init_val = "getelementptr inbounds ([1 x i8]* @.str_empty, i32 0, i32 0)";
 		else
 			init_val = "null";
 		return init_val;

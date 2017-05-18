@@ -193,10 +193,10 @@ TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
 		common_parent = e_name;
 
 	// If not check if there is a common ancestor
-	if (!common_parent && parent)
+	if ((!common_parent || common_parent->getLiteral() == "Object") && parent)
 		common_parent = parent->getCommonParent(other);
 
-	if(!common_parent && other->parent)
+	if((!common_parent || common_parent->getLiteral() == "Object") && other->parent)
 		common_parent = other->parent->getCommonParent(this);
 
 	return common_parent;
@@ -288,4 +288,12 @@ vector<FieldNode*> ClassNode::getNewFields(){
 		new_fields.push_back(field.second);
 
 	return new_fields;
+}
+
+string ClassNode::getInstanciatorOfMethod(const string& method_name) const{
+	if(methods.find(method_name) != methods.end())
+		return e_name->getLiteral();
+	if(parent)
+		return parent->getInstanciatorOfMethod(method_name);
+	return "";
 }

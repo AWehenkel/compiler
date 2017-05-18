@@ -16,21 +16,32 @@ void print(char* string){
   printf("%s", string);
 }
 
+//TODO faire proprement en réalouant selon la taille de l'input.
+char* inputLine(){
+  char* string = NULL;
+  int read;
+  unsigned int len;
+  if(getline(&string, &len, stdin) == -1)
+    printf("Error reading line");
+
+  return string;
+}
+
 int inputInt32(){
   int i;
   scanf("%d", &i);
+  char* flushing = inputLine();
+  free(flushing);
   return i;
 }
 
 short int inputBool(){
-  short int i;
-  scanf("%hd", &i);
-  return i;
-}
 
-//TODO faire proprement en réalouant selon la taille de l'input.
-char* inputLine(){
-  char* string = malloc(sizeof(char)*1000);
-  scanf("%s", string);
-  return string;
+  char *val = inputLine();
+  if(val[0] == 't'){
+    free(val);
+    return 1;
+  }
+  free(val);
+  return 0;
 }

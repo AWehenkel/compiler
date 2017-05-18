@@ -43,6 +43,7 @@ public :
     int visitAssignNode(AssignNode *node);
     int visitBinaryOperatorNode(BinaryOperatorNode *node);
     int visitBlockNode(BlockNode *node);
+    int visitBraceNode(BraceNode *node);
     int visitCallNode(CallNode *node);
     int visitConditionalNode(ConditionalNode *node);
     int visitLetNode(LetNode *node);

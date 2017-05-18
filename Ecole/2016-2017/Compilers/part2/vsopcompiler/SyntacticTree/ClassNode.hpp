@@ -192,6 +192,14 @@ public :
 	OUT: std::vector<FieldNode*>, the new declared fields.
 	*/
 	std::vector<FieldNode*> getNewFields();
+
+	/*
+	getInstanciatorOfMethod
+	ROLE: Return a string containing the name of the first class which implement the method in the hierarchy.
+	OUT: std::string, the name of the class.
+	*/
+	std::string getInstanciatorOfMethod(const std::string& method_name) const;
+
 };
 
 #endif //class_node_hpp

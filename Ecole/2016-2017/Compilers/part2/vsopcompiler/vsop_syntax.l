@@ -94,7 +94,7 @@ int-lit   	[0-9]+|"0x"{hex}+|"0b"[0-1]+
 wrong-int-lit 	"0x"[0-9a-zA-Z]*|"0b"[0-9a-zA-Z]*
 type-id   	[A-Z][a-zA-Z0-9_]*
 obj-id    	[a-z][a-zA-Z0-9_]*
-str-lit   	\"({reg-char}|{esc-char})+\"
+str-lit   	\"({reg-char}|{esc-char})*\"
 str-lit-escape  \"([^\"]|\n|{esc-char})+\"
 unterm-str-lit  \"({reg-char}|{esc-char})+
 comments  	\/\/.*

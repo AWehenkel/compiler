@@ -6,19 +6,20 @@ using namespace std;
 
 string CodeGenStringVisitor::transformStringInLLVMFormat(const string& lit) const{
 
-  string new_lit(lit);
+  string new_lit(lit), replace("\\");
   string find = "\\x";
 
   for(string::size_type i = 0; (i = new_lit.find(find, i)) != string::npos;){
-    new_lit.replace(i, find.length(), "\\");
-    i += new_lit.length();
+    new_lit.replace(i, find.length(), replace);
+    i += replace.length();
   }
 
   find = "\\\"";
+  replace = "\\22";
 
   for(string::size_type i = 0; (i = new_lit.find(find, i)) != string::npos;){
-    new_lit.replace(i, find.length(), "\\22");
-    i += new_lit.length();
+    new_lit.replace(i, find.length(), replace);
+    i += replace.length();
   }
 
   return new_lit.insert(new_lit.size() - 1, "\\00");

@@ -66,7 +66,7 @@ public :
 	ROLE: Return the code to instanciate the VTable with the function.
 	Return: std::string, the code
 	*/
-	std::string getLLVMInstance(std::string class_name, std::string parent_name = "") const;
+	std::string getLLVMInstance(std::string class_name, ClassNode* parent = NULL) const;
 };
 
 #endif //method_node_hpp

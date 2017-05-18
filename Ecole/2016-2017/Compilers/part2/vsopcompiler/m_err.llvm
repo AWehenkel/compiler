@@ -5,40 +5,26 @@ declare void @print(i8*)
 declare void @printInt32(i32)
 declare void @printBool(i1)
 declare i32 @strcmp(i8*, i8*)
-@.str0 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
-@.str1 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
+declare float @llvm.powi.f32(float, i32)
+
+@.str_empty = private unnamed_addr constant [1 x i8] c"\00", align 1
 declare noalias i8* @malloc(i32)
 
 %struct.Main = type {
-	%struct.MainVTable*,
-	i32
+	%struct.MainVTable*
 }
 
 %struct.MainVTable = type {
-	i32 (%struct.Main*)*,
-	%struct.IO* (%struct.Main*, i8*)*,
-	%struct.IO* (%struct.Main*, i1)*,
-	%struct.IO* (%struct.Main*, i32)*,
-	i1 (%struct.Main*)*,
-	i8* (%struct.Main*)*,
 	i32 (%struct.Main*)*
 }
 
 @MainVTable_inst = global %struct.MainVTable{
-	i32 (%struct.Main*)* bitcast (i32 (%struct.IO*)* @IO_inputInt32 to i32 (%struct.Main*)*),
-	%struct.IO* (%struct.Main*, i8*)* bitcast (%struct.IO* (%struct.IO*, i8*)* @IO_print to %struct.IO* (%struct.Main*, i8*)*),
-	%struct.IO* (%struct.Main*, i1)* bitcast (%struct.IO* (%struct.IO*, i1)* @IO_printBool to %struct.IO* (%struct.Main*, i1)*),
-	%struct.IO* (%struct.Main*, i32)* bitcast (%struct.IO* (%struct.IO*, i32)* @IO_printInt32 to %struct.IO* (%struct.Main*, i32)*),
-	i1 (%struct.Main*)* bitcast (i1 (%struct.IO*)* @IO_inputBool to i1 (%struct.Main*)*),
-	i8* (%struct.Main*)* bitcast (i8* (%struct.IO*)* @IO_inputLine to i8* (%struct.Main*)*),
 	i32 (%struct.Main*)* @Main_main
 }
 
 define void @MainInit(%struct.Main* %self){
-	%1 = bitcast %struct.Main* %self to %struct.IO*
-	call void @IOInit(%struct.IO* %1)
-	%x = getelementptr inbounds %struct.Main* %self, i32 0, i32 1
-	store i32 0, i32* %x
+	%1 = bitcast %struct.Main* %self to %struct.Object*
+	call void @ObjectInit(%struct.Object* %1)
 	%2 = getelementptr inbounds %struct.Main* %self, i32 0, i32 0
 	store %struct.MainVTable* @MainVTable_inst, %struct.MainVTable** %2
 	ret void
@@ -61,6 +47,123 @@ notnull:			; preds = %5
 
 null:   			; preds = %5
 	ret %struct.Main* %4
+}
+
+%struct.A = type {
+	%struct.AVTable*
+}
+
+%struct.AVTable = type {
+	i32 (%struct.A*)*
+}
+
+@AVTable_inst = global %struct.AVTable{
+	i32 (%struct.A*)* bitcast (i32 (%struct.Main*)* @Main_main to i32 (%struct.A*)*)
+}
+
+define void @AInit(%struct.A* %self){
+	%1 = bitcast %struct.A* %self to %struct.B*
+	call void @BInit(%struct.B* %1)
+	%2 = getelementptr inbounds %struct.A* %self, i32 0, i32 0
+	store %struct.AVTable* @AVTable_inst, %struct.AVTable** %2
+	ret void
+}
+
+define %struct.A* @ANew(){
+	%self = alloca %struct.A*
+	%1 = getelementptr %struct.A* null, i32 1
+	%size = ptrtoint %struct.A* %1 to i32
+	%2 = call noalias i8* @malloc(i32 %size)
+	%3 = bitcast i8* %2 to %struct.A*
+	store %struct.A* %3, %struct.A** %self
+	%4 = load %struct.A** %self
+	%5 = icmp ne %struct.A* %4, null
+	br i1 %5, label %notnull, label %null
+
+notnull:			; preds = %5
+	call void @AInit(%struct.A* %4)
+	br label %null
+
+null:   			; preds = %5
+	ret %struct.A* %4
+}
+
+%struct.B = type {
+	%struct.BVTable*
+}
+
+%struct.BVTable = type {
+	i32 (%struct.B*)*
+}
+
+@BVTable_inst = global %struct.BVTable{
+	i32 (%struct.B*)* bitcast (i32 (%struct.Main*)* @Main_main to i32 (%struct.B*)*)
+}
+
+define void @BInit(%struct.B* %self){
+	%1 = bitcast %struct.B* %self to %struct.C*
+	call void @CInit(%struct.C* %1)
+	%2 = getelementptr inbounds %struct.B* %self, i32 0, i32 0
+	store %struct.BVTable* @BVTable_inst, %struct.BVTable** %2
+	ret void
+}
+
+define %struct.B* @BNew(){
+	%self = alloca %struct.B*
+	%1 = getelementptr %struct.B* null, i32 1
+	%size = ptrtoint %struct.B* %1 to i32
+	%2 = call noalias i8* @malloc(i32 %size)
+	%3 = bitcast i8* %2 to %struct.B*
+	store %struct.B* %3, %struct.B** %self
+	%4 = load %struct.B** %self
+	%5 = icmp ne %struct.B* %4, null
+	br i1 %5, label %notnull, label %null
+
+notnull:			; preds = %5
+	call void @BInit(%struct.B* %4)
+	br label %null
+
+null:   			; preds = %5
+	ret %struct.B* %4
+}
+
+%struct.C = type {
+	%struct.CVTable*
+}
+
+%struct.CVTable = type {
+	i32 (%struct.C*)*
+}
+
+@CVTable_inst = global %struct.CVTable{
+	i32 (%struct.C*)* bitcast (i32 (%struct.Main*)* @Main_main to i32 (%struct.C*)*)
+}
+
+define void @CInit(%struct.C* %self){
+	%1 = bitcast %struct.C* %self to %struct.Main*
+	call void @MainInit(%struct.Main* %1)
+	%2 = getelementptr inbounds %struct.C* %self, i32 0, i32 0
+	store %struct.CVTable* @CVTable_inst, %struct.CVTable** %2
+	ret void
+}
+
+define %struct.C* @CNew(){
+	%self = alloca %struct.C*
+	%1 = getelementptr %struct.C* null, i32 1
+	%size = ptrtoint %struct.C* %1 to i32
+	%2 = call noalias i8* @malloc(i32 %size)
+	%3 = bitcast i8* %2 to %struct.C*
+	store %struct.C* %3, %struct.C** %self
+	%4 = load %struct.C** %self
+	%5 = icmp ne %struct.C* %4, null
+	br i1 %5, label %notnull, label %null
+
+notnull:			; preds = %5
+	call void @CInit(%struct.C* %4)
+	br label %null
+
+null:   			; preds = %5
+	ret %struct.C* %4
 }
 
 %struct.IO = type {
@@ -259,94 +362,19 @@ define i32 @Main_main(%struct.Main* %self) #0 {
 	%1 = alloca %struct.Main*
 	store %struct.Main* %self, %struct.Main** %1
 	%2 = alloca i32
-	%3 = alloca %struct.IO*
-	; let
-	%4 = alloca i32
-	%5 = alloca %struct.IO*
-	%6 = alloca i32
-	; assignement
-	%7 = alloca i32
-	; assignement
-	%8 = alloca i32
-	store i32 1984, i32* %8
-	%9 = load i32* %8
-	store i32 %9, i32* %4
-	store i32 %9, i32* %7
-	%10 = load i32* %7
-;field
-	%11 = load %struct.Main** %1
-	%12 = getelementptr inbounds %struct.Main* %11, i32 0, i32 1
-	store i32 %10, i32* %12
-	store i32 %10, i32* %6
-	%13 = alloca %struct.IO*
-	%14 = alloca i8*
-	store i8* getelementptr inbounds ([2 x i8]* @.str0, i32 0, i32 0), i8** %14
-	%15 = alloca %struct.IO*
-	%16 = alloca i32
-	%17 = load i32* %4
-	store i32 %17, i32* %16
-; call
-	%18 = load %struct.Main** %1
-	%19 = getelementptr inbounds %struct.Main* %18, i32 0, i32 0
-	%20 = load %struct.MainVTable** %19
-	%21 = getelementptr inbounds %struct.MainVTable* %20, i32 0, i32 3
-	%22 = load %struct.IO* (%struct.Main*, i32)** %21
-	%23 = load i32* %16
-	%24 = call %struct.IO* %22(%struct.Main* %18, i32 %23)
-	store %struct.IO* %24, %struct.IO** %15
-; call
-	%25 = load %struct.IO** %15
-	%26 = getelementptr inbounds %struct.IO* %25, i32 0, i32 0
-	%27 = load %struct.IOVTable** %26
-	%28 = getelementptr inbounds %struct.IOVTable* %27, i32 0, i32 1
-	%29 = load %struct.IO* (%struct.IO*, i8*)** %28
-	%30 = load i8** %14
-	%31 = call %struct.IO* %29(%struct.IO* %25, i8* %30)
-	store %struct.IO* %31, %struct.IO** %13
-	%32 = load %struct.IO** %13
-	store %struct.IO* %32, %struct.IO** %5
-	%33 = load %struct.IO** %5
-	store %struct.IO* %33, %struct.IO** %3
-	%34 = alloca %struct.IO*
-	%35 = alloca i8*
-	store i8* getelementptr inbounds ([2 x i8]* @.str1, i32 0, i32 0), i8** %35
-	%36 = alloca %struct.IO*
-	%37 = alloca i32
-	%38 = load %struct.Main** %1
-	%39 = getelementptr inbounds %struct.Main* %38, i32 0, i32 1
-	%40 = load i32* %39
-	store i32 %40, i32* %37
-; call
-	%41 = load %struct.Main** %1
-	%42 = getelementptr inbounds %struct.Main* %41, i32 0, i32 0
-	%43 = load %struct.MainVTable** %42
-	%44 = getelementptr inbounds %struct.MainVTable* %43, i32 0, i32 3
-	%45 = load %struct.IO* (%struct.Main*, i32)** %44
-	%46 = load i32* %37
-	%47 = call %struct.IO* %45(%struct.Main* %41, i32 %46)
-	store %struct.IO* %47, %struct.IO** %36
-; call
-	%48 = load %struct.IO** %36
-	%49 = getelementptr inbounds %struct.IO* %48, i32 0, i32 0
-	%50 = load %struct.IOVTable** %49
-	%51 = getelementptr inbounds %struct.IOVTable* %50, i32 0, i32 1
-	%52 = load %struct.IO* (%struct.IO*, i8*)** %51
-	%53 = load i8** %35
-	%54 = call %struct.IO* %52(%struct.IO* %48, i8* %53)
-	store %struct.IO* %54, %struct.IO** %34
-	%55 = alloca i32
-	store i32 0, i32* %55
-	%56 = load i32* %55
-	store i32 %56, i32* %2
-	%57 = load i32* %2
-	ret i32 %57
+	%3 = alloca i32
+	store i32 0, i32* %3
+	%4 = load i32* %3
+	store i32 %4, i32* %2
+	%5 = load i32* %2
+	ret i32 %5
 }
 
 define i32 @main(){
 	%1 = call %struct.Main* @MainNew()
 	%2 = getelementptr inbounds %struct.Main* %1, i32 0, i32 0
 	%3 = load %struct.MainVTable** %2
-	%4 = getelementptr inbounds %struct.MainVTable* %3, i32 0, i32 6
+	%4 = getelementptr inbounds %struct.MainVTable* %3, i32 0, i32 0
 	%5 = load i32 (%struct.Main*)** %4
 	%6 = call i32 %5(%struct.Main* %1)
 	ret i32 %6
