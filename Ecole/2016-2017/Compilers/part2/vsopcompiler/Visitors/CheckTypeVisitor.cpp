@@ -64,9 +64,13 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
   BinaryOperator op = node->getOperator();
   switch (op){
     case BinaryOperator::b_op_and :
+    case BinaryOperator::b_op_or :
       // Check both operands are bools or errors and return a bool if ok
       if ((s_left_type != "bool" && s_left_type != "error") || (s_right_type != "bool" && s_right_type != "error")){
-        SemanticError error("The two members of an and-expression must be boolean, got '" + s_left_type +"' and '" + s_right_type + "'", node);
+        string exp_type = "or";
+        if(op = BinaryOperator::b_op_and)
+          exp_type = "and";
+        SemanticError error("The two members of an " + exp_type + " expression must be boolean, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
         return errors.size();

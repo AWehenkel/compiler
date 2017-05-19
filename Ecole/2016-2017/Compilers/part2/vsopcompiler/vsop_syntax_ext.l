@@ -61,6 +61,7 @@ string replaceASCII(string text, unsigned int min, unsigned int max);
 //Hash table for keywords.
 unordered_map<std::string,int> keywords_map ({
      {"and", T_AND},
+     {"or", T_OR},
      {"bool", T_BOOL},
      {"class", T_CLASS},
      {"do", T_DO},
@@ -246,6 +247,8 @@ comments  	\/\/.*
 "<="           return T_LEQ;
 ">"            return T_GREATER;
 ">="           return T_GEQ;
+"++"           return T_PP;
+"--"           return T_MM;
 "<-"           return T_ASSIGN;
 .              {lexicalError();};
 %%

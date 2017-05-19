@@ -58,8 +58,8 @@ void yyerror(const char *s);
 	class PairColLine* col_lin;
 };
 
-%token T_AND T_BOOL T_CLASS T_DO T_ELSE T_EXTENDS T_FALSE T_IF T_IN T_INT32
-%token T_ISNULL T_LET T_NEW T_NOT T_STRING T_THEN T_TRUE T_UNIT T_WHILE
+%token T_AND T_OR T_BOOL T_CLASS T_DO T_ELSE T_EXTENDS T_FALSE T_IF T_IN T_INT32
+%token T_ISNULL T_LET T_NEW T_NOT T_STRING T_THEN T_TRUE T_UNIT T_WHILE T_PP T_MM
 %token T_OBJ_ID
 %token T_INT_LIT
 %token T_TYPE_ID
@@ -98,7 +98,7 @@ void yyerror(const char *s);
 %type <col_lin>									t_new
 
 %right T_ASSIGN
-%left T_AND
+%left T_AND T_OR
 %right T_NOT
 %nonassoc T_EQUAL T_LOWER T_LEQ T_GREATER T_GEQ
 %left T_PLUS T_MINUS
@@ -290,8 +290,6 @@ field :
 																							 else
 																								$$ = new FieldNode($1, $3, $1->getCol(), $1->getLine());
 																							}
-  | t_obj_id T_COLON error T_SEMI_COLON					{delete $1;$$ = NULL;syntax_error++;}
-  | error T_COLON type assign T_SEMI_COLON			{delete $3; delete $4;$$ = NULL;syntax_error++;}
 ;
 
 assign :
@@ -345,6 +343,7 @@ expr :
 	| T_ISNULL expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2, @1.first_column, @1.first_line);}
 	| expr T_PLUS expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3, @2.first_column, @2.first_line);}
 	| expr T_AND expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3, @2.first_column, @2.first_line);}
+	| expr T_OR expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_or, $1, $3, @2.first_column, @2.first_line);}
 	| expr T_EQUAL expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3, @2.first_column, @2.first_line);}
 	| expr T_LEQ expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3, @2.first_column, @2.first_line);}
 	| expr T_LOWER expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3, @2.first_column, @2.first_line);}

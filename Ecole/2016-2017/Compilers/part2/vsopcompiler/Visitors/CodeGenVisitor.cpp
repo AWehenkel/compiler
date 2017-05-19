@@ -189,16 +189,26 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   ExpressionNode* left = node->getLeft();
   ExpressionNode* right = node->getRight();
   ir += tab + "; binary operation\n";
-  if(node->getOperator() == b_op_and){
-    LiteralNode* false_bool = new LiteralNode("false", "bool");
+  if(node->getOperator() == b_op_and || node->getOperator() == b_op_or){
+    LiteralNode* default_bool;
+    ConditionalNode* tmp_cond;
+
+    if(node->getOperator() == b_op_and){
+      default_bool = new LiteralNode("false", "bool");
+      tmp_cond = new ConditionalNode(left, right, default_bool);
+    }
+    else{
+      default_bool = new LiteralNode("true", "bool");
+      tmp_cond = new ConditionalNode(left, default_bool, right);
+    }
+
     TypeIdentifierNode* bool_type = new TypeIdentifierNode("bool");
-    false_bool->setType(bool_type, true);
-    ConditionalNode* tmp_cond = new ConditionalNode(left, right, false_bool);
+    default_bool->setType(bool_type, true);
+
     tmp_cond->setLLVMAddress(node->getLLVMAddress());
     tmp_cond->setType(bool_type);
-    ir += "; blabla";
     tmp_cond->accept(this);
-    free(false_bool);
+    free(default_bool);
     return 0;
   }
   // Visit the children nodes

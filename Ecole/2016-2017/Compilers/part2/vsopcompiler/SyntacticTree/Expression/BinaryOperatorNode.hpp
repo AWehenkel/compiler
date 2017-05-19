@@ -9,7 +9,7 @@
 	Enumeration listing the possible binary operator.
 */
 enum BinaryOperator {b_op_and = 0, b_op_minus = 1, b_op_less = 2, b_op_leq = 3, b_op_plus = 4, b_op_equal = 5,
-											b_op_times = 6, b_op_div = 7, b_op_pow = 8};
+											b_op_times = 6, b_op_div = 7, b_op_pow = 8, b_op_or = 9};
 /*
 	Class used to represent a syntaxic node containing a binary operation
 */
@@ -41,6 +41,7 @@ public :
 		literal_op_table[b_op_times] = "*";
 		literal_op_table[b_op_div] = "/";
 		literal_op_table[b_op_pow] = "^";
+		literal_op_table[b_op_or] = "or";
 	};
 
 	//Destructor:
