@@ -7,8 +7,13 @@ all:	vsopc
 # Your compiler
 vsopc: bison flex preprocessing g++ io
 
+extension: bison_ext flex_ext preprocessing_ext g++_ext io
+
 bison:
 	bison -v -d vsop_grammar.y
+
+bison_ext:
+	bison -v -d vsop_grammar_ext.y
 
 io:
 	gcc -std=c99 -g -O -c Libraries/io.c -o Libraries/io.o
@@ -16,15 +21,25 @@ io:
 flex:
 	flex vsop_syntax.l
 
+flex_ext:
+	flex vsop_syntax_ext.l
+
 preprocessing :
 	patch -p0 vsop_grammar.tab.c < yystate.patch
+	chmod +x vsopc
+
+preprocessing_ext :
+	patch -p0 vsop_grammar_ext.tab.c < yystate.patch
 	chmod +x vsopc
 
 g++ :
 	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp SemanticAnalysis/*.cpp Visitors/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc_exe
 
+g++_ext :
+	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp SemanticAnalysis/*.cpp Visitors/*.cpp lex.yy.c vsop_grammar_ext.tab.c -lfl -o vsopc_exe
+
 generation :
-	./merr.linux -B -s "make vsopc" -o yyerror.c ./vsopc
+	./merr.linux -B -s "make vsopc" -o yyerror.c ./vsopc_exe
 
 # Should clean built files, and keep only source code. Adapt to your language
 # and folder structure. If using git, you might want to use `git clean`.

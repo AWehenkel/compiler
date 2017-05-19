@@ -32,6 +32,7 @@ class Main extends IO {
       1 < 2;
       xs <- new Cons;
       test();
+      if 2^2 > 2 then print("Ca marche\n");
       //xs.init(10, new List); //On a une seg fault dans notre code quelque part quand on lui donne ça, normalement ça devrait donner une erreur vu que init est pas déclaré chez List
       printInt32(xs.length());
       print("\n");
