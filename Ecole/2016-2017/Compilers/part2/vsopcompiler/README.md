@@ -27,6 +27,6 @@ To add new errors to the automatic detection :
   to
   const char *msg;
 
-7) Add a conversion to *errtable before every calloc 
+7) Add a conversion to *errtable before every calloc
 
 8) Finally, undo all you did at point 1, 2 and 3

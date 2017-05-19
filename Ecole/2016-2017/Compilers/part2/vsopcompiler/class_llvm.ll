@@ -85,7 +85,7 @@ define %struct.Child* @Child_new() #0 {
   br label %8
 
 ; <label>:6                                       ; preds = %0
-  call void @__assert_fail(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.1, i32 0, i32 0), i32 76, i8* getelementptr inbounds ([26 x i8], [26 x i8]* @__PRETTY_FUNCTION__.Child_new, i32 0, i32 0)) #3
+  call void @__assert_fail(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.1, i32 0, i32 0), i32 77, i8* getelementptr inbounds ([26 x i8], [26 x i8]* @__PRETTY_FUNCTION__.Child_new, i32 0, i32 0)) #3
   unreachable
                                                   ; No predecessors!
   br label %8
@@ -107,24 +107,30 @@ declare void @__assert_fail(i8*, i8*, i32, i8*) #1
 define i32 @main() #0 {
   %1 = alloca i32, align 4
   %i = alloca i32, align 4
+  %a = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  store i32 0, i32* %i, align 4
-  br label %2
+  store i32 1, i32* %i, align 4
+  store i32 0, i32* %a, align 4
+  %2 = load i32, i32* %i, align 4
+  %3 = icmp ne i32 %2, 0
+  br i1 %3, label %4, label %8
 
-; <label>:2                                       ; preds = %5, %0
-  %3 = load i32, i32* %i, align 4
-  %4 = icmp slt i32 %3, 5
-  br i1 %4, label %5, label %8
+; <label>:4                                       ; preds = %0
+  %5 = load i32, i32* %a, align 4
+  %6 = icmp ne i32 %5, 0
+  br i1 %6, label %7, label %8
 
-; <label>:5                                       ; preds = %2
-  %6 = load i32, i32* %i, align 4
-  %7 = add nsw i32 %6, 1
-  store i32 %7, i32* %i, align 4
-  br label %2
+; <label>:7                                       ; preds = %4
+  store i32 -1, i32* %1, align 4
+  br label %9
 
-; <label>:8                                       ; preds = %2
-  %9 = load i32, i32* %1, align 4
-  ret i32 %9
+; <label>:8                                       ; preds = %4, %0
+  store i32 0, i32* %1, align 4
+  br label %9
+
+; <label>:9                                       ; preds = %8, %7
+  %10 = load i32, i32* %1, align 4
+  ret i32 %10
 }
 
 attributes #0 = { nounwind "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="pentium4" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }

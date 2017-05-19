@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
+#include "/home/antoine/vsopcompiler/compiler/Ecole/2016-2017/Compilers/part2/vsopcompiler/include/gc/gc.h"
 
 struct ChildVTable;
 struct Child;
@@ -80,11 +81,10 @@ struct Child *Child_new() {
 
 int main () {
 
-  int i = 0;
-  while(i<5){
-    ++i;
-  }
+  int i = 1;
+  int a = 0;
+  if (i && a)
+    return -1;
 
-  // let myObject : MyClass <- new MyClass in
-  struct Child;
+  return 0;
 }

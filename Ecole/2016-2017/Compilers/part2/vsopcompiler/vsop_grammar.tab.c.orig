@@ -2678,8 +2678,8 @@ void yyerror(const char *s)
       sprintf(sbuf,"%s (%d;%d)", s, yystate, yychar);
       s = sbuf;
    }
-   fprintf(stderr, "%d: # \"%s\": %s\n", yylineno, yytext, s);
-   */
+   fprintf(stderr, "%d: # \"%s\": %s\n", yylineno, yytext, s);*/
+
 
    // Lines to comment when doing error generation
 	 cerr << file_name << ":" << yylloc.first_line << ":" << yylloc.first_column << ": syntax error" << endl;

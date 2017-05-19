@@ -6,7 +6,6 @@ class main {} ::: First letter of class is not uppercase
 class Main { ::: Missing closing curly brace at the end of class
 class Main } ::: Missing opening curly brace at the beginning of class
 class Main {{} ::: Too much opening curly braces at the beginning of class
-class Main {}} ::: Too much closing curly braces at the closing of class
 class Main IO {} ::: Missing extension keyword
 class Main inherits IO {} ::: Wrong extension keyword, use 'extends'
 class Main extends io {} ::: Extension can only be applied on objects
@@ -37,31 +36,31 @@ class Main {
 } ::: Mising assignemen value
 
 class Main {
-  () : int32 {}
+  () : int32 {0}
 } ::: Missing method name in method declaration
 class Main {
-  f() : {}
+  f() : {0}
 } ::: Missing type in method declaration
 class Main {
-  f() int32 {}
+  f() int32 {0}
 } ::: Missing ':' in method declaration
 class Main {
-  f() : int {}
+  f() : int {0}
 } ::: Wrong type in method declaration
 class Main {
-  F() : int32 {}
+  F() : int32 {0}
 } ::: Method cannot start with a capital letter
 class Main {
-  f( : int32 {}
+  f( : int32 {0}
 } ::: Missing closing brackets in method declaration
 class Main {
-  f() : int32 {}
+  f() : int32 {0}
 } ::: Mising opening brackets in method declaration
+f()) : int32 {0}
 class Main {
-  f()) : int32 {}
 } ::: Too many closing brackets in method declaration
 class Main {
-  f(() : int32 {}
+  f(() : int32 {0}
 } ::: Too many opening brackets in method declaration
 class Main {
   f() : int32 {
@@ -70,16 +69,16 @@ class Main {
   f() : int32 }
 } ::: Missing opening curly braces in method declaration
 class Main {
-  f() : int32 {}}
+  f() : int32 {0}}
 } ::: Too many closing curly braces in method declaration
 class Main {
-  f() : int32 {{}
+  f() : int32 {{0}
 } ::: Too many opening curly braces in method declaration
 class Main {
-  f() : int32 {};
+  f() : int32 {0};
 } ::: Unexpected ';' at the end of method declaration
 class Main {
-  f() ; int32 {};
+  f() ; int32 {0};
 } ::: Wrong separator in method declaration
 
 class Main {
@@ -108,7 +107,7 @@ class Main {
 } ::: Wrong separator of formals in method declaration
 
 class Main {
-  f() : int32 {}
+  f() : int32 {0}
 } ::: Block must contain at least one expression
 class Main {
   f() : int32 {0 1}
