@@ -21,7 +21,7 @@ public :
 			line:					int, the line where the node is present.
 	*/
 	ExpressionNode(int col = 0, int line = 0) : VSOPNode(col, line), node_type(NULL){};
-	ExpressionNode(std::string type, int col = 0, int line = 0);
+	ExpressionNode(std::string& type, int col = 0, int line = 0);
 	ExpressionNode(TypeIdentifierNode* type, int col = 0, int line = 0) : VSOPNode(col, line), node_type(type){};
 
 	//Destructor:
@@ -30,10 +30,10 @@ public :
 	//Public method
 	//Inherited
 	virtual int accept(Visitor* visitor) = 0;
-	virtual bool alreadyInstanciated(){return false;};
+	virtual bool alreadyInstanciated() const{return false;};
 	virtual std::string getLiteral(bool with_type = false) const = 0;
-	virtual TypeIdentifierNode* getType(){return node_type;};
-	virtual std::string getLLVMType();
+	virtual TypeIdentifierNode* getType() const{return node_type;};
+	virtual std::string getLLVMType() const;
 	virtual void setType(TypeIdentifierNode* new_type, bool new_self_type = false){
 		node_type = new_type;
 		self_type = new_self_type;

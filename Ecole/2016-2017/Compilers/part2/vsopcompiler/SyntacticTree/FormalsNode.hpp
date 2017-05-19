@@ -28,8 +28,8 @@ public :
 
 	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitFormalsNode(this);};
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
+	TypeIdentifierNode* getDeclarationType (const std::string& id) const;
+	const std::string getDeclarationLLVM(const std::string& id) const;
 	std::string getLiteral(bool with_type = false) const;
 
 	/*
@@ -54,7 +54,7 @@ public :
 	IN:		method: MethodNode const &, the method with which compare the current method.
 	OUT: bool, true if the name, the type and the arguments are equal.
 	*/
-	bool equals(FormalsNode &formals);
+	bool equals(const FormalsNode &formals) const;
 };
 
 #endif //formals_node_hpp

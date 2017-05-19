@@ -11,7 +11,7 @@ FieldNode::~FieldNode(){
 	delete e_init_expr;
 }
 
-string FieldNode::getLiteral(bool with_type) const {
+string FieldNode::getLiteral(bool with_type) const{
 
 	string literal = "Field(" + e_name->getLiteral() + ", " + e_type->getLiteral(with_type);
 	if(e_init_expr)

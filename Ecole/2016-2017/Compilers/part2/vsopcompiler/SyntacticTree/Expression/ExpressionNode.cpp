@@ -3,12 +3,12 @@
 
 using namespace std;
 
-ExpressionNode::ExpressionNode(std::string type, int col, int line) : VSOPNode(col, line){
+ExpressionNode::ExpressionNode(std::string& type, int col, int line) : VSOPNode(col, line){
   node_type = new TypeIdentifierNode(type);
   self_type = true;
 }
 
-string ExpressionNode::getLLVMType(){
+string ExpressionNode::getLLVMType() const{
   return node_type ? node_type->getLLVMType() : "ERROR";
 }
 

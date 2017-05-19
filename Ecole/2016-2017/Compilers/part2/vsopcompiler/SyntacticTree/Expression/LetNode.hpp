@@ -41,10 +41,10 @@ public :
 
 	//Inherited
 	int accept(Visitor* visitor){return visitor->visitLetNode(this);};
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
+	TypeIdentifierNode* getDeclarationType (const std::string& id) const;
+	const std::string getDeclarationLLVM (const std::string& id) const;
 	std::string getLiteral(bool with_type = false) const;
-	FieldNode* getFieldFromId(std::string id) const;
+	FieldNode* getFieldFromId(const std::string& id) const;
 
 };
 

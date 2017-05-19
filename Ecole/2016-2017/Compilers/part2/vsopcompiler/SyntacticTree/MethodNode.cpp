@@ -16,7 +16,7 @@ MethodNode::~MethodNode(){
 	delete e_block;
 }
 
-TypeIdentifierNode* MethodNode::getDeclarationType(string id){
+TypeIdentifierNode* MethodNode::getDeclarationType(const string& id) const{
 
 	TypeIdentifierNode* to_ret = e_formals->getDeclarationType(id);
 	if(!to_ret)
@@ -25,7 +25,7 @@ TypeIdentifierNode* MethodNode::getDeclarationType(string id){
 	return to_ret;
 }
 
-const string MethodNode::getDeclarationLLVM(string id){
+const string MethodNode::getDeclarationLLVM(const string& id) const{
 
 	string to_ret = e_formals->getDeclarationLLVM(id);
 	if(!to_ret.size())
@@ -34,7 +34,7 @@ const string MethodNode::getDeclarationLLVM(string id){
 	return to_ret;
 }
 
-FieldNode* MethodNode::getFieldFromId(string id) const{
+FieldNode* MethodNode::getFieldFromId(const string& id) const{
 	TypeIdentifierNode* to_ret = e_formals->getDeclarationType(id);
 	if(to_ret)
 		return NULL;
@@ -42,16 +42,16 @@ FieldNode* MethodNode::getFieldFromId(string id) const{
 	return e_class_scope->getFieldFromId(id);
 }
 
-string MethodNode::getLiteral(bool with_type) const {
+string MethodNode::getLiteral(bool with_type) const{
 	return "Method(" + e_name->getLiteral(with_type) + ", " + e_formals->getLiteral(with_type) + ", "
 									 + e_ret_type->getLiteral(with_type) + "," + e_block->getLiteral(with_type) + ")";
 }
 
-bool MethodNode::equals(MethodNode &method){
+bool MethodNode::equals(const MethodNode &method) const{
 	return *(method.getName()) == *(getName()) && *(method.getFormals()) == *(getFormals()) && *(method.getRetType()) == *(getRetType());
 }
 
-string MethodNode::getLLVMStructure(string struct_class) const{
+string MethodNode::getLLVMStructure(const string& struct_class) const{
 
 	string code_struct = getRetType()->getLLVMType() + " (" + struct_class + "*, ";
 	for(auto formal : e_formals->getFormals())
@@ -62,7 +62,7 @@ string MethodNode::getLLVMStructure(string struct_class) const{
 	return code_struct;
 }
 
-string MethodNode::getLLVMInstance(string class_name, ClassNode* parent) const{
+string MethodNode::getLLVMInstance(const string& class_name, ClassNode* parent) const{
 
 	string code_inst = getLLVMStructure("%struct." + class_name);
 	if(parent){

@@ -12,7 +12,7 @@ LetNode::~LetNode(){
   delete e_object_type;
 }
 
-TypeIdentifierNode* LetNode::getDeclarationType(string id){
+TypeIdentifierNode* LetNode::getDeclarationType(const string& id) const{
 
   if(e_object_id->getLiteral() == id)
     return e_object_type;
@@ -21,7 +21,7 @@ TypeIdentifierNode* LetNode::getDeclarationType(string id){
 
   return NULL;
 }
-FieldNode* LetNode::getFieldFromId(std::string id) const{
+FieldNode* LetNode::getFieldFromId(const string& id) const{
   if(e_object_id->getLiteral() == id)
     return NULL;
 
@@ -31,7 +31,7 @@ FieldNode* LetNode::getFieldFromId(std::string id) const{
   return NULL;
 }
 
-const string LetNode::getDeclarationLLVM(string id){
+const string LetNode::getDeclarationLLVM(const string& id) const{
 
   if(e_object_id->getLiteral() == id)
     return e_object_id->getLLVMAddress();

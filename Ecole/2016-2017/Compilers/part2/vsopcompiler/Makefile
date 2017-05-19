@@ -11,7 +11,7 @@ bison:
 	bison -v -d vsop_grammar.y
 
 io:
-	gcc -g -O -c Libraries/io.c -o Libraries/io.o
+	gcc -std=c99 -g -O -c Libraries/io.c -o Libraries/io.o
 
 flex:
 	flex vsop_syntax.l

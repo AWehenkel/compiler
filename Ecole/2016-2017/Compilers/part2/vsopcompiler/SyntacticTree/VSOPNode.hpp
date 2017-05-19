@@ -29,7 +29,7 @@ public :
 	//Accessors:
 	const int getLine() const{return n_line;};
 	const int getCol() const{return n_col;};
-	const std::string getLLVMAddress(){return llvm_address;};
+	const std::string getLLVMAddress() const{return llvm_address;};
 	void setLLVMAddress(int i_llvm_address){llvm_address = "%" + std::to_string(i_llvm_address);};
 	void setLLVMAddressAsString(std::string s_llvm_address){llvm_address = "%" + s_llvm_address;};
 	void setLLVMAddress(std::string s_llvm_address){llvm_address = s_llvm_address;};
@@ -55,7 +55,7 @@ public :
 	IN:		id: std::string, the name of the variable.
 	OUT: bool, true if the variable is declared in the VSOPNode or in one of its children.
 	*/
-	virtual TypeIdentifierNode* getDeclarationType(std::string id){
+	virtual TypeIdentifierNode* getDeclarationType(const std::string& id) const{
 		return NULL;
 	};
 
@@ -65,7 +65,7 @@ public :
 	IN:		id: std::string, the name of the variable.
 	OUT: bool, true if the variable is declared in the VSOPNode or in one of its children.
 	*/
-	virtual const std::string getDeclarationLLVM(std::string id){
+	virtual const std::string getDeclarationLLVM(const std::string& id) const{
 		return "";
 	};
 
@@ -75,7 +75,7 @@ public :
 	IN:		id: std::string, the name of the variable.
 	OUT: 	FieldNode*, null if the object identifier does not correspond to a field
 	*/
-	virtual FieldNode* getFieldFromId(std::string id) const{
+	virtual FieldNode* getFieldFromId(const std::string& id) const{
 		return NULL;
 	};
 };

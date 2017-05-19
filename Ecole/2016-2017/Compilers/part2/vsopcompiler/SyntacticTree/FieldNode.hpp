@@ -43,7 +43,7 @@ public :
 	ObjectIdentifierNode* getName() const {return e_name;};
 	TypeIdentifierNode* getType() const {return e_type;};
 	ExpressionNode* getInitExpr() const {return e_init_expr;};
-	int getPosition(){return position;};
+	int getPosition() const{return position;};
 
 	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitFieldNode(this);};

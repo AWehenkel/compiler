@@ -31,7 +31,7 @@ public :
 	//Inherited:
 	std::string getLiteral(bool with_type = false) const;
 	int accept(Visitor* visitor){return visitor->visitObjectIdentifierNode(this);};
-	virtual bool alreadyInstanciated(){return true;};
+	virtual bool alreadyInstanciated() const{return true;};
 
 	/*
 	equals

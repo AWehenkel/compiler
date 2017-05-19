@@ -76,9 +76,9 @@ public :
 	//Inherited
 	int accept(Visitor* visitor);
 	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
-	FieldNode* getFieldFromId(std::string id) const;
+	TypeIdentifierNode* getDeclarationType(const std::string& id) const;
+	const std::string getDeclarationLLVM(const std::string& id) const;
+	FieldNode* getFieldFromId(const std::string& id) const;
 	std::string getLiteral(bool with_type = false) const;
 
 	/*
@@ -93,7 +93,7 @@ public :
 	IN: 	method, std::string, the literal of the the name of the method.
 	OUT:	A pointer to the method if it is declared else NULL.
 	*/
-	FieldNode* getField(std::string name);
+	FieldNode* getField(const std::string& name) const;
 
 	/*
 	addField
@@ -109,7 +109,7 @@ public :
 	IN: 	method, std::string, the literal of the the name of the method.
 	OUT:	A pointer to the method if it is declared else NULL.
 	*/
-	MethodNode* getMethod(std::string name);
+	MethodNode* getMethod(const std::string& name) const;
 
 	/*
 	addMethod
@@ -125,7 +125,7 @@ public :
 	IN:		unordered_map<std:string, ClassNode*> class_table, the table containing the class of the program.
 	OUT: -
 	*/
-	int setParent(std::unordered_map<std::string, ClassNode*> &table);
+	int setParent(const std::unordered_map<std::string, ClassNode*> &table);
 
 	/*
 	inCycle
@@ -141,7 +141,7 @@ public :
 	IN : other, pointers to classes
   OUT : A pointer to the common ancestor type, null if no common ancestor
 	*/
-	TypeIdentifierNode* getCommonParent(ClassNode *other);
+	TypeIdentifierNode* getCommonParent(const ClassNode *other) const;
 
 	/*
 	hasParent
@@ -149,49 +149,49 @@ public :
 	IN : candidate: ClassNode*, the candidate parent.
 	OUT : bool, true if the candidate is a parent of the current class.
 	*/
-	bool hasParent(ClassNode* candidate);
+	bool hasParent(ClassNode* candidate) const;
 
 	/*
 	getInheritedMethods()
 	ROLE: Return the methods inherited by the class.
 	OUT: std::vector<MethodNode*>, the inherited methods.
 	*/
-	std::vector<MethodNode*> getInheritedMethods();
+	std::vector<MethodNode*> getInheritedMethods() const;
 
 	/*
 	getOverridendMethods()
 	ROLE: Return the methods overriden by the class.
 	OUT: std::vector<MethodNode*>, the overriden methods.
 	*/
-	std::vector<MethodNode*> getOverridendMethods();
+	std::vector<MethodNode*> getOverridendMethods() const;
 
 	/*
 	getNewMethods()
 	ROLE: Return the methods newly declared by the class.
 	OUT: std::vector<MethodNode*>, the new methods.
 	*/
-	std::vector<MethodNode*> getNewMethods();
+	std::vector<MethodNode*> getNewMethods() const;
 
 	/*
 	getAllMethods()
 	ROLE: Return all the methods of the class.
 	OUT: std::vector<MethodNode*>, the methods.
 	*/
-	std::vector<MethodNode*> getAllMethods();
+	std::vector<MethodNode*> getAllMethods() const;
 
 	/*
 	getInheritedFields()
 	ROLE: Return all the field inherited from parents class.
 	OUT: std::vector<FieldNode*>, the inherited fields.
 	*/
-	std::vector<FieldNode*> getInheritedFields();
+	std::vector<FieldNode*> getInheritedFields() const;
 
 	/*
 	getNewFields()
 	ROLE: Return all the fields newly declared in the class.
 	OUT: std::vector<FieldNode*>, the new declared fields.
 	*/
-	std::vector<FieldNode*> getNewFields();
+	std::vector<FieldNode*> getNewFields() const;
 
 	/*
 	getInstanciatorOfMethod

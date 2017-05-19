@@ -27,7 +27,7 @@ int ClassNode::fillClassTable(unordered_map<string, ClassNode*> &table){
 	return 0;
 }
 
-TypeIdentifierNode* ClassNode::getDeclarationType(string id){
+TypeIdentifierNode* ClassNode::getDeclarationType(const string& id) const{
 
 	if(fields.find(id) != fields.end())
 		return fields.find(id)->second->getType();
@@ -37,7 +37,7 @@ TypeIdentifierNode* ClassNode::getDeclarationType(string id){
 	return NULL;
 }
 
-const string ClassNode::getDeclarationLLVM(string id){
+const string ClassNode::getDeclarationLLVM(const string& id) const{
 
 	if(fields.find(id) != fields.end())
 		return fields.find(id)->second->getLLVMAddress();
@@ -49,7 +49,7 @@ const string ClassNode::getDeclarationLLVM(string id){
 	return "";
 }
 
-FieldNode* ClassNode::getFieldFromId(string id) const{
+FieldNode* ClassNode::getFieldFromId(const string& id) const{
 	if(fields.find(id) != fields.end())
 		return fields.find(id)->second;
 	else if(parent)
@@ -96,7 +96,7 @@ bool ClassNode::parentHasMethod(MethodNode* method) const{
 	return (parent && parent->hasMethod(method));
 }
 
-FieldNode* ClassNode::getField(string name){
+FieldNode* ClassNode::getField(const string &name) const{
 
 	FieldNode* to_ret;
 	if(fields.find(name) == fields.end()){
@@ -123,7 +123,7 @@ SemanticError ClassNode::addField(FieldNode* field){
 	return error;
 }
 
-MethodNode* ClassNode::getMethod(string name){
+MethodNode* ClassNode::getMethod(const string& name) const{
 
 	MethodNode* to_ret;
 	if(methods.find(name) == methods.end()){
@@ -158,7 +158,7 @@ SemanticError ClassNode::addMethod(MethodNode* method){
 }
 
 
-int ClassNode::setParent(unordered_map<string, ClassNode*> &table){
+int ClassNode::setParent(const unordered_map<string, ClassNode*> &table){
 
 	// Can have no parents
 	if (!e_extends)
@@ -181,7 +181,7 @@ bool ClassNode::inCycle(){
 	return in_cycle;
 }
 
-TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
+TypeIdentifierNode* ClassNode::getCommonParent(const ClassNode *other) const{
 
 	TypeIdentifierNode* common_parent =  NULL;
 	if(other == NULL)
@@ -202,12 +202,12 @@ TypeIdentifierNode* ClassNode::getCommonParent(ClassNode *other){
 	return common_parent;
 }
 
-bool ClassNode::hasParent(ClassNode* candidate){
+bool ClassNode::hasParent(ClassNode* candidate) const{
 	TypeIdentifierNode* common_parent = getCommonParent(candidate);
 	return common_parent && common_parent->getLiteral() == candidate->getName()->getLiteral();
 }
 
-vector<MethodNode*> ClassNode::getInheritedMethods(){
+vector<MethodNode*> ClassNode::getInheritedMethods() const{
 
 	vector<MethodNode*> inherited_methods;
 	if(parent){
@@ -221,7 +221,7 @@ vector<MethodNode*> ClassNode::getInheritedMethods(){
 	return inherited_methods;
 }
 
-vector<MethodNode*> ClassNode::getOverridendMethods(){
+vector<MethodNode*> ClassNode::getOverridendMethods() const{
 
 	vector<MethodNode*> overriden_methods;
 	if(parent){
@@ -234,7 +234,7 @@ vector<MethodNode*> ClassNode::getOverridendMethods(){
 	return overriden_methods;
 }
 
-vector<MethodNode*> ClassNode::getNewMethods(){
+vector<MethodNode*> ClassNode::getNewMethods() const{
 
 	unordered_map<string, MethodNode*> all_methods(methods);
 	vector<MethodNode*> overriden_methods = getOverridendMethods();
@@ -249,7 +249,7 @@ vector<MethodNode*> ClassNode::getNewMethods(){
 	return new_methods;
 }
 
-vector<MethodNode*> ClassNode::getAllMethods(){
+vector<MethodNode*> ClassNode::getAllMethods() const{
 
 	vector<MethodNode*> all_methods;
 	vector<MethodNode*> new_methods = getNewMethods();
@@ -264,7 +264,7 @@ vector<MethodNode*> ClassNode::getAllMethods(){
 	return all_methods;
 }
 
-vector<FieldNode*> ClassNode::getInheritedFields(){
+vector<FieldNode*> ClassNode::getInheritedFields() const{
 
 	vector<FieldNode*> all_fields;
 	vector<FieldNode*> parent_inh_fields;
@@ -281,7 +281,7 @@ vector<FieldNode*> ClassNode::getInheritedFields(){
 	return all_fields;
 }
 
-vector<FieldNode*> ClassNode::getNewFields(){
+vector<FieldNode*> ClassNode::getNewFields() const{
 
 	vector<FieldNode*> new_fields;
 	for(auto field : fields)

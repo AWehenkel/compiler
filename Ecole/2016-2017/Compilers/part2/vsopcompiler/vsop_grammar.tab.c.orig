@@ -2151,73 +2151,73 @@ yyreduce:
 
   case 88:
 #line 341 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_not, (yyvsp[0].expression_node), (yyvsp[0].expression_node)->getCol(), (yyvsp[0].expression_node)->getLine());}
+    {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_not, (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line); cout << (yyval.expression_node)->getLine() << endl;}
 #line 2156 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
 #line 342 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_minus, (yyvsp[0].expression_node), (yyvsp[0].expression_node)->getCol(), (yyvsp[0].expression_node)->getLine());}
+    {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_minus, (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2162 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
 #line 343 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_isnull, (yyvsp[0].expression_node), (yyvsp[0].expression_node)->getCol(), (yyvsp[0].expression_node)->getLine());}
+    {(yyval.expression_node) = new UnaryOperatorNode(UnaryOperator::u_op_isnull, (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2168 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
 #line 344 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_plus, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_plus, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2174 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
 #line 345 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_and, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_and, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2180 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
 #line 346 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_equal, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_equal, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2186 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
 #line 347 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_leq, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_leq, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2192 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
 #line 348 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_less, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_less, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2198 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
 #line 349 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_minus, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_minus, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2204 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
 #line 350 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_times, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_times, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2210 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
 #line 351 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_div, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_div, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2216 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
 #line 352 "vsop_grammar.y" /* yacc.c:1646  */
-    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_pow, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yyvsp[-2].expression_node)->getCol(), (yyvsp[-2].expression_node)->getLine());}
+    {(yyval.expression_node) = new BinaryOperatorNode(BinaryOperator::b_op_pow, (yyvsp[-2].expression_node), (yyvsp[0].expression_node), (yylsp[-1]).first_column, (yylsp[-1]).first_line);}
 #line 2222 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 

@@ -27,7 +27,7 @@ public :
 	//Accessors:
 	std::vector<ExpressionNode*> getExpressions() const {return expressions;};
 	std::string getLastExprLLVMAddr() const {return last_expr_LLVM_addr;};
-	void setLastExprLLVMAddr(std::string address){last_expr_LLVM_addr = address;};
+	void setLastExprLLVMAddr(std::string& address){last_expr_LLVM_addr = address;};
 
 	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitBlockNode(this);};

@@ -35,15 +35,15 @@ public :
 	TypeIdentifierNode* getRetType() const {return e_ret_type;};
 	BlockNode* getBlock() const {return e_block;};
 	ClassNode* getClassScope() const {return e_class_scope;};
-	unsigned int getPosition(){return position;};
+	unsigned int getPosition() const{return position;};
 	void setClassScope(ClassNode* class_scope){e_class_scope = class_scope;};
 	void setPosition(unsigned int pos){position = pos;};
 
 	//Inherited:
 	int accept(Visitor* visitor){return visitor->visitMethodNode(this);}
-	TypeIdentifierNode* getDeclarationType(std::string id);
-	const std::string getDeclarationLLVM(std::string id);
-	FieldNode* getFieldFromId(std::string id) const;
+	TypeIdentifierNode* getDeclarationType(const std::string& id) const;
+	const std::string getDeclarationLLVM(const std::string& id) const;
+	FieldNode* getFieldFromId(const std::string& id) const;
 	std::string getLiteral(bool with_type = false) const;
 
 	/*
@@ -52,21 +52,21 @@ public :
 	IN:		method: MethodNode const &, the method with which compare the current method.
 	OUT: bool, true if the name, the type and the arguments are equal.
 	*/
-	bool equals(MethodNode &method);
+	bool equals(const MethodNode &method) const;
 
 	/*
 	getLLVMStructure()
 	ROLE: Return the code to insert into a structure to declare the function.
 	Return: std::string, the code.
 	*/
-	std::string getLLVMStructure(std::string struct_class) const;
+	std::string getLLVMStructure(const std::string& struct_class) const;
 
 	/*
 	getLLVMInstance()
 	ROLE: Return the code to instanciate the VTable with the function.
 	Return: std::string, the code
 	*/
-	std::string getLLVMInstance(std::string class_name, ClassNode* parent = NULL) const;
+	std::string getLLVMInstance(const std::string& class_name, ClassNode* parent = NULL) const;
 };
 
 #endif //method_node_hpp

@@ -11,18 +11,18 @@ FormalsNode::~FormalsNode(){
 	}
 }
 
-TypeIdentifierNode* FormalsNode::getDeclarationType(string id){
+TypeIdentifierNode* FormalsNode::getDeclarationType(const string& id) const{
 
-	for(vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
+	for(vector<FormalNode*>::const_iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
 		if((*formal_it)->getName()->getLiteral() == id)
 			return (*formal_it)->getType();
 
 	return NULL;
 }
 
-const string FormalsNode::getDeclarationLLVM(string id){
+const string FormalsNode::getDeclarationLLVM(const string& id) const{
 
-	for(vector<FormalNode*>::iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
+	for(vector<FormalNode*>::const_iterator formal_it = formals.begin(); formal_it != formals.end(); ++formal_it)
 		if((*formal_it)->getName()->getLiteral() == id)
 			return (*formal_it)->getLLVMAddress();
 
@@ -50,7 +50,7 @@ void FormalsNode::insertFormal(FormalNode *formal) {
 	formals.insert(formals.begin(), formal);
 }
 
-bool FormalsNode::equals(FormalsNode &formals){
+bool FormalsNode::equals(const FormalsNode &formals) const{
 
 	if(formals.formals.size() != this->formals.size())
 		return false;
