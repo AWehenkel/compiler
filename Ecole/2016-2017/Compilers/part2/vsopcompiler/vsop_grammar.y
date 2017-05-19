@@ -95,17 +95,6 @@ void yyerror(const char *s);
 %type <col_lin>									t_if
 %type <col_lin>									t_while
 %type <col_lin>									t_let
-%type <col_lin>									t_not
-%type <col_lin>									t_isnull
-%type <col_lin>									t_plus
-%type <col_lin>									t_and
-%type <col_lin>									t_equal
-%type <col_lin>									t_leq
-%type <col_lin>									t_lower
-%type <col_lin>									t_minus
-%type <col_lin>									t_times
-%type <col_lin>									t_div
-%type <col_lin>									t_pow
 %type <col_lin>									t_new
 
 %right T_ASSIGN
@@ -133,7 +122,6 @@ start :
 																											$2->addClass(io_node);
 																											$2->addClass(obj_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
-																											cout << semantic_error << endl;
 																											// Remove IO class for the class table
 																											std::unordered_map<std::string, ClassNode*> c_table = $2->getTableClasses();
 																										  $2->removeClass(c_table["IO"]);
@@ -271,50 +259,6 @@ t_let :
 	T_LET 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
 ;
 
-t_not :
-	T_NOT 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_isnull :
-	T_ISNULL 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_plus :
-	T_PLUS 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_and :
-	T_AND 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_equal :
-	T_EQUAL 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_leq :
-	T_LEQ									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_lower :
-	T_LOWER 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_minus :
-	T_MINUS 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_times :
-	T_TIMES 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_div :
-	T_DIV 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
-t_pow :
-	T_POW 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
-;
-
 t_new :
 	T_NEW 									{$$ = new PairColLine(yylloc.first_column, yylloc.first_line);}
 ;
@@ -394,18 +338,18 @@ expr :
 	| t_while expr T_DO expr													{$$ = new WhileNode($2, $4, $1->getCol(), $1->getLine()); delete $1;}
 	| t_let t_obj_id T_COLON type assign T_IN expr		{$$ = new LetNode($2, $4, $7, $5, $1->getCol(), $1->getLine()); delete $1;}
 	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3, $1->getCol(), $1->getLine());}
-	| t_not expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2, $1->getCol(), $1->getLine()); delete $1;}
-	| t_minus expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2, $1->getCol(), $1->getLine()); delete $1;}
-	| t_isnull expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2, $1->getCol(), $1->getLine()); delete $1;}
-	| expr t_plus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_and expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_equal expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_leq expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_lower expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_minus expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_minus, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_times expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_div expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
-	| expr t_pow expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3, $2->getCol(), $2->getLine()); delete $2;}
+	| T_NOT expr																			{$$ = new UnaryOperatorNode(UnaryOperator::u_op_not, $2, $2->getCol(), $2->getLine());}
+	| T_MINUS expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_minus, $2, $2->getCol(), $2->getLine());}
+	| T_ISNULL expr																		{$$ = new UnaryOperatorNode(UnaryOperator::u_op_isnull, $2, $2->getCol(), $2->getLine());}
+	| expr T_PLUS expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_plus, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_AND expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_and, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_EQUAL expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_equal, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_LEQ expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_leq, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_LOWER expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_less, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_MINUS expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_minus, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_TIMES expr																{$$ = new BinaryOperatorNode(BinaryOperator::b_op_times, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_DIV expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_div, $1, $3, $1->getCol(), $1->getLine());}
+	| expr T_POW expr																	{$$ = new BinaryOperatorNode(BinaryOperator::b_op_pow, $1, $3, $1->getCol(), $1->getLine());}
 	| t_obj_id T_L_PAR args T_R_PAR										{$$ = new CallNode($1, $3, NULL, $1->getCol(), $1->getLine());}
 	| expr T_DOT t_obj_id T_L_PAR args T_R_PAR				{$$ = new CallNode($3, $5, $1, $3->getCol(), $3->getLine());}
 	| t_new t_type_id																	{$$ = new NewNode($2, $1->getCol(), $1->getLine()); delete $1;}

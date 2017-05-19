@@ -46,6 +46,8 @@ string CodeGenVisitor::getLLVMReturnCode(string to_ret, string type){
 
 string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, string op2){
   string code, to_ret, tmp;
+  string left_add = node->getLeft()->getLLVMAddress(), right_add = node->getRight()->getLLVMAddress();
+  string tmp1, tmp2, tmp3, tmp4;
   switch (node->getOperator()) {
     case b_op_and :
       to_ret = "%" + to_string(addr_counter++);
@@ -69,8 +71,17 @@ string CodeGenVisitor::getLLVMBinaryCode(BinaryOperatorNode* node, string op1, s
       break;
     case b_op_equal :
       if(node->getLeft()->getLLVMType() != node->getRight()->getLLVMType()){
+        tmp1 = "%" + to_string(addr_counter++);
+        code += tab + getLLVMLoadCode(tmp1, left_add, node->getLeft()->getLLVMType());
+        tmp2 = "%" + to_string(addr_counter++);
+        code += tab + getLLVMBitCastCode(tmp2, node->getLeft()->getLLVMType(), tmp1, "i8*");
+
+        tmp3 = "%" + to_string(addr_counter++);
+        code += tab + getLLVMLoadCode(tmp3, right_add, node->getRight()->getLLVMType());
+        tmp4 = "%" + to_string(addr_counter++);
+        code += tab + getLLVMBitCastCode(tmp4, node->getRight()->getLLVMType(), tmp3, "i8*");
         to_ret = "%" + to_string(addr_counter++);
-        code = tab + to_ret + " = i1 0";
+        code += tab + to_ret + " = icmp eq i8* " + tmp2 + ", "  + tmp4;
       }
       else if(node->getLeft()->getLLVMType() == "i8*"){
         tmp = "%" + to_string(addr_counter++);
@@ -348,6 +359,8 @@ int CodeGenVisitor::visitLetNode(LetNode *node){
     //ir += tab + getLLVMLoadCode(tmp_var, init_expr->getLLVMAddress(), object_id->getLLVMType());
     ir += tab + getLLVMStoreCode(tmp_var, object_id->getLLVMAddress(), object_type->getLLVMType());
   }
+  else
+    ir += tab + getLLVMStoreCode(object_type->getInitLLVMValue(), object_id->getLLVMAddress(), object_type->getLLVMType());
 
   scope_exp->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(scope_exp->getLLVMAddress(), scope_exp->getLLVMType());
@@ -589,8 +602,8 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
       init_value = field->getType()->getInitLLVMValue();
     ir += tab + getLLVMStoreCode(init_value, field->getLLVMAddress(), field->getType()->getLLVMType());
   }
-  ir += tab + getLLVMGetElementPtr("%" + to_string(++addr_counter), struct_name, "%self", 0, 0);
-  ir += tab + getLLVMStoreCode(struct_instance, "%" + to_string(addr_counter), struct_vtable + "*");
+  ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter), struct_name, "%self", 0, 0);
+  ir += tab + getLLVMStoreCode(struct_instance, "%" + to_string(addr_counter++), struct_vtable + "*");
   ir += tab + "ret void\n";
   tab.pop_back();
   ir += tab + "}\n\n";

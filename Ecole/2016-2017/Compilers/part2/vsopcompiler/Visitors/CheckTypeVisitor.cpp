@@ -58,8 +58,8 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
     errors.push_back(error);
     return -1;
   }
-  string s_left_type = left_type->getLiteral();
-  string s_right_type = right_type->getLiteral();
+  string s_left_type = left_type->getLiteral(), s_right_type = right_type->getLiteral();
+  ClassNode* left_class = left_type->getClassType(), *right_class = right_type->getClassType();
 
   BinaryOperator op = node->getOperator();
   switch (op){
@@ -75,7 +75,7 @@ int CheckTypeVisitor::visitBinaryOperatorNode(BinaryOperatorNode *node){
       break;
     case BinaryOperator::b_op_equal :
       // Check if the two types are the same (or errors) and return bool if ok
-      if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type){
+      if(s_left_type != "error" && s_right_type != "error" && s_left_type != s_right_type && (!left_class || !right_class)){
         SemanticError error("The two members of an equal-expression must have the same type, got '" + s_left_type +"' and '" + s_right_type + "'", node);
         errors.push_back(error);
         node->setType(new TypeIdentifierNode("error"), true);
