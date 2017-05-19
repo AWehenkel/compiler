@@ -190,7 +190,18 @@ int CodeGenVisitor::visitBinaryOperatorNode(BinaryOperatorNode* node){
   ExpressionNode* left = node->getLeft();
   ExpressionNode* right = node->getRight();
   ir += tab + "; binary operation\n";
-
+  if(node->getOperator() == b_op_and){
+    LiteralNode* false_bool = new LiteralNode("false", "bool");
+    TypeIdentifierNode* bool_type = new TypeIdentifierNode("bool");
+    false_bool->setType(bool_type, true);
+    ConditionalNode* tmp_cond = new ConditionalNode(left, right, false_bool);
+    tmp_cond->setLLVMAddress(node->getLLVMAddress());
+    tmp_cond->setType(bool_type);
+    ir += "; blabla";
+    tmp_cond->accept(this);
+    free(false_bool);
+    return 0;
+  }
   // Visit the children nodes
   left->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(left->getLLVMAddress(), left->getLLVMType());
@@ -413,10 +424,8 @@ int CodeGenVisitor::visitObjectIdentifierNode(ObjectIdentifierNode *node){
     FieldNode* field = current_scope->getFieldFromId(node->getLiteral());
 
     if (field){
-      MethodNode* cur_method = (MethodNode*) current_scope;
-      ClassNode* cur_class = cur_method->getClassScope();
-      ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + cur_class->getName()->getLiteral() + "*");
-      ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + cur_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
+      ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + current_class->getName()->getLiteral() + "*");
+      ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + current_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
       ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%" + to_string(addr_counter - 1), node->getLLVMType());
     }else
       ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), current_scope->getDeclarationLLVM(node->getLiteral()), node->getLLVMType());
@@ -455,7 +464,6 @@ int CodeGenVisitor::visitWhileNode(WhileNode *node){
 
   action->setLLVMAddress(addr_counter++);
   ir += tab + getLLVMAllocationCode(action->getLLVMAddress(), action->getLLVMType());
-
   ir += tab + "; while\n";
 
   // Branch to the condition
@@ -723,7 +731,7 @@ int CodeGenVisitor::visitCallNode(CallNode* node){
   }
 
   if(external_call)
-    return genExternalCallCode(node);//A changer ici on devra juste faire que ça call directement la fonction sans se poser la question
+    return genExternalCallCode(node);
 
   string method_name = node->getMethodName()->getLiteral();
   ClassNode* obj_class = object->getType()->getClassType();

@@ -26,6 +26,7 @@ class Cons extends List {
 }
 
 class Main extends IO {
+  test : Int32;
   main() : int32 {
     let xs : List in {
       print("List has length\n");
