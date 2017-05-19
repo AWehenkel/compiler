@@ -288,8 +288,6 @@ field :
 																							 else
 																								$$ = new FieldNode($1, $3, $1->getCol(), $1->getLine());
 																							}
-  | t_obj_id T_COLON error T_SEMI_COLON					{delete $1;$$ = NULL;syntax_error++;}
-  | error T_COLON type assign T_SEMI_COLON			{delete $3; delete $4;$$ = NULL;syntax_error++;}
 ;
 
 assign :
