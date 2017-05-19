@@ -26,10 +26,14 @@ class Cons extends List {
 }
 
 class Main extends IO {
+  test : int32 <- 7;
   main() : int32 {
     let xs : List in {
       print("List has length\n");
-      1 < 2;
+      printInt32(1).print("\n");
+      printInt32(1).print("\n");
+      printInt32(++test).print("\n");
+      printInt32(test).print("\n");
       xs <- new Cons;
       test();
       if {print("ok"); true} or {print("ko"); true} then print("Ca marche\n");

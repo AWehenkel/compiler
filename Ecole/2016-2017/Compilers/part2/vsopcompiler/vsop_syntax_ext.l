@@ -247,8 +247,6 @@ comments  	\/\/.*
 "<="           return T_LEQ;
 ">"            return T_GREATER;
 ">="           return T_GEQ;
-"++"           return T_PP;
-"--"           return T_MM;
 "<-"           return T_ASSIGN;
 .              {lexicalError();};
 %%

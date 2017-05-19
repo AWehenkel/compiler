@@ -11,13 +11,17 @@ declare float @llvm.powi.f32(float, i32)
 @.str0 = private unnamed_addr constant [2 x i8] c"a\00", align 1
 @.str1 = private unnamed_addr constant [2 x i8] c"a\00", align 1
 @.str2 = private unnamed_addr constant [17 x i8] c"List has length\0a\00", align 1
-@.str3 = private unnamed_addr constant [3 x i8] c"ok\00", align 1
-@.str4 = private unnamed_addr constant [3 x i8] c"ko\00", align 1
-@.str5 = private unnamed_addr constant [11 x i8] c"Ca marche\0a\00", align 1
+@.str3 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
+@.str4 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
+@.str5 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
 @.str6 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
-@.str7 = private unnamed_addr constant [2 x i8] c" \00", align 1
-@.str8 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
-@.str9 = private unnamed_addr constant [7 x i8] c"coucou\00", align 1
+@.str7 = private unnamed_addr constant [3 x i8] c"ok\00", align 1
+@.str8 = private unnamed_addr constant [3 x i8] c"ko\00", align 1
+@.str9 = private unnamed_addr constant [11 x i8] c"Ca marche\0a\00", align 1
+@.str10 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
+@.str11 = private unnamed_addr constant [2 x i8] c" \00", align 1
+@.str12 = private unnamed_addr constant [2 x i8] c"\0a\00", align 1
+@.str13 = private unnamed_addr constant [7 x i8] c"coucou\00", align 1
 declare noalias i8* @malloc(i32)
 
 %struct.List = type {
@@ -160,7 +164,8 @@ null:   			; preds = %5
 }
 
 %struct.Main = type {
-	%struct.MainVTable*
+	%struct.MainVTable*,
+	i32
 }
 
 %struct.MainVTable = type {
@@ -188,8 +193,13 @@ null:   			; preds = %5
 define void @MainInit(%struct.Main* %self){
 	%1 = bitcast %struct.Main* %self to %struct.IO*
 	call void @IOInit(%struct.IO* %1)
-	%2 = getelementptr inbounds %struct.Main* %self, i32 0, i32 0
-	store %struct.MainVTable* @MainVTable_inst, %struct.MainVTable** %2
+	%test = getelementptr inbounds %struct.Main* %self, i32 0, i32 1
+	%2 = alloca i32
+	store i32 7, i32* %2
+	%3 = load i32* %2
+	store i32 %3, i32* %test
+	%4 = getelementptr inbounds %struct.Main* %self, i32 0, i32 0
+	store %struct.MainVTable* @MainVTable_inst, %struct.MainVTable** %4
 	ret void
 }
 
@@ -582,252 +592,360 @@ define i32 @Main_main(%struct.Main* %self) #0 {
 	%13 = load i8** %7
 	%14 = call %struct.IO* %12(%struct.Main* %8, i8* %13)
 	store %struct.IO* %14, %struct.IO** %6
-	%15 = alloca i1
-	; binary operation
-	%16 = alloca i32
-	store i32 1, i32* %16
-	%17 = alloca i32
-	store i32 2, i32* %17
-	%18 = load i32* %16
-	%19 = load i32* %17
-	%20 = icmp slt i32 %18, %19
-	store i1 %20, i1* %15
-	%21 = alloca %struct.List*
+	%15 = alloca %struct.IO*
+	%16 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str3, i32 0, i32 0), i8** %16
+	%17 = alloca %struct.IO*
+	%18 = alloca i32
+	store i32 1, i32* %18
+; call
+	%19 = load %struct.Main** %1
+	%20 = getelementptr inbounds %struct.Main* %19, i32 0, i32 0
+	%21 = load %struct.MainVTable** %20
+	%22 = getelementptr inbounds %struct.MainVTable* %21, i32 0, i32 3
+	%23 = load %struct.IO* (%struct.Main*, i32)** %22
+	%24 = load i32* %18
+	%25 = call %struct.IO* %23(%struct.Main* %19, i32 %24)
+	store %struct.IO* %25, %struct.IO** %17
+; call
+	%26 = load %struct.IO** %17
+	%27 = getelementptr inbounds %struct.IO* %26, i32 0, i32 0
+	%28 = load %struct.IOVTable** %27
+	%29 = getelementptr inbounds %struct.IOVTable* %28, i32 0, i32 1
+	%30 = load %struct.IO* (%struct.IO*, i8*)** %29
+	%31 = load i8** %16
+	%32 = call %struct.IO* %30(%struct.IO* %26, i8* %31)
+	store %struct.IO* %32, %struct.IO** %15
+	%33 = alloca %struct.IO*
+	%34 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str4, i32 0, i32 0), i8** %34
+	%35 = alloca %struct.IO*
+	%36 = alloca i32
+	store i32 1, i32* %36
+; call
+	%37 = load %struct.Main** %1
+	%38 = getelementptr inbounds %struct.Main* %37, i32 0, i32 0
+	%39 = load %struct.MainVTable** %38
+	%40 = getelementptr inbounds %struct.MainVTable* %39, i32 0, i32 3
+	%41 = load %struct.IO* (%struct.Main*, i32)** %40
+	%42 = load i32* %36
+	%43 = call %struct.IO* %41(%struct.Main* %37, i32 %42)
+	store %struct.IO* %43, %struct.IO** %35
+; call
+	%44 = load %struct.IO** %35
+	%45 = getelementptr inbounds %struct.IO* %44, i32 0, i32 0
+	%46 = load %struct.IOVTable** %45
+	%47 = getelementptr inbounds %struct.IOVTable* %46, i32 0, i32 1
+	%48 = load %struct.IO* (%struct.IO*, i8*)** %47
+	%49 = load i8** %34
+	%50 = call %struct.IO* %48(%struct.IO* %44, i8* %49)
+	store %struct.IO* %50, %struct.IO** %33
+	%51 = alloca %struct.IO*
+	%52 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str5, i32 0, i32 0), i8** %52
+	%53 = alloca %struct.IO*
+	%54 = alloca i32
 	; assignement
-	%22 = alloca %struct.Cons*
-	; new
-	%23 = call %struct.Cons* @ConsNew()
-	store %struct.Cons* %23, %struct.Cons** %22
-	%24 = load %struct.Cons** %22
-	%25 = bitcast %struct.Cons* %24 to %struct.List*
-	store %struct.List* %25, %struct.List** %4
-	store %struct.List* %25, %struct.List** %21
-	%26 = alloca i1
+	%55 = alloca i32
+	; binary operation
+	%56 = alloca i32
+	%57 = load %struct.Main** %1
+	%58 = getelementptr inbounds %struct.Main* %57, i32 0, i32 1
+	%59 = load i32* %58
+	store i32 %59, i32* %56
+	%60 = alloca i32
+	store i32 1, i32* %60
+	%61 = load i32* %56
+	%62 = load i32* %60
+	%63 = add nuw i32 %61, %62
+	store i32 %63, i32* %55
+	%64 = load i32* %55
+;field
+	%65 = load %struct.Main** %1
+	%66 = getelementptr inbounds %struct.Main* %65, i32 0, i32 1
+	store i32 %64, i32* %66
+	store i32 %64, i32* %54
 ; call
-	%27 = load %struct.Main** %1
-	%28 = getelementptr inbounds %struct.Main* %27, i32 0, i32 0
-	%29 = load %struct.MainVTable** %28
-	%30 = getelementptr inbounds %struct.MainVTable* %29, i32 0, i32 6
-	%31 = load i1 (%struct.Main*)** %30
-	%32 = call i1 %31(%struct.Main* %27)
-	store i1 %32, i1* %26
-	%33 = alloca i1
+	%67 = load %struct.Main** %1
+	%68 = getelementptr inbounds %struct.Main* %67, i32 0, i32 0
+	%69 = load %struct.MainVTable** %68
+	%70 = getelementptr inbounds %struct.MainVTable* %69, i32 0, i32 3
+	%71 = load %struct.IO* (%struct.Main*, i32)** %70
+	%72 = load i32* %54
+	%73 = call %struct.IO* %71(%struct.Main* %67, i32 %72)
+	store %struct.IO* %73, %struct.IO** %53
+; call
+	%74 = load %struct.IO** %53
+	%75 = getelementptr inbounds %struct.IO* %74, i32 0, i32 0
+	%76 = load %struct.IOVTable** %75
+	%77 = getelementptr inbounds %struct.IOVTable* %76, i32 0, i32 1
+	%78 = load %struct.IO* (%struct.IO*, i8*)** %77
+	%79 = load i8** %52
+	%80 = call %struct.IO* %78(%struct.IO* %74, i8* %79)
+	store %struct.IO* %80, %struct.IO** %51
+	%81 = alloca %struct.IO*
+	%82 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str6, i32 0, i32 0), i8** %82
+	%83 = alloca %struct.IO*
+	%84 = alloca i32
+	%85 = load %struct.Main** %1
+	%86 = getelementptr inbounds %struct.Main* %85, i32 0, i32 1
+	%87 = load i32* %86
+	store i32 %87, i32* %84
+; call
+	%88 = load %struct.Main** %1
+	%89 = getelementptr inbounds %struct.Main* %88, i32 0, i32 0
+	%90 = load %struct.MainVTable** %89
+	%91 = getelementptr inbounds %struct.MainVTable* %90, i32 0, i32 3
+	%92 = load %struct.IO* (%struct.Main*, i32)** %91
+	%93 = load i32* %84
+	%94 = call %struct.IO* %92(%struct.Main* %88, i32 %93)
+	store %struct.IO* %94, %struct.IO** %83
+; call
+	%95 = load %struct.IO** %83
+	%96 = getelementptr inbounds %struct.IO* %95, i32 0, i32 0
+	%97 = load %struct.IOVTable** %96
+	%98 = getelementptr inbounds %struct.IOVTable* %97, i32 0, i32 1
+	%99 = load %struct.IO* (%struct.IO*, i8*)** %98
+	%100 = load i8** %82
+	%101 = call %struct.IO* %99(%struct.IO* %95, i8* %100)
+	store %struct.IO* %101, %struct.IO** %81
+	%102 = alloca %struct.List*
+	; assignement
+	%103 = alloca %struct.Cons*
+	; new
+	%104 = call %struct.Cons* @ConsNew()
+	store %struct.Cons* %104, %struct.Cons** %103
+	%105 = load %struct.Cons** %103
+	%106 = bitcast %struct.Cons* %105 to %struct.List*
+	store %struct.List* %106, %struct.List** %4
+	store %struct.List* %106, %struct.List** %102
+	%107 = alloca i1
+; call
+	%108 = load %struct.Main** %1
+	%109 = getelementptr inbounds %struct.Main* %108, i32 0, i32 0
+	%110 = load %struct.MainVTable** %109
+	%111 = getelementptr inbounds %struct.MainVTable* %110, i32 0, i32 6
+	%112 = load i1 (%struct.Main*)** %111
+	%113 = call i1 %112(%struct.Main* %108)
+	store i1 %113, i1* %107
+	%114 = alloca i1
 	; condition
-	%34 = alloca i1
+	%115 = alloca i1
 	; binary operation
 	; condition
-	%35 = alloca i1
-	%36 = alloca %struct.IO*
-	%37 = alloca i8*
-	store i8* getelementptr inbounds ([3 x i8]* @.str3, i32 0, i32 0), i8** %37
+	%116 = alloca i1
+	%117 = alloca %struct.IO*
+	%118 = alloca i8*
+	store i8* getelementptr inbounds ([3 x i8]* @.str7, i32 0, i32 0), i8** %118
 ; call
-	%38 = load %struct.Main** %1
-	%39 = getelementptr inbounds %struct.Main* %38, i32 0, i32 0
-	%40 = load %struct.MainVTable** %39
-	%41 = getelementptr inbounds %struct.MainVTable* %40, i32 0, i32 1
-	%42 = load %struct.IO* (%struct.Main*, i8*)** %41
-	%43 = load i8** %37
-	%44 = call %struct.IO* %42(%struct.Main* %38, i8* %43)
-	store %struct.IO* %44, %struct.IO** %36
-	%45 = alloca i1
-	store i1 true, i1* %45
-	%46 = load i1* %45
-	store i1 %46, i1* %35
-	%47 = load i1* %35
-	br i1 %47, label %then_47, label %else_47
+	%119 = load %struct.Main** %1
+	%120 = getelementptr inbounds %struct.Main* %119, i32 0, i32 0
+	%121 = load %struct.MainVTable** %120
+	%122 = getelementptr inbounds %struct.MainVTable* %121, i32 0, i32 1
+	%123 = load %struct.IO* (%struct.Main*, i8*)** %122
+	%124 = load i8** %118
+	%125 = call %struct.IO* %123(%struct.Main* %119, i8* %124)
+	store %struct.IO* %125, %struct.IO** %117
+	%126 = alloca i1
+	store i1 true, i1* %126
+	%127 = load i1* %126
+	store i1 %127, i1* %116
+	%128 = load i1* %116
+	br i1 %128, label %then_128, label %else_128
 	
-then_47:
-		%48 = alloca i1
-		store i1 true, i1* %48
+then_128:
+		%129 = alloca i1
+		store i1 true, i1* %129
 ;avant bitcast
-		%49 = load i1* %48
-		store i1 %49, i1* %34
-		br label %end_47
+		%130 = load i1* %129
+		store i1 %130, i1* %115
+		br label %end_128
 	
-else_47:
-		%50 = alloca i1
-		%51 = alloca %struct.IO*
-		%52 = alloca i8*
-		store i8* getelementptr inbounds ([3 x i8]* @.str4, i32 0, i32 0), i8** %52
+else_128:
+		%131 = alloca i1
+		%132 = alloca %struct.IO*
+		%133 = alloca i8*
+		store i8* getelementptr inbounds ([3 x i8]* @.str8, i32 0, i32 0), i8** %133
 ; call
-		%53 = load %struct.Main** %1
-		%54 = getelementptr inbounds %struct.Main* %53, i32 0, i32 0
-		%55 = load %struct.MainVTable** %54
-		%56 = getelementptr inbounds %struct.MainVTable* %55, i32 0, i32 1
-		%57 = load %struct.IO* (%struct.Main*, i8*)** %56
-		%58 = load i8** %52
-		%59 = call %struct.IO* %57(%struct.Main* %53, i8* %58)
-		store %struct.IO* %59, %struct.IO** %51
-		%60 = alloca i1
-		store i1 true, i1* %60
-		%61 = load i1* %60
-		store i1 %61, i1* %50
-		%62 = load i1* %50
-		store i1 %62, i1* %34
-		br label %end_47
+		%134 = load %struct.Main** %1
+		%135 = getelementptr inbounds %struct.Main* %134, i32 0, i32 0
+		%136 = load %struct.MainVTable** %135
+		%137 = getelementptr inbounds %struct.MainVTable* %136, i32 0, i32 1
+		%138 = load %struct.IO* (%struct.Main*, i8*)** %137
+		%139 = load i8** %133
+		%140 = call %struct.IO* %138(%struct.Main* %134, i8* %139)
+		store %struct.IO* %140, %struct.IO** %132
+		%141 = alloca i1
+		store i1 true, i1* %141
+		%142 = load i1* %141
+		store i1 %142, i1* %131
+		%143 = load i1* %131
+		store i1 %143, i1* %115
+		br label %end_128
 	
-end_47:
-	%63 = load i1* %34
-	br i1 %63, label %then_63, label %end_63
+end_128:
+	%144 = load i1* %115
+	br i1 %144, label %then_144, label %end_144
 	
-then_63:
-		%64 = alloca %struct.IO*
-		%65 = alloca i8*
-		store i8* getelementptr inbounds ([11 x i8]* @.str5, i32 0, i32 0), i8** %65
+then_144:
+		%145 = alloca %struct.IO*
+		%146 = alloca i8*
+		store i8* getelementptr inbounds ([11 x i8]* @.str9, i32 0, i32 0), i8** %146
 ; call
-		%66 = load %struct.Main** %1
-		%67 = getelementptr inbounds %struct.Main* %66, i32 0, i32 0
-		%68 = load %struct.MainVTable** %67
-		%69 = getelementptr inbounds %struct.MainVTable* %68, i32 0, i32 1
-		%70 = load %struct.IO* (%struct.Main*, i8*)** %69
-		%71 = load i8** %65
-		%72 = call %struct.IO* %70(%struct.Main* %66, i8* %71)
-		store %struct.IO* %72, %struct.IO** %64
-		store i1 0, i1* %33
-		br label %end_63
+		%147 = load %struct.Main** %1
+		%148 = getelementptr inbounds %struct.Main* %147, i32 0, i32 0
+		%149 = load %struct.MainVTable** %148
+		%150 = getelementptr inbounds %struct.MainVTable* %149, i32 0, i32 1
+		%151 = load %struct.IO* (%struct.Main*, i8*)** %150
+		%152 = load i8** %146
+		%153 = call %struct.IO* %151(%struct.Main* %147, i8* %152)
+		store %struct.IO* %153, %struct.IO** %145
+		store i1 0, i1* %114
+		br label %end_144
 	
-end_63:
-	%73 = alloca %struct.IO*
-	%74 = alloca i32
-	%75 = alloca %struct.List*
-	%76 = load %struct.List** %4
-	store %struct.List* %76, %struct.List** %75
+end_144:
+	%154 = alloca %struct.IO*
+	%155 = alloca i32
+	%156 = alloca %struct.List*
+	%157 = load %struct.List** %4
+	store %struct.List* %157, %struct.List** %156
 ; call
-	%77 = load %struct.List** %75
-	%78 = getelementptr inbounds %struct.List* %77, i32 0, i32 0
-	%79 = load %struct.ListVTable** %78
-	%80 = getelementptr inbounds %struct.ListVTable* %79, i32 0, i32 0
-	%81 = load i32 (%struct.List*)** %80
-	%82 = call i32 %81(%struct.List* %77)
-	store i32 %82, i32* %74
+	%158 = load %struct.List** %156
+	%159 = getelementptr inbounds %struct.List* %158, i32 0, i32 0
+	%160 = load %struct.ListVTable** %159
+	%161 = getelementptr inbounds %struct.ListVTable* %160, i32 0, i32 0
+	%162 = load i32 (%struct.List*)** %161
+	%163 = call i32 %162(%struct.List* %158)
+	store i32 %163, i32* %155
 ; call
-	%83 = load %struct.Main** %1
-	%84 = getelementptr inbounds %struct.Main* %83, i32 0, i32 0
-	%85 = load %struct.MainVTable** %84
-	%86 = getelementptr inbounds %struct.MainVTable* %85, i32 0, i32 3
-	%87 = load %struct.IO* (%struct.Main*, i32)** %86
-	%88 = load i32* %74
-	%89 = call %struct.IO* %87(%struct.Main* %83, i32 %88)
-	store %struct.IO* %89, %struct.IO** %73
-	%90 = alloca %struct.IO*
-	%91 = alloca i8*
-	store i8* getelementptr inbounds ([2 x i8]* @.str6, i32 0, i32 0), i8** %91
+	%164 = load %struct.Main** %1
+	%165 = getelementptr inbounds %struct.Main* %164, i32 0, i32 0
+	%166 = load %struct.MainVTable** %165
+	%167 = getelementptr inbounds %struct.MainVTable* %166, i32 0, i32 3
+	%168 = load %struct.IO* (%struct.Main*, i32)** %167
+	%169 = load i32* %155
+	%170 = call %struct.IO* %168(%struct.Main* %164, i32 %169)
+	store %struct.IO* %170, %struct.IO** %154
+	%171 = alloca %struct.IO*
+	%172 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str10, i32 0, i32 0), i8** %172
 ; call
-	%92 = load %struct.Main** %1
-	%93 = getelementptr inbounds %struct.Main* %92, i32 0, i32 0
-	%94 = load %struct.MainVTable** %93
-	%95 = getelementptr inbounds %struct.MainVTable* %94, i32 0, i32 1
-	%96 = load %struct.IO* (%struct.Main*, i8*)** %95
-	%97 = load i8** %91
-	%98 = call %struct.IO* %96(%struct.Main* %92, i8* %97)
-	store %struct.IO* %98, %struct.IO** %90
-	%99 = alloca i1
+	%173 = load %struct.Main** %1
+	%174 = getelementptr inbounds %struct.Main* %173, i32 0, i32 0
+	%175 = load %struct.MainVTable** %174
+	%176 = getelementptr inbounds %struct.MainVTable* %175, i32 0, i32 1
+	%177 = load %struct.IO* (%struct.Main*, i8*)** %176
+	%178 = load i8** %172
+	%179 = call %struct.IO* %177(%struct.Main* %173, i8* %178)
+	store %struct.IO* %179, %struct.IO** %171
+	%180 = alloca i1
 	; let
-	%100 = alloca i32
-	%101 = alloca i32
-	store i32 10, i32* %101
-	%102 = load i32* %101
-	store i32 %102, i32* %100
-	%103 = alloca i1
-	%104 = alloca i1
-	%105 = alloca i32
+	%181 = alloca i32
+	%182 = alloca i32
+	store i32 10, i32* %182
+	%183 = load i32* %182
+	store i32 %183, i32* %181
+	%184 = alloca i1
+	%185 = alloca i1
+	%186 = alloca i32
 	; while
 	br label %loop_1
 
 loop_1:
-	%106 = alloca i1
+	%187 = alloca i1
 	; binary operation
-	%107 = alloca i32
-	store i32 0, i32* %107
-	%108 = alloca i32
-	%109 = load i32* %100
-	store i32 %109, i32* %108
-	%110 = load i32* %107
-	%111 = load i32* %108
-	%112 = icmp slt i32 %110, %111
-	store i1 %112, i1* %106
-	%113 = load i1* %106
-	br i1 %113, label %do_1, label %end_1
+	%188 = alloca i32
+	store i32 0, i32* %188
+	%189 = alloca i32
+	%190 = load i32* %181
+	store i32 %190, i32* %189
+	%191 = load i32* %188
+	%192 = load i32* %189
+	%193 = icmp slt i32 %191, %192
+	store i1 %193, i1* %187
+	%194 = load i1* %187
+	br i1 %194, label %do_1, label %end_1
 
 do_1:
-	%114 = alloca %struct.IO*
-	%115 = alloca i32
-	%116 = load i32* %100
-	store i32 %116, i32* %115
+	%195 = alloca %struct.IO*
+	%196 = alloca i32
+	%197 = load i32* %181
+	store i32 %197, i32* %196
 ; call
-	%117 = load %struct.Main** %1
-	%118 = getelementptr inbounds %struct.Main* %117, i32 0, i32 0
-	%119 = load %struct.MainVTable** %118
-	%120 = getelementptr inbounds %struct.MainVTable* %119, i32 0, i32 3
-	%121 = load %struct.IO* (%struct.Main*, i32)** %120
-	%122 = load i32* %115
-	%123 = call %struct.IO* %121(%struct.Main* %117, i32 %122)
-	store %struct.IO* %123, %struct.IO** %114
-	%124 = alloca %struct.IO*
-	%125 = alloca i8*
-	store i8* getelementptr inbounds ([2 x i8]* @.str7, i32 0, i32 0), i8** %125
+	%198 = load %struct.Main** %1
+	%199 = getelementptr inbounds %struct.Main* %198, i32 0, i32 0
+	%200 = load %struct.MainVTable** %199
+	%201 = getelementptr inbounds %struct.MainVTable* %200, i32 0, i32 3
+	%202 = load %struct.IO* (%struct.Main*, i32)** %201
+	%203 = load i32* %196
+	%204 = call %struct.IO* %202(%struct.Main* %198, i32 %203)
+	store %struct.IO* %204, %struct.IO** %195
+	%205 = alloca %struct.IO*
+	%206 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str11, i32 0, i32 0), i8** %206
 ; call
-	%126 = load %struct.Main** %1
-	%127 = getelementptr inbounds %struct.Main* %126, i32 0, i32 0
-	%128 = load %struct.MainVTable** %127
-	%129 = getelementptr inbounds %struct.MainVTable* %128, i32 0, i32 1
-	%130 = load %struct.IO* (%struct.Main*, i8*)** %129
-	%131 = load i8** %125
-	%132 = call %struct.IO* %130(%struct.Main* %126, i8* %131)
-	store %struct.IO* %132, %struct.IO** %124
-	%133 = alloca i32
+	%207 = load %struct.Main** %1
+	%208 = getelementptr inbounds %struct.Main* %207, i32 0, i32 0
+	%209 = load %struct.MainVTable** %208
+	%210 = getelementptr inbounds %struct.MainVTable* %209, i32 0, i32 1
+	%211 = load %struct.IO* (%struct.Main*, i8*)** %210
+	%212 = load i8** %206
+	%213 = call %struct.IO* %211(%struct.Main* %207, i8* %212)
+	store %struct.IO* %213, %struct.IO** %205
+	%214 = alloca i32
 	; assignement
-	%134 = alloca i32
+	%215 = alloca i32
 	; binary operation
-	%135 = alloca i32
-	%136 = load i32* %100
-	store i32 %136, i32* %135
-	%137 = alloca i32
-	store i32 1, i32* %137
-	%138 = load i32* %135
-	%139 = load i32* %137
-	%140 = sub i32 %138, %139
-	store i32 %140, i32* %134
-	%141 = load i32* %134
-	store i32 %141, i32* %100
-	store i32 %141, i32* %133
-	%142 = load i32* %133
-	store i32 %142, i32* %105
+	%216 = alloca i32
+	%217 = load i32* %181
+	store i32 %217, i32* %216
+	%218 = alloca i32
+	store i32 1, i32* %218
+	%219 = load i32* %216
+	%220 = load i32* %218
+	%221 = sub i32 %219, %220
+	store i32 %221, i32* %215
+	%222 = load i32* %215
+	store i32 %222, i32* %181
+	store i32 %222, i32* %214
+	%223 = load i32* %214
+	store i32 %223, i32* %186
 	br label %loop_1
 
 end_1:
-	%143 = load i1* %104
-	store i1 %143, i1* %103
-	%144 = load i1* %103
-	store i1 %144, i1* %99
-	%145 = alloca %struct.IO*
-	%146 = alloca i8*
-	store i8* getelementptr inbounds ([2 x i8]* @.str8, i32 0, i32 0), i8** %146
+	%224 = load i1* %185
+	store i1 %224, i1* %184
+	%225 = load i1* %184
+	store i1 %225, i1* %180
+	%226 = alloca %struct.IO*
+	%227 = alloca i8*
+	store i8* getelementptr inbounds ([2 x i8]* @.str12, i32 0, i32 0), i8** %227
 ; call
-	%147 = load %struct.Main** %1
-	%148 = getelementptr inbounds %struct.Main* %147, i32 0, i32 0
-	%149 = load %struct.MainVTable** %148
-	%150 = getelementptr inbounds %struct.MainVTable* %149, i32 0, i32 1
-	%151 = load %struct.IO* (%struct.Main*, i8*)** %150
-	%152 = load i8** %146
-	%153 = call %struct.IO* %151(%struct.Main* %147, i8* %152)
-	store %struct.IO* %153, %struct.IO** %145
-	%154 = alloca i8*
-	store i8* getelementptr inbounds ([7 x i8]* @.str9, i32 0, i32 0), i8** %154
-	%155 = alloca %struct.Cons*
+	%228 = load %struct.Main** %1
+	%229 = getelementptr inbounds %struct.Main* %228, i32 0, i32 0
+	%230 = load %struct.MainVTable** %229
+	%231 = getelementptr inbounds %struct.MainVTable* %230, i32 0, i32 1
+	%232 = load %struct.IO* (%struct.Main*, i8*)** %231
+	%233 = load i8** %227
+	%234 = call %struct.IO* %232(%struct.Main* %228, i8* %233)
+	store %struct.IO* %234, %struct.IO** %226
+	%235 = alloca i8*
+	store i8* getelementptr inbounds ([7 x i8]* @.str13, i32 0, i32 0), i8** %235
+	%236 = alloca %struct.Cons*
 	; new
-	%156 = call %struct.Cons* @ConsNew()
-	store %struct.Cons* %156, %struct.Cons** %155
-	%157 = alloca i32
-	store i32 0, i32* %157
-	%158 = load i32* %157
-	store i32 %158, i32* %5
-	%159 = load i32* %5
-	store i32 %159, i32* %3
-	%160 = load i32* %3
-	store i32 %160, i32* %2
-	%161 = load i32* %2
-	ret i32 %161
+	%237 = call %struct.Cons* @ConsNew()
+	store %struct.Cons* %237, %struct.Cons** %236
+	%238 = alloca i32
+	store i32 0, i32* %238
+	%239 = load i32* %238
+	store i32 %239, i32* %5
+	%240 = load i32* %5
+	store i32 %240, i32* %3
+	%241 = load i32* %3
+	store i32 %241, i32* %2
+	%242 = load i32* %2
+	ret i32 %242
 }
 
 define i1 @Main_test(%struct.Main* %self) #0 {
