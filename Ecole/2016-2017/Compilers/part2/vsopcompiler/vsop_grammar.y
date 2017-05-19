@@ -371,7 +371,7 @@ int main (int argc, char *argv[]){
 		cerr << "Usage for lexer, parse and semantic: ./" << argv[0] << " -check <Source_File>" << endl;
 		cerr << "Usage for code generation: ./" << argv[0] << " -llvm <Source_File>" << endl;
 		cerr << "Usage for executable generation : ./" << argv[0] << " <Source_File>" << endl;
-		cerr << "You can also add -lex to activate the extensions" << endl;
+		cerr << "You can also add -ext to activate the extensions" << endl;
 		return -1;
 	}
 
@@ -385,10 +385,8 @@ int main (int argc, char *argv[]){
 			start_token = START_SYNTAX;
 		else if(!strcmp(argv[i], "-llvm"))
 			start_token = START_CODE_GEN;
-		else if(!strcmp(argv[i], "-ext")){
-			// Do nothing for now
-		}else if(argv[i][0] == '-'){
-			cerr << "Undefined argument" << endl;
+		else if(argv[i][0] == '-'){
+			cerr << "Undefined argument" << argv[i] << endl;
 			return -1;
 		}
 	}

@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,7 +21,7 @@ void print(char* string){
 char* inputLine(){
   char* string = NULL;
   int read;
-  unsigned int len;
+  size_t len;
   if(getline(&string, &len, stdin) == -1)
     printf("Error reading line");
 
@@ -29,7 +30,8 @@ char* inputLine(){
 
 int inputInt32(){
   int i;
-  scanf("%d", &i);
+  while(scanf("%d", &i) <= 0)
+    printf("Enter a correct integer please\n");
   char* flushing = inputLine();
   free(flushing);
   return i;

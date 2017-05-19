@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <utility>
 #include <sstream>
+#include <vector>
+#include <string>
 #include "all_headers.hpp"
 #include "yyerror_init.h"
 #include "SemanticAnalysis/SemanticAnalyser.hpp"
@@ -31,6 +33,7 @@ int start_token;
 int syntax_error;
 ClassNode* io_node;
 ClassNode* obj_node;
+ProgramNode* tmp_program = NULL;
 
 void yyerror(const char *s);
 
@@ -68,7 +71,7 @@ void yyerror(const char *s);
 %token T_PLUS T_MINUS T_TIMES T_DIV T_POW T_DOT T_EQUAL T_LOWER T_LEQ T_GREATER T_GEQ
 %token T_ASSIGN
 %token T_COMMENTS
-%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN START_IO START_EX_GEN;
+%token START_SYNTAX START_LEXICAL START_SEMANTIC START_CODE_GEN START_EX_GEN START_IO START_MULTIPLE;
 %token T_ERROR
 
 %type <program_node>            program
@@ -108,17 +111,19 @@ void yyerror(const char *s);
 %%
 start :
 	START_LEXICAL Input
-	| START_SYNTAX program													{	if(!syntax_error){
+	| START_SYNTAX program													{
+																										if(!syntax_error){
 																											cout << *$2;
 																											delete $2;
 																										}
-																									 }
+																									}
   | START_SEMANTIC program                        {
 																										if(!syntax_error){
+																											if(tmp_program)
+																												*$2 += *tmp_program;
 																											$2->addClass(io_node);
 																											$2->addClass(obj_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
-																											// Remove IO class for the class table
 																											std::unordered_map<std::string, ClassNode*> c_table = $2->getTableClasses();
 																										  $2->removeClass(c_table["IO"]);
 																										  $2->removeClass(c_table["Object"]);
@@ -129,6 +134,8 @@ start :
 																									}
 	| START_CODE_GEN program												{
 																									if(!syntax_error){
+																										if(tmp_program)
+																											*$2 += *tmp_program;
 																										$2->addClass(io_node);
 																										$2->addClass(obj_node);
 																										semantic_error = SemanticAnalyser::semanticAnalysis($2);
@@ -149,6 +156,8 @@ start :
 																								}
 	| START_EX_GEN program												{
 																										if(!syntax_error){
+																											if(tmp_program)
+																												*$2 += *tmp_program;
 																											$2->addClass(io_node);
 																											$2->addClass(obj_node);
 																											semantic_error = SemanticAnalyser::semanticAnalysis($2);
@@ -182,6 +191,12 @@ start :
 	| START_IO class class													{
 																										io_node = $2;
 																										obj_node = $3;
+																									}
+	| START_MULTIPLE program												{
+																										if(tmp_program)
+																											*tmp_program += *$2;
+																										else
+																											tmp_program = $2;
 																									}
 ;
 
@@ -319,7 +334,7 @@ expr :
 	T_IF expr T_THEN expr															{$$ = new ConditionalNode($2, $4, NULL, @1.first_column, @1.first_line);}
 	| T_IF expr T_THEN expr T_ELSE expr								{$$ = new ConditionalNode($2, $4, $6, @1.first_column, @1.first_line);}
 	| T_WHILE expr T_DO expr													{$$ = new WhileNode($2, $4, @1.first_column, @1.first_line);}
-	| T_LET t_obj_id T_COLON type assign T_IN let-expr	{$$ = new LetNode($2, $4, $7, $5, @1.first_column, @1.first_line); cout << "ici" << endl;}
+	| T_LET t_obj_id T_COLON type assign T_IN let-expr	{$$ = new LetNode($2, $4, $7, $5, @1.first_column, @1.first_line);}
 	| t_obj_id T_ASSIGN expr													{$$ = new AssignNode($1, $3, $1->getCol(), $1->getLine());}
 	| T_PLUS T_PLUS t_obj_id													{
 																											LiteralNode* increment = new LiteralNode(1, "int32");
@@ -385,17 +400,18 @@ boolean-literal :
 
 int main (int argc, char *argv[]){
 
-	if(argc != 2 && argc != 3 && argc != 4){
-		cerr << "Usage for only lexer: ./" << argv[0] << " -lex <Source_File>" << endl;
-		cerr << "Usage for both lexer and parse: ./" << argv[0] << " -parse <Source_File>" << endl;
-		cerr << "Usage for lexer, parse and semantic: ./" << argv[0] << " -check <Source_File>" << endl;
-		cerr << "Usage for code generation: ./" << argv[0] << " -llvm <Source_File>" << endl;
-		cerr << "Usage for executable generation : ./" << argv[0] << " <Source_File>" << endl;
-		cerr << "You can also add -lex to activate the extensions" << endl;
+	if(argc < 2){
+		cerr << "Usage for only lexer: ./" << argv[0] << " -lex <Source_Files>" << endl;
+		cerr << "Usage for both lexer and parse: ./" << argv[0] << " -parse <Source_Files>" << endl;
+		cerr << "Usage for lexer, parse and semantic: ./" << argv[0] << " -check <Source_Files>" << endl;
+		cerr << "Usage for code generation: ./" << argv[0] << " -llvm <Source_Files>" << endl;
+		cerr << "Usage for executable generation : ./" << argv[0] << " <Source_Files>" << endl;
+		cerr << "You can also add -ext to activate the extensions" << endl;
 		return -1;
 	}
 
 	start_token = START_EX_GEN;
+	vector<string> file_names;
 	for(int i = 1; i < argc; ++i){
 		if(!strcmp(argv[i], "-lex"))
 			start_token = START_LEXICAL;
@@ -408,9 +424,11 @@ int main (int argc, char *argv[]){
 		else if(!strcmp(argv[i], "-ext")){
 			// Do nothing for now
 		}else if(argv[i][0] == '-'){
-			cerr << "Undefined argument" << endl;
+			cerr << "Undefined argument" << argv[i] << endl;
 			return -1;
 		}
+		else
+			file_names.push_back(string(argv[i]));
 	}
 
 	//Insert IO class if needed.
@@ -437,28 +455,40 @@ int main (int argc, char *argv[]){
 		start_token = t;
 		fclose(yyin);
 	}
-
-	FILE *myfile = fopen(argv[argc-1], "r");
-	file_name = argv[argc-1];
-	if (!myfile) {
-	 	cerr << "Could not open " << file_name << endl;
-		return -1;
-	}
-	SemanticError::FILE_NAME = file_name;
-	// set flex to read from it instead of defaulting to STDIN:
-	yyin = myfile;
-
-	// parse through the input until there is no more:
-	syntax_error = 0;
-	do {
-		if(yyparse() == 1){
-			syntax_error++;
+	FILE *myfile;
+	int mem_start_token = start_token;
+	for(size_t i = 0; i < file_names.size(); ++i){
+		syntax_error = 0;
+		if(i == file_names.size() - 1)
+			start_token = mem_start_token;
+		else
+			start_token = START_MULTIPLE;
+		myfile = fopen(file_names.at(i).c_str(), "r");
+		file_name = argv[argc-1];
+		if (!myfile) {
+		 	cerr << "Could not open " << file_names.at(i) << endl;
+			return -1;
 		}
-	} while (!feof(yyin));
+		SemanticError::FILE_NAME = file_names.at(i);
+		// set flex to read from it instead of defaulting to STDIN:
+		yyin = myfile;
 
-	fclose(yyin);
-	if(syntax_error)
-		return -1;
+		// parse through the input until there is no more:
+		syntax_error = 0;
+		do {
+			if(yyparse() == 1){
+				syntax_error++;
+			}
+		} while (!feof(yyin));
+
+		fclose(yyin);
+		if(syntax_error || semantic_error)
+			return -1;
+		yylloc.first_line = 1;
+		yylloc.first_column = 0;
+		yylloc.last_line = 1;
+		yylloc.last_column = 0;
+	}
 
 	return semantic_error;
 }

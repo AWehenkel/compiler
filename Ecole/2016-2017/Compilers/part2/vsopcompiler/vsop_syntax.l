@@ -282,5 +282,9 @@ string replaceASCII(string text, unsigned int min, unsigned int max){
 
 void lexicalError(){
   cerr << file_name << ":" << yylloc.first_line << ":" << yylloc.first_column << ": lexical error" << endl;
+  if(yyleng == 1)
+    cerr << "\tInvalid character in this context: \"" << std::string(yytext, yyleng) << "\""<< endl;
+  else
+    cerr << "\tInvalid sequence of characters in this context: \"" << std::string(yytext, yyleng) << "\""<< endl;
   exit(1);
 }

@@ -2,6 +2,8 @@
 
 #include "ProgramNode.hpp"
 #include "ClassNode.hpp"
+#include "TypeIdentifierNode.hpp"
+#include "../SemanticAnalysis/SemanticError.hpp"
 
 using namespace std;
 
@@ -44,12 +46,13 @@ void ProgramNode::addClass(ClassNode *new_class) {
 	classes.push_back(new_class);
 }
 
-int ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
+SemanticError ProgramNode::fillClassTable(std::unordered_map<std::string, ClassNode*> &table){
 
 	for(std::vector<ClassNode*>::iterator class_it = classes.begin(); class_it != classes.end(); ++class_it)
 		if((*class_it)->fillClassTable(table) < 0)
-			return -1;
+			return SemanticError("Redefinition of class: " + (*class_it)->getName()->getLiteral(), *class_it);
+			
 	table_classes = table;
 
-	return 0;
+	return SemanticError();
 }

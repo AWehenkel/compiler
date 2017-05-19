@@ -1,6 +1,6 @@
 # This Makefile will be used to build your compiler.
 
-all:	vsopc
+all: vsopc extension
 
 .PHONY:	all archive clean install-tools
 
@@ -36,7 +36,7 @@ g++ :
 	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp SemanticAnalysis/*.cpp Visitors/*.cpp lex.yy.c vsop_grammar.tab.c -lfl -o vsopc_exe
 
 g++_ext :
-	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp SemanticAnalysis/*.cpp Visitors/*.cpp lex.yy.c vsop_grammar_ext.tab.c -lfl -o vsopc_exe
+	g++ -std=c++11 SyntacticTree/*.cpp SyntacticTree/Expression/*.cpp SemanticAnalysis/*.cpp Visitors/*.cpp lex.yy.c vsop_grammar_ext.tab.c -lfl -o vsopc_ext_exe
 
 generation :
 	./merr.linux -B -s "make vsopc" -o yyerror.c ./vsopc_exe

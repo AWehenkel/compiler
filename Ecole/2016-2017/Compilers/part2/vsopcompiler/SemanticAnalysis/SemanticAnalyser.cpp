@@ -18,9 +18,9 @@ int SemanticAnalyser::semanticAnalysis(ProgramNode* program){
   unordered_map<string, ClassNode*> class_table;
 
   // Fill the class table with the other class in the program
-  if(program->fillClassTable(class_table)){
-    SemanticError error("Redefintion of a class");
-    errors.push_back(error);
+  SemanticError result_fill = program->fillClassTable(class_table);
+  if(result_fill.isValid()){
+    errors.push_back(result_fill);
     cerr << errors;
     // Directly exit because a doublon in the class name would lead to incoherent error detection
     return 1;

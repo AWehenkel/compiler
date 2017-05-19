@@ -10,6 +10,8 @@
 /*
 	Class used to represent a syntaxic node containing a program
 */
+class SemanticError;
+
 class ProgramNode : public VSOPNode {
 private :
 	std::vector<ClassNode*> classes;
@@ -53,7 +55,7 @@ public :
 	IN: std::unordered_maptable, a reference to the table to fill with the class contained in the subnode of the current node.
 	Out: -
 	*/
-	int fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
+	SemanticError fillClassTable(std::unordered_map<std::string, ClassNode*> &table);
 };
 
 #endif //program_node_hpp
