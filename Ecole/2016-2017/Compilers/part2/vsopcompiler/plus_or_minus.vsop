@@ -1,0 +1,54 @@
+class Calculator extends IO{
+  to_guess : int32 <- 0;
+
+  getGuess() : int32 {
+    to_guess
+  }
+
+  generateGuess(surname : string, firstname : string) : unit {
+    let t1 : int32 in {
+      print(surname).print("\n");
+      print(firstname).print("\n");
+      if (surname = "Antoine\n")
+      then t1 <- 5
+      else t1 <- 10;
+      let t2 : int32 in {
+        if (firstname = "Wehenkel\n")
+        then t2 <- 3
+        else t2 <- 2;
+        to_guess <- t1*t2
+      }
+    };
+    ()
+  }
+}
+
+class Main extends IO {
+  input1 : string;
+  input2 : string;
+  calc : Calculator;
+  main() : int32 {
+      print("Plus or minus game").print("\n----------------\n").print("What's your surname?\n");
+      input1 <- inputLine();
+      print("What's your firstname?\n");
+      input2 <- inputLine();
+      calc <- new Calculator;
+      calc.generateGuess(input1, input2);
+      let guess : int32 in {
+        print("Guess the number:");
+        guess <- inputInt32();
+        while (not(guess = calc.getGuess()))
+        do {
+          if (guess < calc.getGuess())
+          then
+            print("The number is bigger\n")
+          else
+            print("The number is smaller\n");
+          print("Guess the number:");
+          guess <- inputInt32()
+        };
+        print("You have guess the right number\n")
+      };
+      0
+  }
+}
