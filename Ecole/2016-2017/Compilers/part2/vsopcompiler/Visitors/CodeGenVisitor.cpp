@@ -282,6 +282,7 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
   // Store the value if needed by the parent node
   if(node->getType()->getLiteral() != "unit"){
     string tmp_val = "%" + to_string(addr_counter++);
+    ir += ";avant bitcast\n";
     if(action->getLLVMType() != node->getLLVMType()){
       ir += tab + getLLVMLoadCode(tmp_val, action->getLLVMAddress(), action->getLLVMType());
       string new_load = "%" + to_string(addr_counter++);;
@@ -289,7 +290,7 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
       tmp_val = new_load;
     }
     else
-      ir += tab + getLLVMLoadCode(tmp_val, action->getLLVMAddress(), action->getLLVMType());
+      ir += tab + getLLVMLoadCode(tmp_val, action->getLLVMAddress(), node->getLLVMType());
     //ir += tab + getLLVMLoadCode(tmp_val, action->getLLVMAddress(), action->getLLVMType());
     ir += tab + getLLVMStoreCode(tmp_val, expr_addr, node->getLLVMType());
   }
@@ -317,7 +318,7 @@ int CodeGenVisitor::visitConditionalNode(ConditionalNode *node){
         tmp_val = new_load;
       }
       else
-        ir += tab + getLLVMLoadCode(tmp_val, else_action->getLLVMAddress(), action->getLLVMType());
+        ir += tab + getLLVMLoadCode(tmp_val, else_action->getLLVMAddress(), node->getLLVMType());
       //ir += tab + getLLVMLoadCode(tmp_val, else_action->getLLVMAddress(), action->getLLVMType());
       ir += tab + getLLVMStoreCode(tmp_val, expr_addr, node->getLLVMType());
     }
