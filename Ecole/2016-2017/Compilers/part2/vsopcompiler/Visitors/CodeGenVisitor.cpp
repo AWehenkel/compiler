@@ -157,8 +157,7 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   if (expr->accept(this) < 0)
     return -1;
 
-  // Store the value of the expression in the left term //TODO ici je rajoute le bitcast dans le cas du polymorphisme, cependant qu'elle est la bon type pour le assign
-  // en lui meme? le parent ou le fils? Pour le moment je mets la meme chose pour les duex. si à changer il faut faire gaffe car le code se sert de ça.
+  // Store the value of the expression in the left term
   string load = "%" + to_string(addr_counter++);
   if(expr->getLLVMType() != node->getLLVMType()){
     ir += tab + getLLVMLoadCode(load, expr->getLLVMAddress(), expr->getLLVMType());
@@ -173,7 +172,7 @@ int CodeGenVisitor::visitAssignNode(AssignNode *node){
   FieldNode* field = current_scope->getFieldFromId(name->getLiteral());
   if(field){
     ir += ";field\n";
-    ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + current_class->getName()->getLiteral() + "*"); // TODO : attention incohérence avec call
+    ir += tab + getLLVMLoadCode("%" + to_string(addr_counter++), "%1", "%struct." + current_class->getName()->getLiteral() + "*");
     ir += tab + getLLVMGetElementPtr("%" + to_string(addr_counter++), "%struct." + current_class->getName()->getLiteral(), "%" + to_string(addr_counter-1), 0, field->getPosition());
     ir += tab + getLLVMStoreCode(load, "%" + to_string(addr_counter-1), name->getLLVMType());
   }else
@@ -602,9 +601,16 @@ int CodeGenVisitor::visitClassNode(ClassNode *node){
         ir += tab + getLLVMAllocationCode(init_expr->getLLVMAddress(), init_expr->getLLVMType());
         if (init_expr->accept(this) < 0)
           return -1;
-        // Load the value
-        ir += tab + getLLVMLoadCode("%" + to_string(addr_counter), init_expr->getLLVMAddress(), init_expr->getLLVMType());
+        // Store the value of the expression in the left term
         init_value = "%" + to_string(addr_counter++);
+        if(init_expr->getLLVMType() != field->getType()->getLLVMType()){
+          ir += tab + getLLVMLoadCode(init_value, init_expr->getLLVMAddress(), init_expr->getLLVMType());
+          string new_load = "%" + to_string(addr_counter++);;
+          ir += tab + getLLVMBitCastCode(new_load, init_expr->getLLVMType(), init_value, field->getType()->getLLVMType());
+          init_value = new_load;
+        }
+        else
+          ir += tab + getLLVMLoadCode(init_value, init_expr->getLLVMAddress(), init_expr->getLLVMType());
     }
     else
       init_value = field->getType()->getInitLLVMValue();

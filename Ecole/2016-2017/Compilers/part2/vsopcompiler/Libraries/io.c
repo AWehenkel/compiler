@@ -24,6 +24,9 @@ char* inputLine(){
   if(getline(&string, &len, stdin) == -1)
     printf("Error reading line");
 
+  for(int i = 0; i < len; i++)
+    if(string[i] == '\n')
+      string[i] = '\0';
   return string;
 }
 

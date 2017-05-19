@@ -2013,13 +2013,13 @@ yyreduce:
 
   case 65:
 #line 291 "vsop_grammar.y" /* yacc.c:1646  */
-    {delete (yyvsp[-3].object_identifier_node);(yyval.field_node) = NULL;cout << "recovery" << endl;syntax_error++;}
+    {delete (yyvsp[-3].object_identifier_node);(yyval.field_node) = NULL;syntax_error++;}
 #line 2018 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
 #line 292 "vsop_grammar.y" /* yacc.c:1646  */
-    {delete (yyvsp[-2].type_identifier_node); delete (yyvsp[-1].expression_node);(yyval.field_node) = NULL;cout << "recovery" << endl;syntax_error++;}
+    {delete (yyvsp[-2].type_identifier_node); delete (yyvsp[-1].expression_node);(yyval.field_node) = NULL;syntax_error++;}
 #line 2024 "vsop_grammar.tab.c" /* yacc.c:1646  */
     break;
 
