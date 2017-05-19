@@ -1,4 +1,7 @@
 class Main {
+  io : IO <- new IO;
   f() : int32 {
+    io.print("caca", );
+    0
   };
 }

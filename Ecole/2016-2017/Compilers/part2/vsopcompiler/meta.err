@@ -33,7 +33,7 @@ class Main {
 } ::: Missing '<-' in assignment
 class Main {
   a : int32 <- ;
-} ::: Mising assignemen value
+} ::: Missing assignment value
 
 class Main {
   () : int32 {0}
@@ -54,8 +54,8 @@ class Main {
   f( : int32 {0}
 } ::: Missing closing brackets in method declaration
 class Main {
-  f() : int32 {0}
-} ::: Mising opening brackets in method declaration
+  f) : int32 {0}
+} ::: Missing opening brackets in method declaration
 f()) : int32 {0}
 class Main {
 } ::: Too many closing brackets in method declaration
@@ -68,9 +68,6 @@ class Main {
 class Main {
   f() : int32 }
 } ::: Missing opening curly braces in method declaration
-class Main {
-  f() : int32 {0}}
-} ::: Too many closing curly braces in method declaration
 class Main {
   f() : int32 {{0}
 } ::: Too many opening curly braces in method declaration
@@ -106,15 +103,13 @@ class Main {
   f(a : int32; b : int32) : int32 {0}
 } ::: Wrong separator of formals in method declaration
 
-class Main {
-  f() : int32 {0}
-} ::: Block must contain at least one expression
+
 class Main {
   f() : int32 {0 1}
 } ::: Missing ';' at the end of expression
 class Main {
   f() : int32 {0;}
-} ::: Unexpected ';' at the end fof block
+} ::: Unexpected ';' at the end of block
 class Main {
   f() : int32 {}
 } ::: Block must contain at least one expression
